@@ -80,3 +80,23 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}
 .hp{border:1px solid var(--ln);border-radius:14px;background:var(--pn);padding:1.4rem 1.6rem;font-size:.95rem}.hp b{color:#fff}.hp p{color:var(--mu);margin:.2rem 0 .9rem}
 .hp div{padding:.35rem 0;color:var(--mu)}.hp div em{font-style:normal;background:rgba(255,255,255,.12);color:#fff;border-radius:6px;padding:0 .45rem;margin-left:.3rem;font-size:.85rem}
 @media(max-width:860px){.two{grid-template-columns:1fr;gap:2rem}.chain s{display:none}}
+/* vérification */
+.vwrap{max-width:640px;padding:130px 0 5rem}
+.vcard{border:1px solid var(--ln);border-radius:20px;background:var(--pn);padding:2.4rem}
+.vcard h1{font-size:clamp(1.5rem,3.4vw,2.1rem);margin-bottom:.5rem}
+.vcard .sub{color:var(--mu)}
+.steps{display:flex;gap:.5rem;margin:1.6rem 0;flex-wrap:wrap}
+.steps span{flex:1;min-width:130px;border:1px solid var(--ln);border-radius:10px;padding:.5rem .7rem;color:var(--mu);font-size:.82rem;text-align:center;transition:.3s}
+.steps span.on{color:#000;background:#fff;border-color:#fff;font-weight:700}
+.vlead{color:var(--tx);margin-bottom:1rem}
+.captcha{display:flex;gap:.8rem;align-items:center;margin:.6rem 0 1.2rem;flex-wrap:wrap}
+.captcha span{display:inline-flex;border:1px solid var(--ln);border-radius:8px;overflow:hidden}
+.captcha span svg{display:block}
+#formulaire{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
+.vinput{background:#0a0a0f;border:1px solid var(--ln);border-radius:10px;color:#fff;padding:.75rem 1rem;font:600 1rem ui-monospace,monospace;letter-spacing:.3em;text-transform:uppercase;width:190px}
+.btn.mini{padding:.55rem .95rem;font-size:.9rem}
+.vmsg{display:none;border:1px solid var(--ln);border-left:3px solid #fff;border-radius:10px;padding:.9rem 1.1rem;margin-top:1.4rem;font-size:.95rem}
+.vmsg.ok{display:block;border-left-color:#57f287}
+.vmsg.no{display:block;border-left-color:#ed4245}
+.vnote{color:var(--mu);font-size:.83rem;margin-top:1.6rem}
+@media(max-width:860px){.vcard{padding:1.6rem}.vinput{width:100%}}

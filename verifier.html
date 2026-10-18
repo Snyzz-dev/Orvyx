@@ -1,0 +1,136 @@
+<!doctype html><html lang="fr"><head><title>Vérification – Orvyx</title><meta name="description" content="Vérifie ton compte Discord pour accéder au serveur : un défi anti-robot, ta connexion Discord, puis ton rôle. Aucun mot de passe, aucune donnée conservée."><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="assets/logo.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Michroma&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"><meta property="og:image" content="assets/banner.png"></head><body>
+<canvas id="stars"></canvas><nav><div class="wrap nv"><a class="brand" href="index.html"><img src="assets/logo.png" alt="">Orvyx</a><button class="burger" aria-label="Menu">☰</button><ul class="links"><li><a href="index.html#fonctionnalites">Fonctionnalités</a></li><li><a href="index.html#commandes">Commandes</a></li><li><a href="index.html#ia">Assistant IA</a></li><li><a href="index.html#faq">FAQ</a></li><li><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a></li><li><a href="#" data-support>Support</a></li><li><a class="btn" href="#" data-invite>Ajouter à Discord</a></li></ul></div></nav>
+
+<main class="wrap vwrap">
+<div class="vcard in" id="carte">
+<h1 id="titre">Vérification requise</h1>
+<p class="sub" id="sous-titre">Trois étapes, une minute, et ton accès au serveur est débloqué.</p>
+<div class="steps" id="etapes"><span class="on">1. Anti-robot</span><span>2. Connexion Discord</span><span>3. Rôle attribué</span></div>
+
+<div id="panneau-captcha">
+<p class="vlead">Recopie les caractères du défi ci-dessous : c'est le test qui bloque les robots.</p>
+<div class="captcha"><span id="defi"></span><button class="btn ghost mini" id="recharger" type="button" aria-label="Nouveau défi">↻ Nouveau défi</button></div>
+<form id="formulaire" autocomplete="off">
+<input class="vinput" id="reponse" maxlength="8" placeholder="CODE" aria-label="Code du défi" required>
+<button class="btn" id="valider" type="submit">Continuer →</button>
+</form>
+</div>
+
+<div class="vmsg" id="message" role="status"></div>
+<p class="vnote">Aucun mot de passe n'est demandé : Discord confirme ton identité, le bot vérifie que tu es bien membre du serveur puis t'attribue le rôle. Rien n'est conservé après la vérification.</p>
+</div>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Orvyx. Créé par Snyzz. Non affilié à Discord Inc.</span><div><a href="conditions.html">Conditions d’Utilisation</a><a href="confidentialite.html">Politique de Confidentialité</a><a href="droit-auteur.html">Droit d’auteur</a><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a><a href="#" data-support>Support</a></div></div></footer>
+<script src="script.js"></script>
+<script>
+(function(){
+"use strict";
+/* API : config.js (dossier Web) — "" = même origine (page servie par le bot). */
+var API = String(window.ORVYX_API || "").replace(/\/+$/, "");
+var q = new URLSearchParams(location.search);
+var SERVEUR = q.get("serveur") || window.ORVYX_SERVEUR || "";
+var $ = function(id){ return document.getElementById(id); };
+var msg = $("message"), etapes = Array.prototype.slice.call(document.querySelectorAll("#etapes span"));
+
+function montrer(texte, type){
+  msg.textContent = texte;
+  msg.className = "vmsg " + (type || "no");
+}
+function etape(i){ etapes.forEach(function(e, n){ e.classList.toggle("on", n <= i); }); }
+
+var ERREURS = {
+  membre: "Ce compte Discord n’est pas membre du serveur. Rejoins le serveur avec le lien d’invitation, puis réessaie.",
+  config: "La vérification n’est pas encore prête sur ce serveur : préviens le staff.",
+  bot: "Le bot n’a pas le droit d’attribuer le rôle (permissions ou hiérarchie) : préviens le staff.",
+  state: "Ce lien a expiré ou a déjà été utilisé. Recommence depuis le serveur.",
+  discord: "Discord a refusé la connexion. Réessaie dans un instant.",
+  reseau: "Le serveur Discord est injoignable pour l’instant. Réessaie dans quelques secondes.",
+  captcha: "CAPTCHA incorrect ou expiré — un nouveau défi a été généré.",
+  api: "Le service de vérification est injoignable. Réessaie plus tard."
+};
+
+/* ---------------------------------------------------------- résultat d'un retour de Discord */
+if (q.get("ok") === "role" || q.get("ok") === "deja"){
+  etape(2);
+  $("panneau-captcha").style.display = "none";
+  if (q.get("ok") === "role"){
+    $("titre").textContent = "Bienvenue !";
+    $("sous-titre").textContent = "Ton rôle t’a été attribué et une confirmation vient de t’arriver en message privé.";
+    montrer("Vérification réussie — tous les salons du serveur sont maintenant visibles.", "ok");
+  } else {
+    $("titre").textContent = "Déjà vérifié";
+    $("sous-titre").textContent = "Tu avais déjà le rôle : rien de plus à faire.";
+    montrer("Tu étais déjà vérifié : profite du serveur !", "ok");
+  }
+} else if (q.get("err")){
+  etape(0);
+  montrer(ERREURS[q.get("err")] || ERREURS.api);
+  if (SERVEUR) chargerDefi(true);
+} else if (!SERVEUR){
+  montrer("Ce lien ne contient pas de serveur à vérifier : utilise le bouton de vérification du serveur.");
+} else {
+  infos();
+  chargerDefi();
+}
+
+/* ---------------------------------------------------------- nom du serveur (affichage) */
+async function infos(){
+  try {
+    var r = await fetch(API + "/api/verify/infos?serveur=" + encodeURIComponent(SERVEUR));
+    if (!r.ok) return;
+    var d = await r.json();
+    if (d.nom) $("sous-titre").textContent = "Tu rejoins " + d.nom +
+      (d.role ? " — le rôle « " + d.role + " » te sera attribué." : ".");
+  } catch (e) { /* affichage facultatif */ }
+}
+
+/* ---------------------------------------------------------- défi anti-robot */
+var defiId = "";
+async function chargerDefi(silencieux){
+  try {
+    var r = await fetch(API + "/api/verify/captcha");
+    if (!r.ok) throw new Error(r.status);
+    var d = await r.json();
+    defiId = d.id;
+    $("defi").innerHTML = d.svg;
+    $("reponse").value = "";
+    $("reponse").focus({preventScroll: true});
+  } catch (e) {
+    /* en mode silencieux, on garde le message d’erreur spécifique affiché */
+    if (!silencieux) montrer(ERREURS.api);
+    $("valider").disabled = true;
+  }
+}
+$("recharger").onclick = function(){ chargerDefi(); };
+
+/* ---------------------------------------------------------- passage au Discord */
+$("formulaire").addEventListener("submit", async function(ev){
+  ev.preventDefault();
+  var bouton = $("valider");
+  bouton.disabled = true;
+  try {
+    var r = await fetch(API + "/api/verify/start", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({serveur: SERVEUR, captcha_id: defiId, captcha: $("reponse").value})
+    });
+    var d = await r.json().catch(function(){ return {}; });
+    if (!r.ok || !d.redirect){
+      montrer(d.erreur || ERREURS.api);
+      chargerDefi();
+      return;
+    }
+    etape(1);
+    montrer("CAPTCHA validé — connexion à Discord…", "ok");
+    location.href = d.redirect;
+  } catch (e) {
+    montrer(ERREURS.api);
+    chargerDefi();
+  } finally {
+    bouton.disabled = false;
+  }
+});
+})();
+</script>
+</body></html>

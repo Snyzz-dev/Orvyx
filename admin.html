@@ -142,7 +142,9 @@ th{color:var(--mu);font-size:.75rem;text-transform:uppercase;letter-spacing:.09e
 "use strict";
 /* API : config.js (dossier Web) — "" = même origine (page servie par le bot
    ou par le reverse proxy qui forward /api/verify/). */
-var API = String(window.ORVYX_API || "").replace(/\/+$/, "");
+var API = String(
+  window.ORVYX_API || "https://api.orvyx.site"
+).replace(/\/+$/, "");
 var CLE = "orvyx_admin_token";
 var $ = function(id){ return document.getElementById(id); };
 

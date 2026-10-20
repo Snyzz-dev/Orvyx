@@ -1,0 +1,373 @@
+<!doctype html><html lang="fr"><head><title>Admin – Orvyx</title><meta name="robots" content="noindex,nofollow"><meta name="description" content="Console d’administration privée Orvyx : statut du bot, durée de connexion, serveurs, logs d’erreurs et pilotage."><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="assets/logo.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Michroma&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"><meta property="og:image" content="assets/banner.png">
+<style>
+.awrap{max-width:1060px;padding:120px 0 4rem}
+.formjeton{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.5rem}
+.ainput{width:min(360px,100%);text-transform:none;letter-spacing:.1em;font-size:.95rem}
+.ahead{display:flex;justify-content:space-between;gap:1.2rem;align-items:center;flex-wrap:wrap}
+.aident{display:flex;gap:1rem;align-items:center;min-width:0}
+.aavatar{width:56px;height:56px;border-radius:50%;border:1px solid var(--ln);background:#0a0a0f}
+.aident h1{font-size:clamp(1.3rem,3vw,1.8rem);word-break:break-word}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--mu);margin-right:.5rem;vertical-align:middle}
+.dot.ok{background:#57f287;box-shadow:0 0 12px rgba(87,242,135,.85)}
+.dot.ko{background:#ed4245;box-shadow:0 0 12px rgba(237,66,69,.85)}
+.dot.wait{background:#fee75c;box-shadow:0 0 12px rgba(254,231,92,.7)}
+.aactions{display:flex;gap:.6rem;flex-wrap:wrap}
+.btn.danger:hover{border-color:#ed4245;color:#ed4245!important;box-shadow:0 0 24px rgba(237,66,69,.3)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1.2rem 0}
+.acarte{border:1px solid var(--ln);border-radius:14px;background:var(--pn);padding:1rem 1.1rem}
+.acarte .lbl{display:block;color:var(--mu);font-size:.76rem;text-transform:uppercase;letter-spacing:.09em;margin-bottom:.4rem}
+.acarte strong{font-family:var(--d);font-weight:400;font-size:1.2rem;color:var(--wh);word-break:break-word}
+.asec{border:1px solid var(--ln);border-radius:20px;background:var(--pn);padding:1.6rem 1.8rem;margin-bottom:1.2rem}
+.asec h3{margin-bottom:1rem}
+.ainfos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.3rem 1.6rem;font-size:.92rem}
+.ainfos .lig{display:flex;justify-content:space-between;gap:1rem;border-bottom:1px dashed rgba(255,255,255,.08);padding:.5rem 0}
+.ainfos .k{color:var(--mu)}
+.ainfos .v{color:var(--tx);font-weight:600;text-align:right;word-break:break-word}
+.atable{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:.6rem .6rem;border-bottom:1px solid var(--ln);white-space:nowrap}
+th{color:var(--mu);font-size:.75rem;text-transform:uppercase;letter-spacing:.09em}
+.num{text-align:right}
+.mono{font-family:ui-monospace,Consolas,monospace;font-size:.85rem}
+.atools{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.9rem}
+.afiltre{border:1px solid var(--ln);background:transparent;color:var(--mu);border-radius:999px;padding:.35rem .85rem;font-size:.8rem;cursor:pointer;font-family:inherit;transition:.2s}
+.afiltre:hover{border-color:var(--wh);color:var(--wh)}
+.afiltre.on{background:#fff;color:#000;border-color:#fff;font-weight:700}
+.acheck{color:var(--mu);font-size:.82rem;cursor:pointer;user-select:none;display:inline-flex;gap:.45rem;align-items:center}
+.acheck input{accent-color:#fff}
+.abadge{border:1px solid var(--ln);border-radius:999px;padding:.22rem .7rem;font-size:.76rem;color:var(--mu);white-space:nowrap}
+.abadge.er{color:#ff5c5c;border-color:rgba(255,92,92,.55)}
+.aconsole{border:1px solid var(--ln);border-radius:12px;background:#050508;height:min(430px,55vh);overflow-y:auto;padding:.7rem .85rem;font:400 .8rem/1.55 ui-monospace,Consolas,monospace}
+.aligne{display:flex;gap:.7rem;padding:.2rem 0;border-bottom:1px solid rgba(255,255,255,.045)}
+.aligne .t{color:var(--mu);white-space:nowrap}
+.aligne .niv{min-width:74px;font-weight:700;flex-shrink:0}
+.aligne .niv.ERROR,.aligne .niv.CRITICAL{color:#ff5c5c}
+.aligne .niv.WARNING{color:#fee75c}
+.aligne .msg{color:#cfcfd9;white-space:pre-wrap;word-break:break-word}
+.vidange{color:var(--mu);padding:.5rem 0}
+@media(max-width:760px){.asec{padding:1.2rem 1.1rem}.ahead{flex-direction:column;align-items:flex-start}}
+</style></head><body>
+<canvas id="stars"></canvas><nav><div class="wrap nv"><a class="brand" href="index.html"><img src="assets/logo.png" alt="">Orvyx</a><button class="burger" aria-label="Menu">☰</button><ul class="links"><li><a href="index.html#fonctionnalites">Fonctionnalités</a></li><li><a href="index.html#commandes">Commandes</a></li><li><a href="index.html#ia">Assistant IA</a></li><li><a href="index.html#faq">FAQ</a></li><li><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a></li><li><a href="#" data-support>Support</a></li><li><a class="btn" href="#" data-invite>Ajouter à Discord</a></li></ul></div></nav>
+
+<main class="wrap awrap">
+
+<!-- ===================================================== porte (jeton) -->
+<div class="vcard in" id="porte">
+<h1>Console d’administration</h1>
+<p class="sub">Statut du bot en direct, logs d’erreurs et pilotage : redémarrage, arrêt.</p>
+<form class="formjeton" id="form-jeton" autocomplete="off">
+<input class="vinput ainput" type="password" id="jeton" placeholder="Jeton ADMIN_TOKEN" aria-label="Jeton d’administration" required>
+<button class="btn" type="submit">Déverrouiller →</button>
+</form>
+<div class="vmsg" id="msg-porte" role="status"></div>
+<p class="vnote">Le jeton correspond à <code>ADMIN_TOKEN</code> du fichier <code>.env</code> du bot. Il reste dans cet onglet uniquement (sessionStorage) : rien n’est envoyé ailleurs, rien n’est conservé après fermeture de l’onglet.</p>
+</div>
+
+<!-- ===================================================== tableau de bord -->
+<div id="panneau" hidden>
+
+<div class="vcard in">
+<div class="ahead">
+<div class="aident">
+<img class="aavatar" id="avatar" alt="" hidden>
+<div><h1 id="nom-bot">Orvyx</h1><p class="sub"><span class="dot" id="pastille"></span><span id="etat">Interrogation…</span></p></div>
+</div>
+<div class="aactions">
+<button class="btn ghost mini" id="btn-redemarrer" type="button">↻ Redémarrer</button>
+<button class="btn ghost mini danger" id="btn-arreter" type="button">■ Arrêter</button>
+<button class="btn ghost mini" id="btn-deconnexion" type="button">Déconnexion</button>
+</div>
+</div>
+<div class="vmsg" id="msg-action" role="status"></div>
+<div class="agrid">
+<div class="acarte"><span class="lbl">Latence</span><strong id="s-ping">—</strong></div>
+<div class="acarte"><span class="lbl">En ligne depuis</span><strong id="s-uptime">—</strong></div>
+<div class="acarte"><span class="lbl">Serveurs</span><strong id="s-serveurs">—</strong></div>
+<div class="acarte"><span class="lbl">Membres</span><strong id="s-membres">—</strong></div>
+<div class="acarte"><span class="lbl">Extensions</span><strong id="s-cogs">—</strong></div>
+<div class="acarte"><span class="lbl">Commandes</span><strong id="s-commandes">—</strong></div>
+</div>
+<p class="vnote">Actualisation automatique toutes les 5 s — les compteurs « en ligne depuis » et « depuis le lancement » défilent seconde par seconde.</p>
+</div>
+
+<!-- infos du bot -->
+<div class="asec">
+<h3>Informations</h3>
+<div class="ainfos">
+<div class="lig"><span class="k">Identifiant</span><span class="v mono" id="i-id">—</span></div>
+<div class="lig"><span class="k">Propriétaires</span><span class="v mono" id="i-props">—</span></div>
+<div class="lig"><span class="k">Assistant IA</span><span class="v" id="i-ia">—</span></div>
+<div class="lig"><span class="k">API de vérification</span><span class="v" id="i-api">—</span></div>
+<div class="lig"><span class="k">Base de données</span><span class="v" id="i-db">—</span></div>
+<div class="lig"><span class="k">Versions</span><span class="v" id="i-versions">—</span></div>
+<div class="lig"><span class="k">Niveau de logs</span><span class="v" id="i-loglevel">—</span></div>
+<div class="lig"><span class="k">Depuis le lancement</span><span class="v" id="i-proc">—</span></div>
+</div>
+</div>
+
+<!-- serveurs -->
+<div class="asec">
+<h3>Serveurs (<span id="s-nb-serveurs">0</span>)</h3>
+<div class="atable"><table>
+<thead><tr><th>Serveur</th><th>Identifiant</th><th class="num">Membres</th><th class="num">Salons</th><th class="num">Rôles</th></tr></thead>
+<tbody id="tbody-serveurs"><tr><td colspan="5">Chargement…</td></tr></tbody>
+</table></div>
+</div>
+
+<!-- logs -->
+<div class="asec">
+<h3>Logs (avertissements &amp; erreurs)</h3>
+<div class="atools">
+<button class="afiltre on" data-filtre="TOUT" type="button">Tout</button>
+<button class="afiltre" data-filtre="ERROR" type="button">ERROR</button>
+<button class="afiltre" data-filtre="WARNING" type="button">WARNING</button>
+<button class="afiltre" data-filtre="CRITICAL" type="button">CRITICAL</button>
+<span class="abadge er" id="b-err">0 ERROR</span>
+<span class="abadge" id="b-warn">0 WARNING</span>
+<label class="acheck"><input type="checkbox" id="auto-logs" checked> Auto (4 s)</label>
+<button class="afiltre" id="btn-vider" type="button">Effacer la vue</button>
+</div>
+<div class="aconsole" id="console"></div>
+<p class="vnote">Mêmes messages que le salon Discord « logs du bot » (secrets masqués, WARNING minimum). « Effacer la vue » ne fait que vider l’affichage de cet onglet, pas le bot.</p>
+</div>
+
+</div>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Orvyx. Créé par Snyzz. Non affilié à Discord Inc.</span><div><a href="conditions.html">Conditions d’Utilisation</a><a href="confidentialite.html">Politique de Confidentialité</a><a href="droit-auteur.html">Droit d’auteur</a><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a><a href="#" data-support>Support</a></div></div></footer>
+<script src="script.js"></script>
+<script>
+(function(){
+"use strict";
+/* API : config.js (dossier Web) — "" = même origine (page servie par le bot
+   ou par le reverse proxy qui forward /api/verify/). */
+var API = String(window.ORVYX_API || "").replace(/\/+$/, "");
+var CLE = "orvyx_admin_token";
+var $ = function(id){ return document.getElementById(id); };
+
+var jeton = sessionStorage.getItem(CLE) || "";
+var tStatut = 0, tLogs = 0, tTick = 0;
+var filtre = "TOUT", autoLogs = true;
+var entrees = [], uptimeBase = null, procBase = null;
+
+/* ------------------------------------------------------------- utilitaires */
+function duree(sec){
+  if (sec == null || sec < 0) return "—";
+  sec = Math.floor(sec);
+  var j = Math.floor(sec / 86400), h = Math.floor((sec % 86400) / 3600),
+      m = Math.floor((sec % 3600) / 60), s = sec % 60;
+  if (j) return j + " j " + h + " h";
+  if (h) return h + " h " + m + " min";
+  if (m) return m + " min " + s + " s";
+  return s + " s";
+}
+function dire(id, texte){ var e = $(id); if (e) e.textContent = texte; }
+function msg(id, texte, type){
+  var e = $(id);
+  e.textContent = texte || "";
+  e.className = texte ? ("vmsg " + (type || "no")) : "vmsg";
+}
+async function api(chemin, opts){
+  opts = opts || {};
+  opts.headers = Object.assign({}, opts.headers, {"Authorization": "Bearer " + jeton});
+  var r = await fetch(API + chemin, opts);
+  var d = await r.json().catch(function(){ return {}; });
+  return {ok: r.ok, status: r.status, data: d};
+}
+
+/* ------------------------------------------------------------- porte */
+function deconnecter(raison){
+  jeton = "";
+  sessionStorage.removeItem(CLE);
+  clearInterval(tStatut); clearInterval(tLogs); clearInterval(tTick);
+  $("panneau").hidden = true;
+  $("porte").hidden = false;
+  $("jeton").value = "";
+  msg("msg-porte", raison, "no");
+}
+$("form-jeton").addEventListener("submit", async function(ev){
+  ev.preventDefault();
+  jeton = $("jeton").value.trim();
+  var res;
+  try { res = await api("/api/verify/admin/status"); }
+  catch (e){ msg("msg-porte", "Joindre l’API impossible : le bot est injoignable (arrêté ?).", "no"); return; }
+  if (res.status === 401 || res.status === 404){
+    jeton = "";
+    msg("msg-porte", "Jeton refusé — vérifie ADMIN_TOKEN dans le .env du bot.", "no");
+    return;
+  }
+  if (!res.ok){ msg("msg-porte", "Réponse inattendue de l’API (" + res.status + ").", "no"); return; }
+  sessionStorage.setItem(CLE, jeton);
+  msg("msg-porte", "");
+  ouvrir(res.data);
+});
+
+/* ------------------------------------------------------------- dashboard */
+function ouvrir(premier){
+  $("porte").hidden = true;
+  $("panneau").hidden = false;
+  if (premier) maj(premier);
+  interroger(); interrogerLogs();
+  clearInterval(tStatut); clearInterval(tLogs); clearInterval(tTick);
+  tStatut = setInterval(interroger, 5000);
+  tLogs = setInterval(function(){ if (autoLogs && !document.hidden) interrogerLogs(); }, 4000);
+  tTick = setInterval(function(){
+    if (uptimeBase) dire("s-uptime", duree(uptimeBase.v + (Date.now() - uptimeBase.recu) / 1000));
+    if (procBase) dire("i-proc", duree(procBase.v + (Date.now() - procBase.recu) / 1000));
+  }, 1000);
+}
+
+function horsLigne(){
+  clearInterval(tTick); uptimeBase = null; procBase = null;
+  $("pastille").className = "dot ko";
+  dire("etat", "Hors ligne — plus de réponse de l’API (arrêt, redémarrage ou proxy éteint).");
+  ["s-ping","s-uptime","s-serveurs","s-membres","s-cogs","s-commandes"].forEach(function(id){ dire(id, "—"); });
+}
+
+async function interroger(){
+  if (document.hidden) return;
+  var res;
+  try { res = await api("/api/verify/admin/status"); }
+  catch (e){ horsLigne(); return; }
+  if (res.status === 401){ deconnecter("Jeton refusé — vérifie ADMIN_TOKEN (.env)."); return; }
+  if (!res.ok){ horsLigne(); return; }
+  maj(res.data);
+}
+
+function maj(d){
+  var b = d.bot || {}, du = d.durees || {};
+  $("pastille").className = "dot " + (b.en_ligne ? "ok" : "wait");
+  dire("etat", b.en_ligne
+    ? "En ligne — " + b.serveurs + " serveur" + (b.serveurs > 1 ? "s" : "") + ", " + b.membres + " membres"
+    : "Processus actif, connexion à la gateway en cours…");
+  dire("nom-bot", b.nom || "Orvyx");
+  if (b.avatar){ var a = $("avatar"); a.src = b.avatar; a.hidden = false; }
+  dire("s-ping", b.latence_ms != null ? Math.round(b.latence_ms) + " ms" : "—");
+  uptimeBase = du.uptime_secondes != null ? {v: du.uptime_secondes, recu: Date.now()} : null;
+  procBase = du.processus_secondes != null ? {v: du.processus_secondes, recu: Date.now()} : null;
+  dire("s-uptime", duree(du.uptime_secondes));
+  dire("i-proc", duree(du.processus_secondes));
+  dire("s-serveurs", b.serveurs != null ? String(b.serveurs) : "—");
+  dire("s-nb-serveurs", b.serveurs != null ? String(b.serveurs) : "?");
+  dire("s-membres", b.membres != null ? b.membres.toLocaleString("fr-FR") : "—");
+  dire("s-cogs", b.cogs != null ? String(b.cogs) : "—");
+  dire("s-commandes", b.commandes != null ? String(b.commandes) : "—");
+
+  var ia = d.ia || {}, av = d.api_verification || {}, db = d.base || {},
+      vs = d.versions || {}, sy = d.systeme || {};
+  dire("i-id", b.id || "—");
+  dire("i-props", (sy.proprietaires || []).join(", ") || "—");
+  dire("i-ia", ia.disponible ? (ia.fournisseurs || []).join(" · ") : "Indisponible");
+  dire("i-api", av.actif ? ("Actif — " + av.hote + ":" + av.port + (av.configure ? "" : " (non configuré)")) : "Inactif");
+  dire("i-db", db.connectee ? "Connectée — " + db.chemin : "Déconnectée");
+  dire("i-versions", "Python " + (vs.python || "?") + " · discord.py " + (vs["discord.py"] || "?"));
+  dire("i-loglevel", sy.log_level || "—");
+  var par = (d.logs && d.logs.par_niveau) || {};
+  dire("b-err", ((par.ERROR || 0) + (par.CRITICAL || 0)) + " ERROR");
+  dire("b-warn", (par.WARNING || 0) + " WARNING");
+
+  var tb = $("tbody-serveurs");
+  tb.textContent = "";
+  (d.serveurs_detail || []).forEach(function(g){
+    var tr = document.createElement("tr");
+    [["nom", false], ["id", true], ["membres", true], ["salons", true], ["roles", true]].forEach(function(c){
+      var td = document.createElement("td");
+      td.textContent = g[c[0]] == null ? "—" : String(g[c[0]]);
+      if (c[1]) td.className = c[0] === "id" ? "mono" : "num";
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  if (!(d.serveurs_detail || []).length){
+    var tr = document.createElement("tr"), td = document.createElement("td");
+    td.colSpan = 5; td.textContent = "Aucun serveur (bot hors ligne ?)";
+    tr.appendChild(td); tb.appendChild(tr);
+  }
+}
+
+/* ------------------------------------------------------------- logs */
+async function interrogerLogs(){
+  var res;
+  try { res = await api("/api/verify/admin/logs?n=300"); }
+  catch (e){ return; }
+  if (res.status === 401){ deconnecter("Jeton refusé — vérifie ADMIN_TOKEN (.env)."); return; }
+  if (!res.ok) return;
+  entrees = (res.data && res.data.entrees) || [];
+  dessiner();
+}
+function dessiner(){
+  var boite = $("console");
+  var enBas = boite.scrollTop + boite.clientHeight >= boite.scrollHeight - 8;
+  boite.textContent = "";
+  var vus = 0;
+  for (var i = 0; i < entrees.length && vus < 300; i++){
+    var e = entrees[i];
+    if (filtre !== "TOUT" && e.niveau !== filtre) continue;
+    vus++;
+    var l = document.createElement("div"); l.className = "aligne";
+    var t = document.createElement("span"); t.className = "t";
+    t.textContent = new Date(e.t * 1000).toLocaleTimeString("fr-FR", {hour12: false});
+    var n = document.createElement("span"); n.className = "niv " + (e.niveau || "");
+    n.textContent = e.niveau || "?";
+    var m = document.createElement("span"); m.className = "msg";
+    m.textContent = "[" + (e.logger || "bot") + "] " + (e.message || "");
+    l.appendChild(t); l.appendChild(n); l.appendChild(m);
+    boite.appendChild(l);
+  }
+  if (!vus){
+    var v = document.createElement("div"); v.className = "vidange";
+    v.textContent = filtre === "TOUT"
+      ? "Aucun avertissement ni erreur depuis le démarrage : tout est clean."
+      : "Aucune entrée « " + filtre + " ».";
+    boite.appendChild(v);
+  }
+  if (enBas) boite.scrollTop = boite.scrollHeight;
+}
+Array.prototype.forEach.call(document.querySelectorAll("[data-filtre]"), function(b){
+  b.addEventListener("click", function(){
+    filtre = b.getAttribute("data-filtre");
+    Array.prototype.forEach.call(document.querySelectorAll("[data-filtre]"), function(x){
+      x.classList.toggle("on", x === b);
+    });
+    dessiner();
+  });
+});
+$("btn-vider").addEventListener("click", function(){ entrees = []; dessiner(); });
+$("auto-logs").addEventListener("change", function(){ autoLogs = this.checked; });
+
+/* ------------------------------------------------------------- actions */
+async function agir(action, phrase){
+  if (!window.confirm(phrase)) return;
+  var res;
+  try { res = await api("/api/verify/admin/" + action, {method: "POST"}); }
+  catch (e){ msg("msg-action", "Le bot ne répond pas : action impossible.", "no"); return; }
+  msg("msg-action", (res.data && (res.data.message || res.data.erreur)) ||
+      ("Réponse de l’API : " + res.status), res.ok ? "ok" : "no");
+  if (res.ok){
+    if (action === "restart"){
+      horsLigne();
+      [2500, 6000, 10000, 16000].forEach(function(ms){ setTimeout(interroger, ms); });
+    } else {
+      clearInterval(tStatut); clearInterval(tLogs); clearInterval(tTick);
+    }
+  }
+}
+$("btn-redemarrer").addEventListener("click", function(){
+  agir("restart", "Redémarrer Orvyx ? Le bot revient tout seul en ligne en quelques secondes.");
+});
+$("btn-arreter").addEventListener("click", function(){
+  agir("stop", "Arrêter Orvyx ? Le bot sera hors ligne jusqu’à un redémarrage MANUEL depuis la machine (python main.py) : cette page ne pourra plus le relancer.");
+});
+$("btn-deconnexion").addEventListener("click", function(){ deconnecter(""); });
+
+/* ------------------------------------------------------------- démarrage */
+if (jeton){
+  api("/api/verify/admin/status").then(function(res){
+    if (res.status === 401){ deconnecter("Jeton refusé — vérifie ADMIN_TOKEN (.env)."); return; }
+    if (res.ok) ouvrir(res.data);
+    else { ouvrir(); horsLigne(); }
+  }).catch(function(){ ouvrir(); horsLigne(); });
+}
+})();
+</script>
+</body></html>

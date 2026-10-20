@@ -51,16 +51,17 @@ th{color:var(--mu);font-size:.75rem;text-transform:uppercase;letter-spacing:.09e
 
 <main class="wrap awrap">
 
-<!-- ===================================================== porte (jeton) -->
+<!-- ===================================================== porte (login) -->
 <div class="vcard in" id="porte">
 <h1>Console d’administration</h1>
 <p class="sub">Statut du bot en direct, logs d’erreurs et pilotage : redémarrage, arrêt.</p>
-<form class="formjeton" id="form-jeton" autocomplete="off">
-<input class="vinput ainput" type="password" id="jeton" placeholder="Jeton ADMIN_TOKEN" aria-label="Jeton d’administration" required>
-<button class="btn" type="submit">Déverrouiller →</button>
+<form class="formjeton" id="form-login" autocomplete="on">
+<input class="vinput ainput" type="email" id="email" placeholder="Adresse e-mail" aria-label="Adresse e-mail" autocomplete="username" required>
+<input class="vinput ainput" type="password" id="mdp" placeholder="Mot de passe" aria-label="Mot de passe" autocomplete="current-password" required>
+<button class="btn" type="submit">Se connecter →</button>
 </form>
 <div class="vmsg" id="msg-porte" role="status"></div>
-<p class="vnote">Le jeton correspond à <code>ADMIN_TOKEN</code> du fichier <code>.env</code> du bot. Il reste dans cet onglet uniquement (sessionStorage) : rien n’est envoyé ailleurs, rien n’est conservé après fermeture de l’onglet.</p>
+<p class="vnote">Accès réservé aux administrateurs du bot — identifiants définis dans le <code>.env</code> (<code>ADMIN_EMAIL</code> / mot de passe haché). La session tient 12 h ; un redémarrage du bot la réinitialise (reconnexion demandée). Le mot de passe n’est jamais stocké côté page, rien n’est conservé après fermeture de l’onglet.</p>
 </div>
 
 <!-- ===================================================== tableau de bord -->
@@ -175,31 +176,39 @@ async function api(chemin, opts){
   return {ok: r.ok, status: r.status, data: d};
 }
 
-/* ------------------------------------------------------------- porte */
+/* ------------------------------------------------------------- porte (login) */
 function deconnecter(raison){
   jeton = "";
   sessionStorage.removeItem(CLE);
   clearInterval(tStatut); clearInterval(tLogs); clearInterval(tTick);
   $("panneau").hidden = true;
   $("porte").hidden = false;
-  $("jeton").value = "";
+  $("mdp").value = "";
   msg("msg-porte", raison, "no");
 }
-$("form-jeton").addEventListener("submit", async function(ev){
+$("form-login").addEventListener("submit", async function(ev){
   ev.preventDefault();
-  jeton = $("jeton").value.trim();
   var res;
-  try { res = await api("/api/verify/admin/status"); }
-  catch (e){ msg("msg-porte", "Joindre l’API impossible : le bot est injoignable (arrêté ?).", "no"); return; }
-  if (res.status === 401 || res.status === 404){
-    jeton = "";
-    msg("msg-porte", "Jeton refusé — vérifie ADMIN_TOKEN dans le .env du bot.", "no");
+  try {
+    res = await fetch(API + "/api/verify/admin/login", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({email: $("email").value.trim(), password: $("mdp").value})
+    });
+  } catch (e){
+    msg("msg-porte", "Joindre l’API impossible : le bot est injoignable (arrêté ?).", "no");
     return;
   }
-  if (!res.ok){ msg("msg-porte", "Réponse inattendue de l’API (" + res.status + ").", "no"); return; }
+  var d = await res.json().catch(function(){ return {}; });
+  if (!res.ok || !d.session){
+    msg("msg-porte", d.erreur || ("Connexion refusée (réponse " + res.status + ")."), "no");
+    return;
+  }
+  jeton = d.session;
   sessionStorage.setItem(CLE, jeton);
+  $("mdp").value = "";
   msg("msg-porte", "");
-  ouvrir(res.data);
+  ouvrir();
 });
 
 /* ------------------------------------------------------------- dashboard */
@@ -229,7 +238,7 @@ async function interroger(){
   var res;
   try { res = await api("/api/verify/admin/status"); }
   catch (e){ horsLigne(); return; }
-  if (res.status === 401){ deconnecter("Jeton refusé — vérifie ADMIN_TOKEN (.env)."); return; }
+  if (res.status === 401){ deconnecter("Session expirée (12 h) ou réinitialisée par un redémarrage du bot : reconnecte-toi."); return; }
   if (!res.ok){ horsLigne(); return; }
   maj(res.data);
 }
@@ -290,7 +299,7 @@ async function interrogerLogs(){
   var res;
   try { res = await api("/api/verify/admin/logs?n=300"); }
   catch (e){ return; }
-  if (res.status === 401){ deconnecter("Jeton refusé — vérifie ADMIN_TOKEN (.env)."); return; }
+  if (res.status === 401){ deconnecter("Session expirée (12 h) ou réinitialisée par un redémarrage du bot : reconnecte-toi."); return; }
   if (!res.ok) return;
   entrees = (res.data && res.data.entrees) || [];
   dessiner();
@@ -358,12 +367,16 @@ $("btn-redemarrer").addEventListener("click", function(){
 $("btn-arreter").addEventListener("click", function(){
   agir("stop", "Arrêter Orvyx ? Le bot sera hors ligne jusqu’à un redémarrage MANUEL depuis la machine (python main.py) : cette page ne pourra plus le relancer.");
 });
-$("btn-deconnexion").addEventListener("click", function(){ deconnecter(""); });
+$("btn-deconnexion").addEventListener("click", function(){
+  /* Révoque aussi la session côté bot (le serveur oublie le jeton). */
+  api("/api/verify/admin/logout", {method: "POST"}).catch(function(){});
+  deconnecter("");
+});
 
 /* ------------------------------------------------------------- démarrage */
 if (jeton){
   api("/api/verify/admin/status").then(function(res){
-    if (res.status === 401){ deconnecter("Jeton refusé — vérifie ADMIN_TOKEN (.env)."); return; }
+    if (res.status === 401){ deconnecter("Session expirée (12 h) ou réinitialisée par un redémarrage du bot : reconnecte-toi."); return; }
     if (res.ok) ouvrir(res.data);
     else { ouvrir(); horsLigne(); }
   }).catch(function(){ ouvrir(); horsLigne(); });

@@ -1,0 +1,697 @@
+﻿<!doctype html><html lang="fr"><head><title>Tableau de bord – Orvyx</title><meta name="robots" content="noindex,nofollow"><meta name="description" content="Tableau de bord Orvyx : connecte-toi avec Discord et gère la configuration, les tickets, la modération et la communauté de tes serveurs où tu es propriétaire ou administrateur."><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="assets/logo.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Michroma&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"><meta property="og:image" content="assets/banner.png">
+<style>
+.dwrap{max-width:1180px;padding:120px 0 4rem}
+.dporte{max-width:560px;margin:2rem auto 0;text-align:center}
+.dporte .logo{width:70px;margin:0 auto 1.4rem;border-radius:16px;border:1px solid var(--ln)}
+.dporte h1{font-size:clamp(1.6rem,3.6vw,2.3rem);margin-bottom:.6rem}
+.dporte p{color:var(--mu);margin-bottom:1.6rem}
+.dbtn-discord{display:inline-flex;align-items:center;gap:.7rem;padding:.95rem 1.7rem;border-radius:999px;background:#5865F2;color:#fff!important;font-weight:700;text-decoration:none;border:none;cursor:pointer;font:700 1rem var(--b);transition:.25s}
+.dbtn-discord:hover{background:#4752c4;box-shadow:0 0 30px rgba(88,101,242,.5)}
+.dbtn-discord svg{width:22px;height:22px;fill:#fff}
+.dporte .vnote{text-align:left}
+/* barre du haut */
+.dtop{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.4rem}
+.did{display:flex;align-items:center;gap:.9rem;min-width:0}
+.did img{width:48px;height:48px;border-radius:50%;border:1px solid var(--ln);background:#0a0a0f}
+.did h1{font-size:clamp(1.2rem,2.6vw,1.6rem);word-break:break-word}
+.did p{color:var(--mu);font-size:.9rem}
+.dsel{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+.dsel select{background:#0a0a0f;border:1px solid var(--ln);border-radius:10px;color:#fff;padding:.7rem 1rem;font:600 .95rem var(--b);min-width:250px;cursor:pointer}
+/* disposition */
+.dgrid{display:grid;grid-template-columns:210px 1fr;gap:1.8rem;align-items:start}
+.dside{position:sticky;top:96px;border:1px solid var(--ln);border-radius:16px;background:var(--pn);padding:.8rem}
+.dside button{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;background:none;border:none;color:var(--mu);padding:.65rem .8rem;border-radius:10px;font:600 .92rem var(--b);cursor:pointer;transition:.2s}
+.dside button:hover{color:#fff;background:rgba(255,255,255,.06)}
+.dside button.on{color:#000;background:#fff;font-weight:700}
+.dcorps{min-width:0}
+.dvue{display:none}.dvue.on{display:block;animation:up .4s forwards;opacity:0}
+.dcarte{border:1px solid var(--ln);border-radius:18px;background:var(--pn);padding:1.5rem 1.7rem;margin-bottom:1.2rem}
+.dcarte h3{margin-bottom:.3rem}
+.dcarte .dsub{color:var(--mu);font-size:.9rem;margin-bottom:1.1rem}
+/* stats */
+.dstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.8rem;margin-bottom:1.2rem}
+.dstat{border:1px solid var(--ln);border-radius:14px;background:var(--pn);padding:.9rem 1rem}
+.dstat b{display:block;font:400 1.5rem var(--d);color:#fff}
+.dstat span{color:var(--mu);font-size:.76rem;text-transform:uppercase;letter-spacing:.08em}
+/* formulaires */
+.dform{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem 1.6rem}
+.dchamp{display:flex;flex-direction:column;gap:.4rem}
+.dchamp label{font-size:.86rem;color:#fff;font-weight:600}
+.dchamp small{color:var(--mu);font-size:.78rem}
+.dchamp input,.dchamp select,.dchamp textarea{background:#0a0a0f;border:1px solid var(--ln);border-radius:9px;color:#fff;padding:.6rem .8rem;font:500 .92rem var(--b);width:100%}
+.dchamp textarea{resize:vertical;min-height:80px;font-family:var(--b)}
+.dchamp input[type=checkbox]{width:auto;accent-color:#fff}
+.dbascule{display:flex;align-items:center;gap:.6rem}
+.dbascule input{width:auto!important}
+.dplein{grid-column:1/-1}
+.dactions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.3rem;align-items:center}
+.dmsg{border:1px solid var(--ln);border-left:3px solid #fff;border-radius:10px;padding:.8rem 1rem;margin-top:1rem;font-size:.92rem;display:none}
+.dmsg.ok{display:block;border-left-color:#57f287}
+.dmsg.no{display:block;border-left-color:#ed4245}
+/* tableaux */
+.dtab{overflow-x:auto;margin-top:.6rem}
+.dtab table{width:100%;border-collapse:collapse;font-size:.9rem}
+.dtab th,.dtab td{text-align:left;padding:.55rem .6rem;border-bottom:1px solid var(--ln);white-space:nowrap}
+.dtab th{color:var(--mu);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em}
+.dtab td.wrap{white-space:normal;max-width:340px}
+.dvide{color:var(--mu);padding:.8rem 0}
+.dpastille{display:inline-block;border:1px solid var(--ln);border-radius:999px;padding:.15rem .6rem;font-size:.75rem;color:var(--mu)}
+.dpastille.ok{color:#57f287;border-color:rgba(87,242,135,.5)}
+.dpastille.ko{color:#ff5c5c;border-color:rgba(255,92,92,.5)}
+.dligne{display:flex;justify-content:space-between;gap:1rem;border-bottom:1px dashed rgba(255,255,255,.08);padding:.45rem 0;font-size:.9rem}
+.dligne .k{color:var(--mu)}
+.dligne .v{color:var(--tx);font-weight:600;text-align:right}
+.dbadge{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:.45rem;vertical-align:middle}
+.dbadge.actif{background:#57f287;box-shadow:0 0 10px rgba(87,242,135,.8)}
+.dbadge.inactif{background:#555}
+.dsmall{color:var(--mu);font-size:.82rem}
+.btn.tiny{padding:.4rem .8rem;font-size:.82rem}
+@media(max-width:900px){.dgrid{grid-template-columns:1fr}.dside{position:static;display:flex;flex-wrap:wrap;gap:.3rem}.dside button{width:auto}}
+</style></head><body>
+<canvas id="stars"></canvas><nav><div class="wrap nv"><a class="brand" href="index.html"><img src="assets/logo.png" alt="">Orvyx</a><button class="burger" aria-label="Menu">☰</button><ul class="links"><li><a href="index.html#fonctionnalites">Fonctionnalités</a></li><li><a href="documentation.html">Documentation</a></li><li><a href="dashboard.html">Tableau de bord</a></li><li><a href="index.html#ia">Assistant IA</a></li><li><a href="index.html#faq">FAQ</a></li><li><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a></li><li><a href="#" data-support>Support</a></li><li><a class="btn" href="#" data-invite>Ajouter à Discord</a></li></ul></div></nav>
+
+<main class="wrap dwrap">
+
+<!-- ===================================================== porte (connexion Discord) -->
+<div class="dporte" id="dporte">
+<img class="logo" src="assets/logo.png" alt="Orvyx">
+<h1>Tableau de bord</h1>
+<p>Connecte-toi avec Discord pour gérer tes serveurs — configuration, tickets, modération et communauté, sans passer par les commandes.</p>
+<button class="dbtn-discord" id="btn-discord" type="button">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3c-.2.4-.5.9-.6 1.3a18.3 18.3 0 0 0-5.5 0C9.1 3.9 8.8 3.4 8.6 3a19.7 19.7 0 0 0-4.9 1.5C.6 9.1-.3 13.6.2 18a19.9 19.9 0 0 0 6 3c.5-.7.9-1.4 1.3-2.1-.7-.3-1.4-.6-2-1l.5-.4a14.2 14.2 0 0 0 12 0l.5.4c-.6.4-1.3.7-2 1 .4.7.8 1.4 1.3 2.1a19.8 19.8 0 0 0 6-3c.6-5.1-.9-9.5-3.7-13.6ZM8 15.3c-1.2 0-2.1-1.1-2.1-2.4S6.8 10.5 8 10.5s2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4Zm8 0c-1.2 0-2.1-1.1-2.1-2.4s.9-2.4 2.1-2.4 2.2 1.1 2.1 2.4c0 1.3-.9 2.4-2.1 2.4Z"/></svg>
+Se connecter avec Discord
+</button>
+<div class="dmsg" id="dmsg-porte" role="status"></div>
+<p class="vnote">Aucun mot de passe. Orvyx voit uniquement ton pseudo et la <b>liste de tes serveurs</b> (portées <code>identify</code> et <code>guilds</code>) : tu ne peux gérer que les serveurs où tu es <b>propriétaire</b> ou <b>administrateur</b>, et où le bot est présent. Aucun message n'est lu, rien n'est publié à ton nom. Tu peux révoquer l'accès à tout moment depuis Discord (Paramètres → Applications autorisées).</p>
+</div>
+
+<!-- ===================================================== tableau de bord -->
+<div id="dpanneau" hidden>
+
+<div class="dtop">
+<div class="did">
+<img id="d-avatar" alt="" hidden>
+<div><h1 id="d-nom">—</h1><p id="d-serveurs-nb">—</p></div>
+</div>
+<div class="dsel">
+<select id="d-select-serveur" aria-label="Choisir un serveur"></select>
+<button class="btn ghost mini" id="d-deco" type="button">Déconnexion</button>
+</div>
+</div>
+<div class="dmsg" id="dmsg-global" role="status"></div>
+
+<div class="dgrid">
+<aside class="dside">
+<button data-v="apercu" class="on">📊 Aperçu</button>
+<button data-v="config">⚙️ Configuration</button>
+<button data-v="moderation">🔨 Modération</button>
+<button data-v="tickets">🎫 Tickets</button>
+<button data-v="communaute">👥 Communauté</button>
+<button data-v="logs">📜 Logs & erreurs</button>
+</aside>
+
+<div class="dcorps">
+
+<!-- --------------------------------------------- aperçu -->
+<div class="dvue on" id="v-apercu">
+<div class="dstats" id="d-stats"></div>
+<div class="dcarte">
+<h3>État de la configuration</h3>
+<p class="dsub">Ce qui est actif sur ce serveur. Un point vert = fonctionnalité configurée.</p>
+<div class="dform" id="d-resume"></div>
+</div>
+<div class="dcarte">
+<h3>Le bot sur ce serveur</h3>
+<div id="d-statut-bot"></div>
+</div>
+</div>
+
+<!-- --------------------------------------------- configuration -->
+<div class="dvue" id="v-config">
+<div class="dcarte">
+<h3>Logs</h3>
+<p class="dsub">Un salon par catégorie ; le salon général sert de repli.</p>
+<div class="dform" id="cfg-logs"></div>
+</div>
+<div class="dcarte">
+<h3>Bienvenue & rôles</h3>
+<div class="dform" id="cfg-accueil"></div>
+</div>
+<div class="dcarte">
+<h3>Modération & auto-modération</h3>
+<div class="dform" id="cfg-moderation"></div>
+</div>
+<div class="dcarte">
+<h3>Anti-raid</h3>
+<div class="dform" id="cfg-antiraid"></div>
+</div>
+<div class="dcarte">
+<h3>Tickets</h3>
+<div class="dform" id="cfg-tickets"></div>
+</div>
+<div class="dcarte">
+<h3>Vocaux temporaires</h3>
+<div class="dform" id="cfg-vocal"></div>
+</div>
+<div class="dcarte">
+<h3>Niveaux (XP) & invitations</h3>
+<div class="dform" id="cfg-communaute"></div>
+</div>
+<div class="dcarte">
+<h3>Vérification, IA, Soutien & webhooks</h3>
+<div class="dform" id="cfg-divers"></div>
+</div>
+<div class="dactions"><button class="btn" id="d-enregistrer" type="button">Enregistrer les modifications</button><span class="dsmall" id="d-enr-etat"></span></div>
+</div>
+
+<!-- --------------------------------------------- modération -->
+<div class="dvue" id="v-moderation">
+<div class="dcarte">
+<h3>Blacklist générale</h3>
+<p class="dsub">Un membre blacklisté ne peut plus ouvrir de ticket.</p>
+<div class="dactions" style="margin-top:0">
+<input class="dinput" id="d-bl-membre" placeholder="ID du membre" style="width:200px;background:#0a0a0f;border:1px solid var(--ln);border-radius:9px;color:#fff;padding:.6rem .8rem">
+<input id="d-bl-raison" placeholder="Raison" style="flex:1;min-width:180px;background:#0a0a0f;border:1px solid var(--ln);border-radius:9px;color:#fff;padding:.6rem .8rem">
+<button class="btn tiny" id="d-bl-ajouter" type="button">Blacklister</button>
+</div>
+<div class="dtab" id="d-blacklist"></div>
+</div>
+<div class="dcarte">
+<h3>Avertissements récents</h3>
+<div class="dtab" id="d-warns"></div>
+</div>
+<div class="dcarte">
+<h3>Sanction rapide</h3>
+<p class="dsub">Applique une sanction à un membre par son identifiant (réfléchie : l'action est tracée dans les logs admin).</p>
+<div class="dform">
+<div class="dchamp"><label>Identifiant du membre</label><input id="d-san-membre" placeholder="123456789012345678"></div>
+<div class="dchamp"><label>Action</label><select id="d-san-action"><option value="warn">Avertissement</option><option value="mute">Rendre muet (timeout)</option><option value="kick">Expulser</option><option value="ban">Bannir</option></select></div>
+<div class="dchamp"><label>Durée du mute (minutes)</label><input id="d-san-minutes" type="number" value="60" min="1" max="40320"></div>
+<div class="dchamp dplein"><label>Raison</label><input id="d-san-raison" placeholder="Motif de la sanction"></div>
+</div>
+<div class="dactions"><button class="btn tiny" id="d-san-appliquer" type="button">Appliquer</button></div>
+<div class="dmsg" id="dmsg-san"></div>
+</div>
+</div>
+
+<!-- --------------------------------------------- tickets -->
+<div class="dvue" id="v-tickets">
+<div class="dcarte">
+<h3>Tickets ouverts</h3>
+<div class="dtab" id="d-tickets-ouverts"></div>
+</div>
+<div class="dcarte">
+<h3>Charge & notes du staff</h3>
+<p class="dsub">Tickets en cours et satisfaction moyenne (étoiles reçues à la fermeture).</p>
+<div class="dtab" id="d-staff"></div>
+</div>
+<div class="dcarte">
+<h3>Tickets fermés récents</h3>
+<div class="dtab" id="d-tickets-fermes"></div>
+</div>
+</div>
+
+<!-- --------------------------------------------- communauté -->
+<div class="dvue" id="v-communaute">
+<div class="dcarte">
+<h3>Classement XP</h3>
+<div class="dtab" id="d-niveaux"></div>
+<div class="dactions"><button class="btn ghost tiny" id="d-xp-reset" type="button">Remettre tous les niveaux à zéro</button></div>
+</div>
+<div class="dcarte">
+<h3>Classement des invitations</h3>
+<div class="dtab" id="d-invitations"></div>
+<div class="dactions">
+<input id="d-inv-membre" placeholder="ID du membre" style="background:#0a0a0f;border:1px solid var(--ln);border-radius:9px;color:#fff;padding:.5rem .8rem">
+<input id="d-inv-delta" type="number" value="1" style="width:90px;background:#0a0a0f;border:1px solid var(--ln);border-radius:9px;color:#fff;padding:.5rem .8rem">
+<button class="btn tiny" id="d-inv-bonus" type="button">Ajouter le bonus</button>
+<button class="btn ghost tiny" id="d-inv-reset" type="button">Tout remettre à zéro</button>
+</div>
+<div class="dmsg" id="dmsg-inv"></div>
+</div>
+</div>
+
+<!-- --------------------------------------------- logs -->
+<div class="dvue" id="v-logs">
+<div class="dcarte">
+<h3>Logs & erreurs du bot</h3>
+<p class="dsub">Vue globale du bot (identique à la console d'administration) : avertissements et erreurs en mémoire, secrets masqués.</p>
+<div class="dtab" id="d-logs"></div>
+<div class="dactions"><button class="btn ghost tiny" id="d-logs-maj" type="button">↻ Actualiser</button><label class="dsmall"><input type="checkbox" id="d-logs-auto"> Auto (5 s)</label></div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Orvyx. Créé par Snyzz. Non affilié à Discord Inc.</span><div><a href="documentation.html">Documentation</a><a href="conditions.html">Conditions d’Utilisation</a><a href="confidentialite.html">Politique de Confidentialité</a><a href="droit-auteur.html">Droit d’auteur</a><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a><a href="#" data-support>Support</a></div></div></footer>
+<script src="script.js"></script>
+<script>
+(function(){
+"use strict";
+/* API : config.js — "" = même origine (page servie par le bot / le reverse proxy). */
+var API = String(window.ORVYX_API || "").replace(/\/+$/, "");
+var CLE = "orvyx_dashboard_jeton";
+var $ = function(id){ return document.getElementById(id); };
+var jeton = sessionStorage.getItem(CLE) || "";
+var moi = null, serveurs = [], courant = null, donnees = null, autoLogs = false, tLogs = 0;
+
+/* ---------------------------------------------------------- utilitaires */
+function msg(id, texte, type){
+  var e = $(id); if(!e) return;
+  e.textContent = texte || "";
+  e.className = "dmsg " + (type || "");
+}
+function date(s){ if(!s) return "—"; return new Date(s * 1000).toLocaleString("fr-FR", {dateStyle:"short", timeStyle:"short"}); }
+function duree(sec){
+  if(sec == null) return "—"; sec = Math.floor(sec);
+  var j=Math.floor(sec/86400),h=Math.floor(sec%86400/3600),m=Math.floor(sec%3600/60);
+  if(j) return j+" j "+h+" h"; if(h) return h+" h "+m+" min"; return m+" min";
+}
+function api(chemin, opts){
+  opts = opts || {};
+  opts.headers = Object.assign({}, opts.headers, {"Authorization":"Bearer "+jeton});
+  return fetch(API + chemin, opts).then(function(r){
+    return r.json().catch(function(){return {};}).then(function(d){ return {ok:r.ok,status:r.status,data:d}; });
+  });
+}
+function poste(chemin, corps){
+  return api(chemin, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(corps||{})});
+}
+function el(balise, classe, texte){ var e=document.createElement(balise); if(classe)e.className=classe; if(texte!=null)e.textContent=texte; return e; }
+
+/* ---------------------------------------------------------- connexion */
+function deconnecter(raison){
+  api("/api/verify/dashboard/logout", {method:"POST"}).catch(function(){});
+  jeton=""; sessionStorage.removeItem(CLE);
+  clearInterval(tLogs);
+  $("dpanneau").hidden = true; $("dporte").hidden = false;
+  msg("dmsg-porte", raison || "");
+}
+$("btn-discord").addEventListener("click", function(){
+  fetch(API + "/api/verify/dashboard/login").then(function(r){ return r.json(); }).then(function(d){
+    if(d.redirect){ location.href = d.redirect; }
+    else { msg("dmsg-porte", d.erreur || "Connexion Discord indisponible pour le moment."); }
+  }).catch(function(){ msg("dmsg-porte", "Impossible de joindre l'API du bot : est-il en ligne ?"); });
+});
+
+/* Retour de Discord : le jeton arrive dans le fragment (#s=…), jamais dans les logs. */
+var frag = new URLSearchParams(location.hash.replace(/^#/, ""));
+if(frag.get("s")){
+  jeton = frag.get("s"); sessionStorage.setItem(CLE, jeton);
+  history.replaceState(null, "", location.pathname + location.search);
+} else if(frag.get("err")){
+  var ERREURS = {state:"Ce lien a expiré ou a déjà servi : reconnecte-toi.", discord:"Discord a refusé la connexion.", reseau:"Discord est injoignable pour l'instant."};
+  setTimeout(function(){ msg("dmsg-porte", ERREURS[frag.get("err")] || "Connexion impossible."); }, 60);
+  history.replaceState(null, "", location.pathname + location.search);
+}
+
+/* ---------------------------------------------------------- ouverture */
+function ouvrirSession(){
+  return api("/api/verify/dashboard/moi").then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée : reconnecte-toi avec Discord."); return false; }
+    if(!res.ok){ msg("dmsg-porte", (res.data && res.data.erreur) || "Erreur de connexion."); return false; }
+    moi = res.data.utilisateur; serveurs = res.data.serveurs || [];
+    $("dporte").hidden = true; $("dpanneau").hidden = false;
+    $("d-nom").textContent = moi.nom || "Utilisateur";
+    if(moi.avatar){ var a=$("d-avatar"); a.src=moi.avatar; a.hidden=false; }
+    var sel = $("d-select-serveur"); sel.textContent = "";
+    if(!serveurs.length){
+      $("d-serveurs-nb").textContent = "Aucun serveur gérable trouvé.";
+      msg("dmsg-global", "Tu n'as aucun serveur où Orvyx est présent et où tu es propriétaire ou administrateur. Ajoute le bot à un serveur dont tu es responsable, puis reviens.", "");
+      return true;
+    }
+    $("d-serveurs-nb").textContent = serveurs.length + " serveur(s) gérable(s)";
+    serveurs.forEach(function(s){
+      var o = el("option", null, s.nom + (s.proprietaire ? " (propriétaire)" : ""));
+      o.value = s.id; sel.appendChild(o);
+    });
+    charger(serveurs[0].id);
+    return true;
+  });
+}
+$("d-select-serveur").addEventListener("change", function(){ charger(this.value); });
+$("d-deco").addEventListener("click", function(){ deconnecter(""); });
+
+function charger(guildId){
+  courant = guildId;
+  return api("/api/verify/dashboard/serveur/" + guildId).then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    if(!res.ok){ msg("dmsg-global", (res.data && res.data.erreur) || "Chargement impossible.", "no"); return; }
+    donnees = res.data;
+    dessiner();
+    msg("dmsg-global", "");
+  }).catch(function(){ msg("dmsg-global", "Le bot ne répond pas.", "no"); });
+}
+
+/* ---------------------------------------------------------- navigation */
+Array.prototype.forEach.call(document.querySelectorAll(".dside button"), function(b){
+  b.addEventListener("click", function(){
+    Array.prototype.forEach.call(document.querySelectorAll(".dside button"), function(x){ x.classList.toggle("on", x===b); });
+    Array.prototype.forEach.call(document.querySelectorAll(".dvue"), function(x){ x.classList.remove("on"); });
+    $("v-" + b.dataset.v).classList.add("on");
+    if(b.dataset.v === "logs") chargerLogs();
+  });
+});
+
+/* ---------------------------------------------------------- rendu */
+function dessiner(){
+  var s = donnees.serveur || {}, r = donnees.resume || {}, st = donnees.statut || {};
+  var stats = [
+    ["Membres", (s.membres||0).toLocaleString("fr-FR")],
+    ["Bots", String(s.bots||0)],
+    ["Salons", String(s.salons||0)],
+    ["Rôles", String(s.roles||0)],
+    ["Boosts", String(s.boosts||0)],
+    ["Niveau boost", "Niv. " + (s.niveau_boost||0)],
+  ];
+  var boite = $("d-stats"); boite.textContent = "";
+  stats.forEach(function(c){ var d=el("div","dstat"); d.appendChild(el("b",null,c[1])); d.appendChild(el("span",null,c[0])); boite.appendChild(d); });
+
+  var res = $("d-resume"); res.textContent = "";
+  Object.keys(r).forEach(function(k){
+    var d = el("div","dligne"); d.appendChild(el("span","k",k));
+    var v = el("span","v");
+    var p = el("span","dbadge " + (r[k] ? "actif" : "inactif")); v.appendChild(p);
+    v.appendChild(document.createTextNode(r[k] ? "Actif" : "Inactif"));
+    d.appendChild(v); res.appendChild(d);
+  });
+
+  var sb = $("d-statut-bot"); sb.textContent = "";
+  if(!st.present){ sb.appendChild(el("p","dvide","Le bot n'est pas présent sur ce serveur.")); }
+  else {
+    var perms = st.permissions || {};
+    var noms = {administrateur:"Administrateur", gerer_serveur:"Gérer le serveur", gerer_roles:"Gérer les rôles", gerer_salons:"Gérer les salons", bannir:"Bannir", expulser:"Expulser", moderer:"Exclure temporairement", gerer_webhooks:"Gérer les webhooks"};
+    var d1 = el("div","dligne"); d1.appendChild(el("span","k","Rôle le plus haut")); d1.appendChild(el("span","v", st.role_le_plus_haut||"—")); sb.appendChild(d1);
+    Object.keys(noms).forEach(function(cle){
+      var d = el("div","dligne"); d.appendChild(el("span","k",noms[cle]));
+      var v = el("span","v"); var p = el("span","dbadge " + (perms[cle] ? "actif":"inactif")); v.appendChild(p);
+      v.appendChild(document.createTextNode(perms[cle] ? "Oui" : "Non")); d.appendChild(v); sb.appendChild(d);
+    });
+  }
+
+  dessinerConfig();
+  dessinerModeration();
+  dessinerTickets();
+  dessinerCommunaute();
+}
+
+/* ---------------------------------------------------------- configuration */
+var SALONS = {}, ROLES = {}, CONFIG = {};
+function optionsSalon(select, valeur, vide){
+  var o = el("option", null, vide || "— Aucun —"); o.value = ""; select.appendChild(o);
+  (donnees.salons.texte||[]).forEach(function(s){ var x=el("option",null,s.nom); x.value=s.id; select.appendChild(x); });
+  select.value = valeur != null ? String(valeur) : "";
+}
+function optionsVocal(select, valeur){
+  var o = el("option", null, "— Aucun —"); o.value=""; select.appendChild(o);
+  (donnees.salons.vocal||[]).forEach(function(s){ var x=el("option",null,s.nom); x.value=s.id; select.appendChild(x); });
+  select.value = valeur != null ? String(valeur) : "";
+}
+function optionsCategorie(select, valeur){
+  var o = el("option", null, "— Aucune —"); o.value=""; select.appendChild(o);
+  (donnees.salons.categorie||[]).forEach(function(s){ var x=el("option",null,s.nom); x.value=s.id; select.appendChild(x); });
+  select.value = valeur != null ? String(valeur) : "";
+}
+function optionsRole(select, valeur, avecAucun){
+  if(avecAucun!==false){ var o=el("option",null,"— Aucun —"); o.value=""; select.appendChild(o); }
+  (donnees.roles||[]).forEach(function(r){ var x=el("option",null,r.nom); x.value=r.id; select.appendChild(x); });
+  select.value = valeur != null ? String(valeur) : "";
+}
+function champ(conteneur, label, aide, controle){
+  var d = el("div","dchamp"); d.appendChild(el("label",null,label));
+  if(aide) d.appendChild(el("small",null,aide));
+  d.appendChild(controle); conteneur.appendChild(d);
+}
+function selectChamp(conteneur, label, aide, type, cle, vide){
+  var sel = el("select"); sel.dataset.cle = cle;
+  if(type==="salon") optionsSalon(sel, CONFIG[cle] && CONFIG[cle].valeur, vide);
+  else if(type==="vocal") optionsVocal(sel, CONFIG[cle] && CONFIG[cle].valeur);
+  else if(type==="categorie") optionsCategorie(sel, CONFIG[cle] && CONFIG[cle].valeur);
+  else optionsRole(sel, CONFIG[cle] && CONFIG[cle].valeur);
+  champ(conteneur, label, aide, sel);
+}
+function boolChamp(conteneur, label, aide, cle){
+  var d = el("div","dchamp"); var lab = el("label","dbascule");
+  var inp = el("input"); inp.type="checkbox"; inp.dataset.cle=cle; inp.dataset.bool="1";
+  inp.checked = !!(CONFIG[cle] && CONFIG[cle].valeur);
+  lab.appendChild(inp); lab.appendChild(document.createTextNode(label));
+  d.appendChild(lab); if(aide) d.appendChild(el("small",null,aide));
+  conteneur.appendChild(d);
+}
+function texteChamp(conteneur, label, aide, cle, long){
+  var inp = long ? el("textarea") : el("input");
+  inp.dataset.cle = cle; if(!long) inp.type="text";
+  inp.value = (CONFIG[cle] && CONFIG[cle].valeur) || "";
+  champ(conteneur, label, aide, inp);
+}
+function nombreChamp(conteneur, label, aide, cle, mini, maxi){
+  var inp = el("input"); inp.type="number"; inp.dataset.cle=cle;
+  if(mini!=null) inp.min=mini; if(maxi!=null) inp.max=maxi;
+  inp.value = (CONFIG[cle] && CONFIG[cle].valeur) != null ? CONFIG[cle].valeur : "";
+  champ(conteneur, label, aide, inp);
+}
+
+function dessinerConfig(){
+  CONFIG = donnees.config || {};
+  var b;
+
+  b = $("cfg-logs"); b.textContent = "";
+  selectChamp(b,"Salon de logs général","Repli pour toutes les catégories.","salon","log_channel");
+  selectChamp(b,"Logs admin","Sanctions et auto-modération.","salon","mod_log_channel");
+  selectChamp(b,"Logs serveur","Arrivées, pseudos, rôles, salons.","salon","log_server_channel");
+  selectChamp(b,"Logs du bot","Erreurs et incidents techniques.","salon","log_bot_channel");
+  selectChamp(b,"Logs anti-raid","Alertes de raid.","salon","antiraid_log_channel");
+
+  b = $("cfg-accueil"); b.textContent = "";
+  boolChamp(b,"Bienvenue activée","Message d'accueil à l'arrivée.","welcome_enabled");
+  selectChamp(b,"Salon de bienvenue",null,"salon","welcome_channel");
+  selectChamp(b,"Rôle automatique","Donné à chaque nouveau membre.","role","autorole");
+  texteChamp(b,"Message de bienvenue","Variables : {user} {username} {server} {count}","welcome_message",true);
+
+  b = $("cfg-moderation"); b.textContent = "";
+  nombreChamp(b,"Avertissements avant sanction",null,"warn_threshold",1,50);
+  nombreChamp(b,"Durée du timeout (minutes)",null,"warn_timeout_minutes",1,40320);
+  boolChamp(b,"Auto-modération activée",null,"automod_enabled");
+
+  b = $("cfg-antiraid"); b.textContent = "";
+  boolChamp(b,"Anti-raid activé",null,"antiraid_enabled");
+  nombreChamp(b,"Membres pour déclencher","Rafale d'arrivées.","antiraid_join_threshold",3,1000);
+  nombreChamp(b,"Fenêtre (secondes)",null,"antiraid_join_window",5,600);
+  nombreChamp(b,"Verrou (secondes)",null,"antiraid_raid_lock_seconds",30,86400);
+
+  b = $("cfg-tickets"); b.textContent = "";
+  selectChamp(b,"Catégorie des tickets",null,"categorie","ticket_category");
+  selectChamp(b,"Salon des transcriptions",null,"salon","ticket_log_channel");
+  selectChamp(b,"Rôle du support",null,"role","support_role");
+  nombreChamp(b,"Tickets ouverts par membre",null,"ticket_limit",1,20);
+  boolChamp(b,"Attribution automatique au staff le moins chargé",null,"ticket_autoassign");
+
+  b = $("cfg-vocal"); b.textContent = "";
+  selectChamp(b,"Salon maître des vocaux",null,"vocal","tempvoc_master");
+  selectChamp(b,"Catégorie des vocaux",null,"categorie","tempvoc_category");
+  texteChamp(b,"Modèle de nom","{user} = pseudo du créateur.","tempvoc_name");
+  nombreChamp(b,"Vocaux simultanés maximum",null,"tempvoc_limit",1,50);
+  boolChamp(b,"Accueil vocal activé",null,"vocal_greet_enabled");
+  texteChamp(b,"Message d'accueil vocal","Variables : {user} {channel}","vocal_greet_message",true);
+
+  b = $("cfg-communaute"); b.textContent = "";
+  boolChamp(b,"Niveaux (XP) activés",null,"xp_enabled");
+  nombreChamp(b,"XP minimum par message",null,"xp_min",1,1000);
+  nombreChamp(b,"XP maximum par message",null,"xp_max",1,1000);
+  nombreChamp(b,"Délai entre deux gains (secondes)",null,"xp_cooldown",0,3600);
+  nombreChamp(b,"XP par minute en vocal",null,"xp_voice_per_minute",0,1000);
+  selectChamp(b,"Salon des annonces de niveau",null,"salon","xp_announce_channel");
+  boolChamp(b,"Invitations activées",null,"invites_enabled");
+  selectChamp(b,"Salon des arrivées d'invitation",null,"salon","invites_log_channel");
+
+  b = $("cfg-divers"); b.textContent = "";
+  selectChamp(b,"Salon de vérification",null,"salon","verify_channel");
+  selectChamp(b,"Rôle de vérification",null,"role","verify_role");
+  boolChamp(b,"Assistant IA activé",null,"ai_enabled");
+  texteChamp(b,"Base de connaissances IA","Texte servant UNIQUEMENT de source aux réponses.","ai_knowledge",true);
+  texteChamp(b,"Texte du Rôle de Soutien","À trouver dans le statut personnalisé.","support_text");
+  selectChamp(b,"Rôle de Soutien",null,"role","support_status_role");
+  boolChamp(b,"Contrôle des webhooks","Supprime les webhooks non autorisés.","webhook_guard");
+}
+
+function lireConfig(){
+  var modifs = {};
+  Array.prototype.forEach.call(document.querySelectorAll("#v-config [data-cle]"), function(elm){
+    var cle = elm.dataset.cle;
+    if(elm.dataset.bool) modifs[cle] = elm.checked;
+    else if(elm.type === "number") modifs[cle] = parseInt(elm.value, 10) || 0;
+    else modifs[cle] = elm.value;
+  });
+  return modifs;
+}
+$("d-enregistrer").addEventListener("click", function(){
+  if(!courant) return;
+  var btn = this; btn.disabled = true;
+  $("d-enr-etat").textContent = "Enregistrement…";
+  poste("/api/verify/dashboard/serveur/" + courant + "/config", lireConfig()).then(function(res){
+    btn.disabled = false;
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    if(!res.ok){ $("d-enr-etat").textContent = (res.data && res.data.erreur) || "Échec."; return; }
+    var refus = Object.keys(res.data.refuses || {});
+    $("d-enr-etat").textContent = refus.length
+      ? ("Enregistré, sauf : " + refus.join(", "))
+      : "Enregistré ✓";
+    if(res.data.config) donnees.config = res.data.config;
+    charger(courant);
+  }).catch(function(){ btn.disabled=false; $("d-enr-etat").textContent = "Le bot ne répond pas."; });
+});
+
+/* ---------------------------------------------------------- modération */
+function tableau(hotes, lignes, rendu, vide){
+  var boite = el("div","dtab");
+  if(!lignes || !lignes.length){ boite.appendChild(el("p","dvide",vide||"Rien à afficher.")); return boite; }
+  var t = el("table"); var thead = el("thead"), tr = el("tr");
+  hotes.forEach(function(h){ tr.appendChild(el("th",null,h)); }); thead.appendChild(tr); t.appendChild(thead);
+  var tb = el("tbody");
+  lignes.forEach(function(item){
+    var r = el("tr");
+    rendu(item).forEach(function(cellule){
+      var td = el("td", cellule.classe||"", cellule.texte);
+      if(cellule.noeud){ td.textContent=""; td.appendChild(cellule.noeud); }
+      r.appendChild(td);
+    });
+    tb.appendChild(r);
+  });
+  t.appendChild(tb); boite.appendChild(t);
+  return boite;
+}
+function remplacer(id, noeud){ var e=$(id); e.textContent=""; e.appendChild(noeud); }
+
+function dessinerModeration(){
+  remplacer("d-blacklist", tableau(["Membre","Par","Raison","Date","Action"],
+    donnees.blacklist, function(b){
+      var btn = el("button","btn ghost tiny","Retirer");
+      btn.onclick = function(){ action("blacklist_remove",{membre:b.membre_id},"dmsg-global"); };
+      return [{texte:b.membre},{texte:b.moderateur},{texte:b.raison,classe:"wrap"},{texte:date(b.date)},{noeud:btn}];
+    }, "La blacklist est vide."));
+
+  remplacer("d-warns", tableau(["Membre","Type","Raison","Modérateur","Date"],
+    donnees.warns, function(w){
+      return [{texte:w.membre},{texte:w.type},{texte:w.raison,classe:"wrap"},{texte:w.moderateur},{texte:date(w.date)}];
+    }, "Aucun avertissement."));
+}
+$("d-bl-ajouter").addEventListener("click", function(){
+  var membre = ($("d-bl-membre").value||"").trim(), raison = ($("d-bl-raison").value||"").trim();
+  if(!/^\d{5,25}$/.test(membre)){ msg("dmsg-global","Identifiant de membre invalide.","no"); return; }
+  action("blacklist_add", {membre:membre, raison:raison}, "dmsg-global", function(){ $("d-bl-membre").value=""; $("d-bl-raison").value=""; });
+});
+$("d-san-appliquer").addEventListener("click", function(){
+  var membre = ($("d-san-membre").value||"").trim();
+  if(!/^\d{5,25}$/.test(membre)){ msg("dmsg-san","Identifiant de membre invalide.","no"); return; }
+  var corps = {membre:membre, raison:($("d-san-raison").value||"").trim(), minutes:parseInt($("d-san-minutes").value,10)||60};
+  var act = $("d-san-action").value;
+  if(!confirm("Confirmer l'action « " + act + " » sur " + membre + " ?")) return;
+  action(act, corps, "dmsg-san", function(){ $("d-san-membre").value=""; $("d-san-raison").value=""; });
+});
+
+/* ---------------------------------------------------------- tickets */
+function dessinerTickets(){
+  remplacer("d-tickets-ouverts", tableau(["N°","Catégorie","Priorité","Échéance","Assigné","Actions"],
+    donnees.tickets.ouverts, function(t){
+      var bloc = el("span");
+      var bf = el("button","btn ghost tiny","Fermer");
+      bf.onclick = function(){ if(confirm("Fermer le ticket #"+t.numero+" et supprimer son salon ?")) action("ticket_close",{salon:t.salon_id},"dmsg-global"); };
+      bloc.appendChild(bf);
+      var sel = el("select"); sel.style.marginLeft=".4rem";
+      (donnees.tickets.priorites||[]).forEach(function(p){ var o=el("option",null,(p.emoji?p.emoji+" ":"")+p.label); o.value=p.label; sel.appendChild(o); });
+      sel.value = t.priorite;
+      sel.onchange = function(){ action("ticket_priority",{salon:t.salon_id, priorite:sel.value},"dmsg-global"); };
+      bloc.appendChild(sel);
+      return [{texte:"#"+t.numero},{texte:t.categorie},{texte:t.priorite},
+              {texte:t.echeance?date(t.echeance):"—"},
+              {texte:t.assigne_id?("<@"+t.assigne_id+">"):"Personne"},{noeud:bloc}];
+    }, "Aucun ticket ouvert."));
+
+  remplacer("d-staff", tableau(["Staff","Tickets en cours","Notes reçues","Satisfaction"],
+    donnees.staff, function(s){
+      return [{texte:s.nom},{texte:String(s.charge)},{texte:String(s.notes)},
+              {texte:s.moyenne!=null?("⭐ "+s.moyenne+"/5"):"—"}];
+    }, "Aucun membre du staff identifié (rôle support ou permission « Gérer le serveur »)."));
+
+  remplacer("d-tickets-fermes", tableau(["N°","Catégorie","Note","Créé"],
+    donnees.tickets.fermes, function(t){
+      return [{texte:"#"+t.numero},{texte:t.categorie},{texte:t.note?("⭐".repeat(t.note)):"—"},{texte:date(t.cree)}];
+    }, "Aucun ticket fermé."));
+}
+
+/* ---------------------------------------------------------- communauté */
+function dessinerCommunaute(){
+  remplacer("d-niveaux", tableau(["#","Membre","Niveau","XP","Messages","Vocal"],
+    donnees.niveaux.xp, function(n){
+      return [{texte:"#"+n.rang},{texte:n.nom},{texte:String(n.niveau)},
+              {texte:n.xp.toLocaleString("fr-FR")},{texte:String(n.messages)},{texte:duree(n.voix)}];
+    }, "Aucune donnée de niveau (XP désactivée ou personne n'a encore gagné d'XP)."));
+  remplacer("d-invitations", tableau(["#","Membre","Actives","Rejointes","Bonus","Départs"],
+    donnees.invitations.top, function(v,i){
+      return [{texte:"#"+v.rang},{texte:v.nom},{texte:String(v.actives)},{texte:String(v.rejointes)},
+              {texte:String(v.bonus)},{texte:String(v.departs)}];
+    }, "Aucune invitation enregistrée."));
+}
+$("d-xp-reset").addEventListener("click", function(){
+  if(confirm("Remettre TOUS les niveaux de ce serveur à zéro ?")) action("xp_reset",{}, "dmsg-global");
+});
+$("d-inv-reset").addEventListener("click", function(){
+  if(confirm("Remettre TOUTES les invitations de ce serveur à zéro ?")) action("invites_reset",{}, "dmsg-inv");
+});
+$("d-inv-bonus").addEventListener("click", function(){
+  var m=($("d-inv-membre").value||"").trim(), d=parseInt($("d-inv-delta").value,10);
+  if(!/^\d{5,25}$/.test(m)){ msg("dmsg-inv","Identifiant invalide.","no"); return; }
+  action("invites_bonus",{membre:m, delta:d}, "dmsg-inv");
+});
+
+/* ---------------------------------------------------------- logs */
+function chargerLogs(){
+  api("/api/verify/dashboard/logs?n=200").then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    if(!res.ok){ return; }
+    var entrees = (res.data && res.data.entrees) || [];
+    var boite = $("d-logs"); boite.textContent = "";
+    if(!entrees.length){ boite.appendChild(el("p","dvide","Aucun avertissement ni erreur depuis le démarrage : tout est propre.")); return; }
+    var t = el("table"); var thead=el("thead"), tr=el("tr");
+    ["Heure","Niveau","Origine","Message"].forEach(function(h){ tr.appendChild(el("th",null,h)); });
+    thead.appendChild(tr); t.appendChild(thead);
+    var tb = el("tbody");
+    entrees.slice(0,200).forEach(function(e){
+      var r = el("tr");
+      r.appendChild(el("td",null,new Date(e.t*1000).toLocaleTimeString("fr-FR",{hour12:false})));
+      r.appendChild(el("td",null,e.niveau));
+      r.appendChild(el("td",null,e.logger||"bot"));
+      r.appendChild(el("td","wrap",e.message));
+      tb.appendChild(r);
+    });
+    t.appendChild(tb); boite.appendChild(t);
+  });
+}
+$("d-logs-maj").addEventListener("click", chargerLogs);
+$("d-logs-auto").addEventListener("change", function(){
+  autoLogs = this.checked;
+  clearInterval(tLogs);
+  if(autoLogs) tLogs = setInterval(function(){ if(!document.hidden) chargerLogs(); }, 5000);
+});
+
+/* ---------------------------------------------------------- actions */
+function action(nom, corps, cible, apres){
+  corps = Object.assign({action:nom}, corps||{});
+  poste("/api/verify/dashboard/serveur/" + courant + "/actions", corps).then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    var texte = (res.data && (res.data.message || res.data.erreur)) || ("Réponse " + res.status);
+    msg(cible || "dmsg-global", texte, res.ok ? "ok" : "no");
+    if(res.ok){ if(apres) apres(); charger(courant); }
+  }).catch(function(){ msg(cible || "dmsg-global", "Le bot ne répond pas.", "no"); });
+}
+
+/* ---------------------------------------------------------- démarrage */
+if(jeton){
+  ouvrirSession();
+}
+})();
+</script>
+</body></html>

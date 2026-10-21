@@ -47,7 +47,7 @@ th{color:var(--mu);font-size:.75rem;text-transform:uppercase;letter-spacing:.09e
 .vidange{color:var(--mu);padding:.5rem 0}
 @media(max-width:760px){.asec{padding:1.2rem 1.1rem}.ahead{flex-direction:column;align-items:flex-start}}
 </style></head><body>
-<canvas id="stars"></canvas><nav><div class="wrap nv"><a class="brand" href="index.html"><img src="assets/logo.png" alt="">Orvyx</a><button class="burger" aria-label="Menu">☰</button><ul class="links"><li><a href="index.html#fonctionnalites">Fonctionnalités</a></li><li><a href="index.html#commandes">Commandes</a></li><li><a href="index.html#ia">Assistant IA</a></li><li><a href="index.html#faq">FAQ</a></li><li><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a></li><li><a href="#" data-support>Support</a></li><li><a class="btn" href="#" data-invite>Ajouter à Discord</a></li></ul></div></nav>
+<canvas id="stars"></canvas><nav><div class="wrap nv"><a class="brand" href="index.html"><img src="assets/logo.png" alt="">Orvyx</a><button class="burger" aria-label="Menu">☰</button><ul class="links"><li><a href="index.html#fonctionnalites">Fonctionnalités</a></li><li><a href="documentation.html">Documentation</a></li><li><a href="dashboard.html">Tableau de bord</a></li><li><a href="index.html#ia">Assistant IA</a></li><li><a href="index.html#faq">FAQ</a></li><li><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a></li><li><a href="#" data-support>Support</a></li><li><a class="btn" href="#" data-invite>Ajouter à Discord</a></li></ul></div></nav>
 
 <main class="wrap awrap">
 
@@ -142,9 +142,7 @@ th{color:var(--mu);font-size:.75rem;text-transform:uppercase;letter-spacing:.09e
 "use strict";
 /* API : config.js (dossier Web) — "" = même origine (page servie par le bot
    ou par le reverse proxy qui forward /api/verify/). */
-var API = String(
-  window.ORVYX_API || "https://api.orvyx.site"
-).replace(/\/+$/, "");
+var API = String(window.ORVYX_API || "").replace(/\/+$/, "");
 var CLE = "orvyx_admin_token";
 var $ = function(id){ return document.getElementById(id); };
 

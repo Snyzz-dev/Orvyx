@@ -44,6 +44,13 @@
 .dbascule{display:flex;align-items:center;gap:.6rem}
 .dbascule input{width:auto!important}
 .dplein{grid-column:1/-1}
+.dliste{display:flex;flex-direction:column;gap:.5rem}
+.dligne{display:flex;gap:.6rem;align-items:flex-end;flex-wrap:wrap}
+.dligne .dcol{display:flex;flex-direction:column;gap:.25rem;flex:1 1 120px;min-width:100px}
+.dligne .dcol small{color:var(--mu);font-size:.72rem}
+.dligne .dcol input{margin:0}
+.dligne>button{flex:0 0 auto;margin-bottom:.05rem}
+.dpied{display:flex;gap:.6rem;margin-top:.5rem}
 .dactions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.3rem;align-items:center}
 .dmsg{border:1px solid var(--ln);border-left:3px solid #fff;border-radius:10px;padding:.8rem 1rem;margin-top:1rem;font-size:.92rem;display:none}
 .dmsg.ok{display:block;border-left-color:#57f287}
@@ -455,6 +462,62 @@ function nombreChamp(conteneur, label, aide, cle, mini, maxi){
   champ(conteneur, label, aide, inp);
 }
 
+/* Champ en LECTURE SEULE : affiché pour information, jamais envoyé au bot. */
+function lectureChamp(conteneur, label, aide, cle){
+  var d = el("div","dchamp"); d.appendChild(el("label",null,label));
+  if(aide) d.appendChild(el("small",null,aide));
+  var inp = el("input"); inp.type = "text"; inp.readOnly = true;
+  var v = CONFIG[cle] && CONFIG[cle].valeur;
+  inp.value = v != null ? String(v) : "—";
+  inp.style.opacity = ".65";
+  d.appendChild(inp); conteneur.appendChild(d);
+}
+
+/* Liste structurée éditable (priorités, catégories, récompenses).
+   Chaque entrée est une ligne ; on peut en ajouter et en retirer. La clé reste
+   marquée `data-liste` et la valeur est reconstruite à l'enregistrement. */
+var LISTES = {};
+function listeChamp(conteneur, label, aide, cle, colonnes, vide){
+  var d = el("div","dchamp dplein");
+  d.appendChild(el("label",null,label));
+  if(aide) d.appendChild(el("small",null,aide));
+  var boite = el("div","dliste"); boite.dataset.liste = cle;
+  var lignes = (CONFIG[cle] && CONFIG[cle].valeur) || [];
+  lignes.forEach(function(entree){ boite.appendChild(ligneListe(cle, colonnes, entree)); });
+  d.appendChild(boite);
+  var ajouter = el("button","btn ghost tiny","+ Ajouter");
+  ajouter.type = "button";
+  ajouter.onclick = function(){ boite.appendChild(ligneListe(cle, colonnes, {})); };
+  var pied = el("div","dpied"); pied.appendChild(ajouter);
+  d.appendChild(pied);
+  conteneur.appendChild(d);
+  LISTES[cle] = {colonnes: colonnes};
+  return boite;
+}
+function ligneListe(cle, colonnes, entree){
+  var ligne = el("div","dligne");
+  colonnes.forEach(function(col){
+    var champDiv = el("div","dcol");
+    champDiv.appendChild(el("small", null, col.label));
+    var inp = el("input");
+    inp.type = col.type === "number" ? "number" : "text";
+    inp.dataset.col = col.cle;
+    if(col.max != null) inp.maxLength = col.max;
+    if(col.min != null) inp.min = col.min;
+    if(col.maxv != null) inp.max = col.maxv;
+    if(col.placeholder) inp.placeholder = col.placeholder;
+    var v = entree[col.cle];
+    inp.value = v != null ? String(v) : "";
+    champDiv.appendChild(inp);
+    ligne.appendChild(champDiv);
+  });
+  var sup = el("button","btn ghost tiny","✕");
+  sup.type = "button"; sup.title = "Retirer cette entrée";
+  sup.onclick = function(){ ligne.parentNode.removeChild(ligne); };
+  ligne.appendChild(sup);
+  return ligne;
+}
+
 function dessinerConfig(){
   CONFIG = donnees.config || {};
   var b;
@@ -489,6 +552,15 @@ function dessinerConfig(){
   selectChamp(b,"Rôle du support",null,"role","support_role");
   nombreChamp(b,"Tickets ouverts par membre",null,"ticket_limit",1,20);
   boolChamp(b,"Attribution automatique au staff le moins chargé",null,"ticket_autoassign");
+  listeChamp(b,"Priorités proposées","Libellé, emoji et délai d'échéance (heures).","ticket_priorities",
+    [{cle:"label",label:"Libellé",max:40,placeholder:"Haute"},
+     {cle:"emoji",label:"Emoji",max:8,placeholder:"🔴"},
+     {cle:"hours",label:"Heures",type:"number",min:1,maxv:720}]);
+  listeChamp(b,"Types de tickets","Libellé, emoji et description affichée au membre.","ticket_categories",
+    [{cle:"label",label:"Libellé",max:40,placeholder:"Support"},
+     {cle:"emoji",label:"Emoji",max:8,placeholder:"🛠️"},
+     {cle:"description",label:"Description",max:100,placeholder:"Besoin d'aide ?"}]);
+  lectureChamp(b,"Numéro du prochain ticket","Compteur tenu par le bot.","ticket_counter");
 
   b = $("cfg-vocal"); b.textContent = "";
   selectChamp(b,"Salon maître des vocaux",null,"vocal","tempvoc_master");
@@ -505,12 +577,22 @@ function dessinerConfig(){
   nombreChamp(b,"Délai entre deux gains (secondes)",null,"xp_cooldown",0,3600);
   nombreChamp(b,"XP par minute en vocal",null,"xp_voice_per_minute",0,1000);
   selectChamp(b,"Salon des annonces de niveau",null,"salon","xp_announce_channel");
+  listeChamp(b,"Rôles de récompense (niveaux)","Du plus bas au plus haut ; trié automatiquement.","xp_rewards",
+    [{cle:"niveau",label:"Niveau",type:"number",min:1,maxv:1000},
+     {cle:"role",label:"Identifiant du rôle",placeholder:"123456789012345678"}],
+    "Aucune récompense de niveau.");
   boolChamp(b,"Invitations activées",null,"invites_enabled");
   selectChamp(b,"Salon des arrivées d'invitation",null,"salon","invites_log_channel");
+  listeChamp(b,"Rôles de récompense (invitations)","Trié automatiquement par nombre d'invitations.","invite_rewards",
+    [{cle:"invites",label:"Invitations",type:"number",min:1,maxv:10000},
+     {cle:"role",label:"Identifiant du rôle",placeholder:"123456789012345678"}],
+    "Aucune récompense d'invitation.");
 
   b = $("cfg-divers"); b.textContent = "";
   selectChamp(b,"Salon de vérification",null,"salon","verify_channel");
   selectChamp(b,"Rôle de vérification",null,"role","verify_role");
+  texteChamp(b,"Lien de vérification","URL du bouton de vérification (facultatif).","verify_link");
+  lectureChamp(b,"Message de vérification publié","Identifiant du message du panneau, tenu par le bot.","verify_message_id");
   boolChamp(b,"Assistant IA activé",null,"ai_enabled");
   texteChamp(b,"Base de connaissances IA","Texte servant UNIQUEMENT de source aux réponses.","ai_knowledge",true);
   texteChamp(b,"Texte du Rôle de Soutien","À trouver dans le statut personnalisé.","support_text");
@@ -522,9 +604,29 @@ function lireConfig(){
   var modifs = {};
   Array.prototype.forEach.call(document.querySelectorAll("#v-config [data-cle]"), function(elm){
     var cle = elm.dataset.cle;
+    if(elm.readOnly) return;                       /* champ d'information : jamais envoyé */
     if(elm.dataset.bool) modifs[cle] = elm.checked;
     else if(elm.type === "number") modifs[cle] = parseInt(elm.value, 10) || 0;
     else modifs[cle] = elm.value;
+  });
+  /* Listes structurées : reconstruites depuis les lignes affichées. */
+  Array.prototype.forEach.call(document.querySelectorAll("#v-config [data-liste]"), function(boite){
+    var cle = boite.dataset.liste;
+    var infos = LISTES[cle] || {colonnes: []};
+    var entrees = [];
+    Array.prototype.forEach.call(boite.querySelectorAll(".dligne"), function(ligne){
+      var objet = {}, vide = true;
+      infos.colonnes.forEach(function(col){
+        var inp = ligne.querySelector('[data-col="' + col.cle + '"]');
+        if(!inp) return;
+        var brut = inp.value.trim();
+        if(brut === "") return;
+        vide = false;
+        objet[col.cle] = col.type === "number" ? (parseInt(brut, 10) || 0) : brut;
+      });
+      if(!vide) entrees.push(objet);
+    });
+    modifs[cle] = entrees;
   });
   return modifs;
 }

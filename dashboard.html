@@ -1,79 +1,171 @@
 ﻿<!doctype html><html lang="fr"><head><title>Tableau de bord – Orvyx</title><meta name="robots" content="noindex,nofollow"><meta name="description" content="Tableau de bord Orvyx : connecte-toi avec Discord et gère la configuration, les tickets, la modération et la communauté de tes serveurs où tu es propriétaire ou administrateur."><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="assets/logo.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Michroma&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"><meta property="og:image" content="assets/banner.png">
 <style>
-.dwrap{max-width:1180px;padding:120px 0 4rem}
-.dporte{max-width:560px;margin:2rem auto 0;text-align:center}
-.dporte .logo{width:70px;margin:0 auto 1.4rem;border-radius:16px;border:1px solid var(--ln)}
-.dporte h1{font-size:clamp(1.6rem,3.6vw,2.3rem);margin-bottom:.6rem}
+/* ==========================================================================
+   Tableau de bord Orvyx — feuille de style locale.
+   Toutes les classes sont préfixées « d » pour ne jamais entrer en conflit
+   avec style.css (site vitrine).
+   ========================================================================== */
+.dwrap{max-width:1240px;padding:118px 0 4rem}
+
+/* ---------------------------------------------------------------- porte */
+.dporte{max-width:560px;margin:1rem auto 0;text-align:center}
+.dporte .logo{width:74px;margin:0 auto 1.4rem;border-radius:18px;border:1px solid var(--ln);box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.dporte h1{font-size:clamp(1.7rem,3.6vw,2.4rem);margin-bottom:.6rem}
 .dporte p{color:var(--mu);margin-bottom:1.6rem}
-.dbtn-discord{display:inline-flex;align-items:center;gap:.7rem;padding:.95rem 1.7rem;border-radius:999px;background:#5865F2;color:#fff!important;font-weight:700;text-decoration:none;border:none;cursor:pointer;font:700 1rem var(--b);transition:.25s}
-.dbtn-discord:hover{background:#4752c4;box-shadow:0 0 30px rgba(88,101,242,.5)}
+.dbtn-discord{display:inline-flex;align-items:center;gap:.7rem;padding:1rem 1.8rem;border-radius:999px;background:#5865F2;color:#fff!important;font-weight:700;text-decoration:none;border:none;cursor:pointer;font:700 1rem var(--b);transition:.25s}
+.dbtn-discord:hover{background:#4752c4;box-shadow:0 0 34px rgba(88,101,242,.55);transform:translateY(-1px)}
 .dbtn-discord svg{width:22px;height:22px;fill:#fff}
 .dporte .vnote{text-align:left}
-/* barre du haut */
-.dtop{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.4rem}
+
+/* ------------------------------------------------------- barre du haut */
+.dtop{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem;padding-bottom:1.2rem;border-bottom:1px solid var(--ln)}
 .did{display:flex;align-items:center;gap:.9rem;min-width:0}
-.did img{width:48px;height:48px;border-radius:50%;border:1px solid var(--ln);background:#0a0a0f}
-.did h1{font-size:clamp(1.2rem,2.6vw,1.6rem);word-break:break-word}
-.did p{color:var(--mu);font-size:.9rem}
-.dsel{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
-.dsel select{background:#0a0a0f;border:1px solid var(--ln);border-radius:10px;color:#fff;padding:.7rem 1rem;font:600 .95rem var(--b);min-width:250px;cursor:pointer}
-/* disposition */
-.dgrid{display:grid;grid-template-columns:210px 1fr;gap:1.8rem;align-items:start}
-.dside{position:sticky;top:96px;border:1px solid var(--ln);border-radius:16px;background:var(--pn);padding:.8rem}
-.dside button{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;background:none;border:none;color:var(--mu);padding:.65rem .8rem;border-radius:10px;font:600 .92rem var(--b);cursor:pointer;transition:.2s}
+.did img{width:52px;height:52px;border-radius:50%;border:1px solid var(--ln);background:#0a0a0f}
+.did h1{font-size:clamp(1.25rem,2.6vw,1.7rem);word-break:break-word}
+.did p{color:var(--mu);font-size:.88rem}
+.dsel{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.dsel select{background:#0a0a0f;border:1px solid var(--ln);border-radius:12px;color:#fff;padding:.72rem 1rem;font:600 .95rem var(--b);min-width:260px;cursor:pointer;transition:.2s}
+.dsel select:hover{border-color:rgba(255,255,255,.4)}
+
+/* ---------------------------------------------------------- disposition */
+.dgrid{display:grid;grid-template-columns:248px minmax(0,1fr);gap:1.6rem;align-items:start}
+.dside{position:sticky;top:92px;border:1px solid var(--ln);border-radius:18px;background:var(--pn);padding:.7rem;backdrop-filter:blur(8px)}
+.dside .dside-titre{font:700 .7rem var(--b);text-transform:uppercase;letter-spacing:.12em;color:var(--mu);padding:.5rem .8rem .4rem}
+.dside button{display:flex;align-items:center;gap:.65rem;width:100%;text-align:left;background:none;border:none;color:var(--mu);padding:.68rem .8rem;border-radius:11px;font:600 .92rem var(--b);cursor:pointer;transition:.18s;position:relative}
 .dside button:hover{color:#fff;background:rgba(255,255,255,.06)}
 .dside button.on{color:#000;background:#fff;font-weight:700}
+.dside button .dico{font-size:1.02rem;line-height:1}
+.dside button .dcompte{margin-left:auto;font-size:.72rem;font-weight:700;background:rgba(255,255,255,.1);border-radius:999px;padding:.12rem .5rem;color:var(--mu)}
+.dside button.on .dcompte{background:rgba(0,0,0,.12);color:#000}
 .dcorps{min-width:0}
-.dvue{display:none}.dvue.on{display:block;animation:up .4s forwards;opacity:0}
-.dcarte{border:1px solid var(--ln);border-radius:18px;background:var(--pn);padding:1.5rem 1.7rem;margin-bottom:1.2rem}
-.dcarte h3{margin-bottom:.3rem}
-.dcarte .dsub{color:var(--mu);font-size:.9rem;margin-bottom:1.1rem}
-/* stats */
-.dstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.8rem;margin-bottom:1.2rem}
-.dstat{border:1px solid var(--ln);border-radius:14px;background:var(--pn);padding:.9rem 1rem}
-.dstat b{display:block;font:400 1.5rem var(--d);color:#fff}
-.dstat span{color:var(--mu);font-size:.76rem;text-transform:uppercase;letter-spacing:.08em}
-/* formulaires */
-.dform{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem 1.6rem}
-.dchamp{display:flex;flex-direction:column;gap:.4rem}
+.dvue{display:none}
+.dvue.on{display:block;animation:dmonte .35s ease both}
+@keyframes dmonte{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* -------------------------------------------------------------- cartes */
+.dcarte{border:1px solid var(--ln);border-radius:18px;background:var(--pn);padding:1.4rem 1.6rem;margin-bottom:1.1rem;transition:border-color .25s}
+.dcarte:hover{border-color:rgba(255,255,255,.22)}
+.dcarte>h3{display:flex;align-items:center;gap:.6rem;margin-bottom:.25rem;font-size:1.08rem}
+.dcarte>h3 .dtag{margin-left:auto;font:600 .72rem var(--b);color:var(--mu);border:1px solid var(--ln);border-radius:999px;padding:.15rem .6rem}
+.dcarte>h3 .dtag.ok{color:#57f287;border-color:rgba(87,242,135,.45)}
+.dcarte>h3 .dtag.ko{color:#ff5c5c;border-color:rgba(255,92,92,.45)}
+.dcarte .dsub{color:var(--mu);font-size:.88rem;margin-bottom:1.1rem;max-width:70ch}
+
+/* -------------------------------------------------------------- stats */
+.dstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:.75rem;margin-bottom:1.1rem}
+.dstat{border:1px solid var(--ln);border-radius:15px;background:var(--pn);padding:.95rem 1rem;transition:.25s;position:relative;overflow:hidden}
+.dstat:hover{border-color:rgba(255,255,255,.3);transform:translateY(-2px)}
+.dstat b{display:block;font:400 1.55rem var(--d);color:#fff;line-height:1.2}
+.dstat span{color:var(--mu);font-size:.74rem;text-transform:uppercase;letter-spacing:.07em}
+
+/* ------------------------------------------------------- champs & formulaires */
+.dform{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1rem 1.5rem}
+.dchamp{display:flex;flex-direction:column;gap:.4rem;min-width:0}
 .dchamp label{font-size:.86rem;color:#fff;font-weight:600}
-.dchamp small{color:var(--mu);font-size:.78rem}
-.dchamp input,.dchamp select,.dchamp textarea{background:#0a0a0f;border:1px solid var(--ln);border-radius:9px;color:#fff;padding:.6rem .8rem;font:500 .92rem var(--b);width:100%}
-.dchamp textarea{resize:vertical;min-height:80px;font-family:var(--b)}
-.dchamp input[type=checkbox]{width:auto;accent-color:#fff}
-.dbascule{display:flex;align-items:center;gap:.6rem}
-.dbascule input{width:auto!important}
+.dchamp small{color:var(--mu);font-size:.77rem;line-height:1.5}
+.dchamp input,.dchamp select,.dchamp textarea{background:#0a0a0f;border:1px solid var(--ln);border-radius:10px;color:#fff;padding:.62rem .8rem;font:500 .92rem var(--b);width:100%;transition:.2s;box-sizing:border-box}
+.dchamp input:focus,.dchamp select:focus,.dchamp textarea:focus{outline:none;border-color:rgba(255,255,255,.5);box-shadow:0 0 0 3px rgba(255,255,255,.07)}
+.dchamp input:read-only{opacity:.62;cursor:default}
+.dchamp textarea{resize:vertical;min-height:84px;font-family:var(--b)}
+.dchamp input[type=number]{-moz-appearance:textfield}
+.dchamp select{cursor:pointer}
 .dplein{grid-column:1/-1}
+.dbascule{display:flex;align-items:center;gap:.65rem;cursor:pointer;padding:.35rem 0}
+.dbascule input{width:18px!important;height:18px;accent-color:#57f287;cursor:pointer;flex:0 0 auto}
+.dchamp.marque{border-left:2px solid #f0b232;padding-left:.75rem;margin-left:-.75rem}
+
+/* -------------------------------------------------- listes structurées */
 .dliste{display:flex;flex-direction:column;gap:.5rem}
 .dligne{display:flex;gap:.6rem;align-items:flex-end;flex-wrap:wrap}
-.dligne .dcol{display:flex;flex-direction:column;gap:.25rem;flex:1 1 120px;min-width:100px}
+.dligne .dcol{display:flex;flex-direction:column;gap:.25rem;flex:1 1 130px;min-width:105px}
 .dligne .dcol small{color:var(--mu);font-size:.72rem}
 .dligne .dcol input{margin:0}
 .dligne>button{flex:0 0 auto;margin-bottom:.05rem}
-.dpied{display:flex;gap:.6rem;margin-top:.5rem}
+.dpied{display:flex;gap:.6rem;margin-top:.6rem;flex-wrap:wrap}
+.dliste:empty+.dpied::before{content:"Aucune entrée.";color:var(--mu);font-size:.85rem}
+
+/* ------------------------------------------------------------ actions */
 .dactions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.3rem;align-items:center}
-.dmsg{border:1px solid var(--ln);border-left:3px solid #fff;border-radius:10px;padding:.8rem 1rem;margin-top:1rem;font-size:.92rem;display:none}
-.dmsg.ok{display:block;border-left-color:#57f287}
-.dmsg.no{display:block;border-left-color:#ed4245}
-/* tableaux */
-.dtab{overflow-x:auto;margin-top:.6rem}
-.dtab table{width:100%;border-collapse:collapse;font-size:.9rem}
-.dtab th,.dtab td{text-align:left;padding:.55rem .6rem;border-bottom:1px solid var(--ln);white-space:nowrap}
-.dtab th{color:var(--mu);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em}
-.dtab td.wrap{white-space:normal;max-width:340px}
-.dvide{color:var(--mu);padding:.8rem 0}
-.dpastille{display:inline-block;border:1px solid var(--ln);border-radius:999px;padding:.15rem .6rem;font-size:.75rem;color:var(--mu)}
-.dpastille.ok{color:#57f287;border-color:rgba(87,242,135,.5)}
-.dpastille.ko{color:#ff5c5c;border-color:rgba(255,92,92,.5)}
-.dligne{display:flex;justify-content:space-between;gap:1rem;border-bottom:1px dashed rgba(255,255,255,.08);padding:.45rem 0;font-size:.9rem}
-.dligne .k{color:var(--mu)}
-.dligne .v{color:var(--tx);font-weight:600;text-align:right}
-.dbadge{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:.45rem;vertical-align:middle}
+.dactions .dnote{color:var(--mu);font-size:.84rem}
+.dmsg{border:1px solid var(--ln);border-left:3px solid #fff;border-radius:11px;padding:.8rem 1rem;margin-top:1rem;font-size:.9rem;display:none;animation:dmonte .3s ease both}
+.dmsg.ok{display:block;border-left-color:#57f287;background:rgba(87,242,135,.06)}
+.dmsg.no{display:block;border-left-color:#ed4245;background:rgba(237,66,69,.06)}
+.dmsg.info{display:block;border-left-color:#5865F2;background:rgba(88,101,242,.06)}
+
+/* bandeau d'enregistrement collant */
+.dbarre{position:sticky;bottom:1rem;z-index:20;display:none;align-items:center;gap:1rem;justify-content:space-between;border:1px solid rgba(240,178,50,.5);background:rgba(20,16,4,.94);backdrop-filter:blur(12px);border-radius:14px;padding:.8rem 1.1rem;margin-top:1.2rem;box-shadow:0 14px 40px rgba(0,0,0,.6)}
+.dbarre.on{display:flex}
+.dbarre .dtxt{font-size:.9rem;color:#f0b232;font-weight:600}
+
+/* --------------------------------------------------------- tableaux */
+.dtab{overflow-x:auto;margin-top:.6rem;border-radius:12px}
+.dtab table{width:100%;border-collapse:collapse;font-size:.89rem}
+.dtab th,.dtab td{text-align:left;padding:.6rem .65rem;border-bottom:1px solid var(--ln);white-space:nowrap;vertical-align:middle}
+.dtab th{color:var(--mu);font-size:.71rem;text-transform:uppercase;letter-spacing:.07em;position:sticky;top:0;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);z-index:1}
+.dtab tbody tr{transition:.15s}
+.dtab tbody tr:hover{background:rgba(255,255,255,.04)}
+.dtab tbody tr:last-child td{border-bottom:none}
+.dtab td.wrap{white-space:normal;max-width:320px;min-width:160px}
+.dvide{color:var(--mu);padding:1rem 0;font-size:.9rem;text-align:center}
+.dpastille{display:inline-block;border:1px solid var(--ln);border-radius:999px;padding:.16rem .62rem;font-size:.74rem;color:var(--mu);white-space:nowrap}
+.dpastille.ok{color:#57f287;border-color:rgba(87,242,135,.5);background:rgba(87,242,135,.08)}
+.dpastille.ko{color:#ff5c5c;border-color:rgba(255,92,92,.5);background:rgba(255,92,92,.08)}
+.dpastille.warn{color:#f0b232;border-color:rgba(240,178,50,.5);background:rgba(240,178,50,.08)}
+.dpastille.bleu{color:#7aa2ff;border-color:rgba(122,162,255,.5);background:rgba(122,162,255,.08)}
+
+/* -------------------------------------------------- lignes clé / valeur */
+.dligne2{display:flex;justify-content:space-between;gap:1rem;border-bottom:1px dashed rgba(255,255,255,.08);padding:.5rem 0;font-size:.9rem}
+.dligne2:last-child{border-bottom:none}
+.dligne2 .k{color:var(--mu)}
+.dligne2 .v{color:var(--tx);font-weight:600;text-align:right;display:flex;align-items:center;gap:.4rem;justify-content:flex-end}
+.dbadge{display:inline-block;width:9px;height:9px;border-radius:50%;flex:0 0 auto}
 .dbadge.actif{background:#57f287;box-shadow:0 0 10px rgba(87,242,135,.8)}
 .dbadge.inactif{background:#555}
 .dsmall{color:var(--mu);font-size:.82rem}
-.btn.tiny{padding:.4rem .8rem;font-size:.82rem}
-@media(max-width:900px){.dgrid{grid-template-columns:1fr}.dside{position:static;display:flex;flex-wrap:wrap;gap:.3rem}.dside button{width:auto}}
+.btn.tiny{padding:.42rem .85rem;font-size:.82rem}
+
+/* --------------------------------------------------- résumé en pastilles */
+.dresume{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.6rem}
+.dres{display:flex;align-items:center;gap:.6rem;border:1px solid var(--ln);border-radius:12px;padding:.65rem .85rem;font-size:.88rem;transition:.2s}
+.dres:hover{border-color:rgba(255,255,255,.22)}
+.dres .dt{color:var(--mu);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dres .dv{font-weight:700;flex:0 0 auto}
+
+/* ------------------------------------------------------------- barre de recherche */
+.drecherche{display:flex;align-items:center;gap:.6rem;border:1px solid var(--ln);border-radius:12px;background:#0a0a0f;padding:.55rem .9rem;margin-bottom:1.1rem;transition:.2s}
+.drecherche:focus-within{border-color:rgba(255,255,255,.45);box-shadow:0 0 0 3px rgba(255,255,255,.07)}
+.drecherche svg{width:17px;height:17px;fill:var(--mu);flex:0 0 auto}
+.drecherche input{flex:1;background:none;border:none;color:#fff;font:500 .95rem var(--b);outline:none;min-width:0}
+.drecherche .dvide2{font-size:.8rem;color:var(--mu);white-space:nowrap}
+.dcache{display:none!important}
+
+/* ---------------------------------------------------------- onglets internes */
+.dsous{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.2rem;border-bottom:1px solid var(--ln);padding-bottom:.7rem}
+.dsous button{background:none;border:1px solid var(--ln);color:var(--mu);padding:.45rem 1rem;border-radius:999px;font:600 .86rem var(--b);cursor:pointer;transition:.2s}
+.dsous button:hover{color:#fff;border-color:rgba(255,255,255,.35)}
+.dsous button.on{background:#fff;border-color:#fff;color:#000;font-weight:700}
+
+/* ------------------------------------------------------------- squelettes */
+.dvide-etat{border:1px dashed var(--ln);border-radius:14px;padding:2rem;text-align:center;color:var(--mu)}
+.dspin{display:inline-block;width:22px;height:22px;border:2px solid rgba(255,255,255,.18);border-top-color:#fff;border-radius:50%;animation:dspin .7s linear infinite}
+@keyframes dspin{to{transform:rotate(360deg)}}
+
+/* ------------------------------------------------------------- responsive */
+@media(max-width:1000px){
+.dgrid{grid-template-columns:1fr}
+.dside{position:static;display:flex;gap:.3rem;overflow-x:auto;padding:.5rem;border-radius:14px}
+.dside .dside-titre{display:none}
+.dside button{width:auto;white-space:nowrap;padding:.6rem .8rem}
+.dside button .dcompte{display:none}
+}
+@media(max-width:600px){
+.dwrap{padding:100px 0 3rem}
+.dcarte{padding:1.15rem}
+.dform{grid-template-columns:1fr}
+.dtop{align-items:flex-start}
+.dsel{width:100%}
+.dsel select{min-width:0;width:100%}
+}
 </style></head><body>
 <canvas id="stars"></canvas><nav><div class="wrap nv"><a class="brand" href="index.html"><img src="assets/logo.png" alt="">Orvyx</a><button class="burger" aria-label="Menu">☰</button><ul class="links"><li><a href="index.html#fonctionnalites">Fonctionnalités</a></li><li><a href="documentation.html">Documentation</a></li><li><a href="dashboard.html">Tableau de bord</a></li><li><a href="index.html#ia">Assistant IA</a></li><li><a href="index.html#faq">FAQ</a></li><li><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a></li><li><a href="#" data-support>Support</a></li><li><a class="btn" href="#" data-invite>Ajouter à Discord</a></li></ul></div></nav>
 
@@ -108,13 +200,14 @@ Se connecter avec Discord
 <div class="dmsg" id="dmsg-global" role="status"></div>
 
 <div class="dgrid">
-<aside class="dside">
-<button data-v="apercu" class="on">📊 Aperçu</button>
-<button data-v="config">⚙️ Configuration</button>
-<button data-v="moderation">🔨 Modération</button>
-<button data-v="tickets">🎫 Tickets</button>
-<button data-v="communaute">👥 Communauté</button>
-<button data-v="logs">📜 Logs & erreurs</button>
+<aside class="dside" aria-label="Sections">
+<div class="dside-titre">Navigation</div>
+<button data-v="apercu" class="on"><span class="dico">📊</span>Aperçu</button>
+<button data-v="config"><span class="dico">⚙️</span>Configuration<span class="dcompte" id="d-nb-config"></span></button>
+<button data-v="tickets"><span class="dico">🎫</span>Tickets<span class="dcompte" id="d-nb-tickets"></span></button>
+<button data-v="moderation"><span class="dico">🔨</span>Modération<span class="dcompte" id="d-nb-bl"></span></button>
+<button data-v="communaute"><span class="dico">👥</span>Communauté</button>
+<button data-v="logs"><span class="dico">📜</span>Journaux</button>
 </aside>
 
 <div class="dcorps">
@@ -123,129 +216,179 @@ Se connecter avec Discord
 <div class="dvue on" id="v-apercu">
 <div class="dstats" id="d-stats"></div>
 <div class="dcarte">
-<h3>État de la configuration</h3>
-<p class="dsub">Ce qui est actif sur ce serveur. Un point vert = fonctionnalité configurée.</p>
-<div class="dform" id="d-resume"></div>
+<h3>Santé du bot sur ce serveur</h3>
+<p class="dsub">Ce que le bot peut faire ici. Un point rouge signale une permission manquante à corriger.</p>
+<div id="d-statut-bot"></div>
 </div>
 <div class="dcarte">
-<h3>Le bot sur ce serveur</h3>
-<div id="d-statut-bot"></div>
+<h3>Fonctionnalités actives</h3>
+<p class="dsub">Un point vert = fonctionnalité configurée et donc opérationnelle.</p>
+<div class="dresume" id="d-resume"></div>
+</div>
+<div class="dcarte" id="d-carte-conseils">
+<h3>À faire / à vérifier</h3>
+<p class="dsub">Points d'attention détectés automatiquement d'après la configuration actuelle.</p>
+<div id="d-conseils"></div>
 </div>
 </div>
 
 <!-- --------------------------------------------- configuration -->
 <div class="dvue" id="v-config">
-<div class="dcarte">
-<h3>Logs</h3>
-<p class="dsub">Un salon par catégorie ; le salon général sert de repli.</p>
-<div class="dform" id="cfg-logs"></div>
-</div>
-<div class="dcarte">
-<h3>Bienvenue & rôles</h3>
-<div class="dform" id="cfg-accueil"></div>
-</div>
-<div class="dcarte">
-<h3>Modération & auto-modération</h3>
-<div class="dform" id="cfg-moderation"></div>
-</div>
-<div class="dcarte">
-<h3>Anti-raid</h3>
-<div class="dform" id="cfg-antiraid"></div>
-</div>
-<div class="dcarte">
-<h3>Tickets</h3>
-<div class="dform" id="cfg-tickets"></div>
-</div>
-<div class="dcarte">
-<h3>Vocaux temporaires</h3>
-<div class="dform" id="cfg-vocal"></div>
-</div>
-<div class="dcarte">
-<h3>Niveaux (XP) & invitations</h3>
-<div class="dform" id="cfg-communaute"></div>
-</div>
-<div class="dcarte">
-<h3>Vérification, IA, Soutien & webhooks</h3>
-<div class="dform" id="cfg-divers"></div>
-</div>
-<div class="dactions"><button class="btn" id="d-enregistrer" type="button">Enregistrer les modifications</button><span class="dsmall" id="d-enr-etat"></span></div>
+<div class="drecherche">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2a8 8 0 1 0 4.9 14.3l5.4 5.4 1.4-1.4-5.4-5.4A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/></svg>
+<input id="d-filtre" placeholder="Rechercher un réglage (ex. : bienvenue, logs, XP, anti-raid…)" aria-label="Rechercher un réglage">
+<span class="dvide2" id="d-filtre-nb"></span>
 </div>
 
-<!-- --------------------------------------------- modération -->
-<div class="dvue" id="v-moderation">
-<div class="dcarte">
-<h3>Blacklist générale</h3>
-<p class="dsub">Un membre blacklisté ne peut plus ouvrir de ticket.</p>
-<div class="dactions" style="margin-top:0">
-<input class="dinput" id="d-bl-membre" placeholder="ID du membre" style="width:200px;background:#0a0a0f;border:1px solid var(--ln);border-radius:9px;color:#fff;padding:.6rem .8rem">
-<input id="d-bl-raison" placeholder="Raison" style="flex:1;min-width:180px;background:#0a0a0f;border:1px solid var(--ln);border-radius:9px;color:#fff;padding:.6rem .8rem">
-<button class="btn tiny" id="d-bl-ajouter" type="button">Blacklister</button>
-</div>
-<div class="dtab" id="d-blacklist"></div>
-</div>
-<div class="dcarte">
-<h3>Avertissements récents</h3>
-<div class="dtab" id="d-warns"></div>
-</div>
-<div class="dcarte">
-<h3>Sanction rapide</h3>
-<p class="dsub">Applique une sanction à un membre par son identifiant (réfléchie : l'action est tracée dans les logs admin).</p>
-<div class="dform">
-<div class="dchamp"><label>Identifiant du membre</label><input id="d-san-membre" placeholder="123456789012345678"></div>
-<div class="dchamp"><label>Action</label><select id="d-san-action"><option value="warn">Avertissement</option><option value="mute">Rendre muet (timeout)</option><option value="kick">Expulser</option><option value="ban">Bannir</option></select></div>
-<div class="dchamp"><label>Durée du mute (minutes)</label><input id="d-san-minutes" type="number" value="60" min="1" max="40320"></div>
-<div class="dchamp dplein"><label>Raison</label><input id="d-san-raison" placeholder="Motif de la sanction"></div>
-</div>
-<div class="dactions"><button class="btn tiny" id="d-san-appliquer" type="button">Appliquer</button></div>
-<div class="dmsg" id="dmsg-san"></div>
+<section class="dcarte dbloc" data-mots="logs journaux salon categorie moderation serveur bot antiraid">
+<h3>Journalisation <span class="dtag" id="dtag-logs"></span></h3>
+<p class="dsub">Un salon par catégorie de journaux. Sans salon spécifique, le salon général reçoit tout.</p>
+<div class="dform" id="cfg-logs"></div>
+</section>
+
+<section class="dcarte dbloc" data-mots="bienvenue accueil message autorole role membre arrivee">
+<h3>Bienvenue &amp; rôles</h3>
+<p class="dsub">Message d'arrivée et rôle attribué automatiquement aux nouveaux membres.</p>
+<div class="dform" id="cfg-accueil"></div>
+</section>
+
+<section class="dcarte dbloc" data-mots="moderation avertissement warn timeout automod filtre">
+<h3>Modération &amp; auto-modération</h3>
+<p class="dsub">Sanctions automatiques et filtrage des messages.</p>
+<div class="dform" id="cfg-moderation"></div>
+</section>
+
+<section class="dcarte dbloc" data-mots="antiraid raid rafale arrivees verrou">
+<h3>Anti-raid</h3>
+<p class="dsub">Détection des arrivées massives et verrouillage automatique.</p>
+<div class="dform" id="cfg-antiraid"></div>
+</section>
+
+<section class="dcarte dbloc" data-mots="tickets support priorite categorie assignation transcription">
+<h3>Tickets</h3>
+<p class="dsub">Salons, priorité, attribution au staff le moins chargé et types de demandes.</p>
+<div class="dform" id="cfg-tickets"></div>
+</section>
+
+<section class="dcarte dbloc" data-mots="vocal voix tempvoc salons temporaires accueil">
+<h3>Salons vocaux temporaires</h3>
+<p class="dsub">Salon maître qui crée automatiquement un vocal personnel.</p>
+<div class="dform" id="cfg-vocal"></div>
+</section>
+
+<section class="dcarte dbloc" data-mots="niveaux xp experience recompenses invitations invites">
+<h3>Niveaux (XP) &amp; invitations</h3>
+<p class="dsub">Gain d'expérience, rôles de récompense et suivi des invitations.</p>
+<div class="dform" id="cfg-communaute"></div>
+</section>
+
+<section class="dcarte dbloc" data-mots="verification ia intelligence webhooks soutien support">
+<h3>Vérification, IA &amp; webhooks</h3>
+<p class="dsub">Parcours de vérification, assistant IA et protection des webhooks.</p>
+<div class="dform" id="cfg-divers"></div>
+</section>
+
+<div class="dmsg" id="dmsg-config"></div>
+<div class="dbarre" id="d-barre">
+<span class="dtxt" id="d-barre-txt">Modifications non enregistrées</span>
+<span>
+<button class="btn ghost tiny" id="d-annuler" type="button">Annuler</button>
+<button class="btn tiny" id="d-enregistrer" type="button">Enregistrer</button>
+</span>
 </div>
 </div>
 
 <!-- --------------------------------------------- tickets -->
 <div class="dvue" id="v-tickets">
-<div class="dcarte">
-<h3>Tickets ouverts</h3>
+<div class="dstats" id="d-stats-tickets"></div>
+<section class="dcarte">
+<h3>Tickets ouverts <span class="dtag" id="dtag-tickets-ouverts"></span></h3>
+<p class="dsub">Fermer supprime le salon après transcription. La priorité se change directement dans le tableau.</p>
 <div class="dtab" id="d-tickets-ouverts"></div>
-</div>
-<div class="dcarte">
-<h3>Charge & notes du staff</h3>
-<p class="dsub">Tickets en cours et satisfaction moyenne (étoiles reçues à la fermeture).</p>
+</section>
+<section class="dcarte">
+<h3>Charge &amp; satisfaction du staff</h3>
+<p class="dsub">Tickets en cours par membre du staff et moyenne des étoiles reçues à la fermeture.</p>
 <div class="dtab" id="d-staff"></div>
-</div>
-<div class="dcarte">
-<h3>Tickets fermés récents</h3>
+</section>
+<section class="dcarte">
+<h3>Tickets fermés récemment</h3>
 <div class="dtab" id="d-tickets-fermes"></div>
+</section>
 </div>
+
+<!-- --------------------------------------------- modération -->
+<div class="dvue" id="v-moderation">
+<section class="dcarte">
+<h3>Sanction rapide</h3>
+<p class="dsub">Applique une sanction à un membre par son identifiant. Chaque action est tracée dans les journaux admin.</p>
+<div class="dform">
+<div class="dchamp"><label for="d-san-membre">Identifiant du membre</label><input id="d-san-membre" placeholder="123456789012345678" inputmode="numeric"></div>
+<div class="dchamp"><label for="d-san-action">Action</label><select id="d-san-action"><option value="warn">Avertissement</option><option value="mute">Rendre muet (timeout)</option><option value="kick">Expulser</option><option value="ban">Bannir</option></select></div>
+<div class="dchamp"><label for="d-san-minutes">Durée du mute (minutes)</label><input id="d-san-minutes" type="number" value="60" min="1" max="40320"></div>
+<div class="dchamp dplein"><label for="d-san-raison">Raison</label><input id="d-san-raison" placeholder="Motif de la sanction"></div>
+</div>
+<div class="dactions"><button class="btn tiny" id="d-san-appliquer" type="button">Appliquer la sanction</button></div>
+<div class="dmsg" id="dmsg-san"></div>
+</section>
+<section class="dcarte">
+<h3>Blacklist générale <span class="dtag" id="dtag-bl"></span></h3>
+<p class="dsub">Un membre blacklisté ne peut plus ouvrir de ticket ni interagir avec les fonctions du bot.</p>
+<div class="dform">
+<div class="dchamp"><label for="d-bl-membre">Identifiant du membre</label><input id="d-bl-membre" placeholder="123456789012345678" inputmode="numeric"></div>
+<div class="dchamp"><label for="d-bl-raison">Raison</label><input id="d-bl-raison" placeholder="Motif du blacklistage"></div>
+</div>
+<div class="dactions"><button class="btn tiny" id="d-bl-ajouter" type="button">Blacklister</button></div>
+<div class="dmsg" id="dmsg-bl"></div>
+<div class="dtab" id="d-blacklist"></div>
+</section>
+<section class="dcarte">
+<h3>Avertissements récents</h3>
+<div class="dtab" id="d-warns"></div>
+</section>
 </div>
 
 <!-- --------------------------------------------- communauté -->
 <div class="dvue" id="v-communaute">
-<div class="dcarte">
-<h3>Classement XP</h3>
+<section class="dcarte">
+<h3>Classement d'expérience <span class="dtag" id="dtag-xp"></span></h3>
+<p class="dsub">Classement par XP, avec messages envoyés et temps passé en vocal.</p>
 <div class="dtab" id="d-niveaux"></div>
 <div class="dactions"><button class="btn ghost tiny" id="d-xp-reset" type="button">Remettre tous les niveaux à zéro</button></div>
-</div>
-<div class="dcarte">
-<h3>Classement des invitations</h3>
+</section>
+<section class="dcarte">
+<h3>Classement des invitations <span class="dtag" id="dtag-inv"></span></h3>
+<p class="dsub">Invitations actives (membres toujours présents), rejointes, bonus et départs.</p>
 <div class="dtab" id="d-invitations"></div>
+<div class="dform">
+<div class="dchamp"><label for="d-inv-membre">Identifiant du membre</label><input id="d-inv-membre" placeholder="123456789012345678" inputmode="numeric"></div>
+<div class="dchamp"><label for="d-inv-delta">Bonus à ajouter (peut être négatif)</label><input id="d-inv-delta" type="number" value="1"></div>
+</div>
 <div class="dactions">
-<input id="d-inv-membre" placeholder="ID du membre" style="background:#0a0a0f;border:1px solid var(--ln);border-radius:9px;color:#fff;padding:.5rem .8rem">
-<input id="d-inv-delta" type="number" value="1" style="width:90px;background:#0a0a0f;border:1px solid var(--ln);border-radius:9px;color:#fff;padding:.5rem .8rem">
 <button class="btn tiny" id="d-inv-bonus" type="button">Ajouter le bonus</button>
 <button class="btn ghost tiny" id="d-inv-reset" type="button">Tout remettre à zéro</button>
 </div>
 <div class="dmsg" id="dmsg-inv"></div>
-</div>
+</section>
 </div>
 
-<!-- --------------------------------------------- logs -->
+<!-- --------------------------------------------- journaux -->
 <div class="dvue" id="v-logs">
-<div class="dcarte">
-<h3>Logs & erreurs du bot</h3>
-<p class="dsub">Vue globale du bot (identique à la console d'administration) : avertissements et erreurs en mémoire, secrets masqués.</p>
-<div class="dtab" id="d-logs"></div>
-<div class="dactions"><button class="btn ghost tiny" id="d-logs-maj" type="button">↻ Actualiser</button><label class="dsmall"><input type="checkbox" id="d-logs-auto"> Auto (5 s)</label></div>
+<section class="dcarte">
+<h3>Journaux &amp; erreurs du bot <span class="dtag" id="dtag-logs2"></span></h3>
+<p class="dsub">Vue globale du bot, identique à la console d'administration : avertissements et erreurs gardés en mémoire, secrets masqués.</p>
+<div class="dsous" id="d-logs-filtres">
+<button data-niv="" class="on">Tout</button>
+<button data-niv="WARNING">Avertissements</button>
+<button data-niv="ERROR">Erreurs</button>
+<button data-niv="CRITICAL">Critiques</button>
 </div>
+<div class="dtab" id="d-logs"></div>
+<div class="dactions">
+<button class="btn ghost tiny" id="d-logs-maj" type="button">↻ Actualiser</button>
+<label class="dbascule dsmall"><input type="checkbox" id="d-logs-auto"> Actualisation automatique (5 s)</label>
+</div>
+</section>
 </div>
 
 </div>
@@ -264,13 +407,17 @@ var API = String(window.ORVYX_API || "").replace(/\/+$/, "");
 var CLE = "orvyx_dashboard_jeton";
 var $ = function(id){ return document.getElementById(id); };
 var jeton = sessionStorage.getItem(CLE) || "";
-var moi = null, serveurs = [], courant = null, donnees = null, autoLogs = false, tLogs = 0;
+var moi = null, serveurs = [], courant = null, donnees = null;
+var autoLogs = false, tLogs = 0, filtreLogs = "";
+var modifs = {};           /* clés modifiées localement, en attente d'enregistrement */
+var CONFIG = {}, LISTES = {}, LISTE_ETAT = {};
 
 /* ---------------------------------------------------------- utilitaires */
 function msg(id, texte, type){
   var e = $(id); if(!e) return;
   e.textContent = texte || "";
   e.className = "dmsg " + (type || "");
+  if(!texte) e.className = "dmsg";
 }
 function date(s){ if(!s) return "—"; return new Date(s * 1000).toLocaleString("fr-FR", {dateStyle:"short", timeStyle:"short"}); }
 function duree(sec){
@@ -278,6 +425,7 @@ function duree(sec){
   var j=Math.floor(sec/86400),h=Math.floor(sec%86400/3600),m=Math.floor(sec%3600/60);
   if(j) return j+" j "+h+" h"; if(h) return h+" h "+m+" min"; return m+" min";
 }
+function nombre(n){ return (Number(n)||0).toLocaleString("fr-FR"); }
 function api(chemin, opts){
   opts = opts || {};
   opts.headers = Object.assign({}, opts.headers, {"Authorization":"Bearer "+jeton});
@@ -289,6 +437,7 @@ function poste(chemin, corps){
   return api(chemin, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(corps||{})});
 }
 function el(balise, classe, texte){ var e=document.createElement(balise); if(classe)e.className=classe; if(texte!=null)e.textContent=texte; return e; }
+function vide(noeud){ while(noeud && noeud.firstChild) noeud.removeChild(noeud.firstChild); }
 
 /* ---------------------------------------------------------- connexion */
 function deconnecter(raison){
@@ -299,10 +448,17 @@ function deconnecter(raison){
   msg("dmsg-porte", raison || "");
 }
 $("btn-discord").addEventListener("click", function(){
+  msg("dmsg-porte", "");
+  this.disabled = true;
+  var b = this; b.textContent = "Connexion…";
   fetch(API + "/api/verify/dashboard/login").then(function(r){ return r.json(); }).then(function(d){
+    b.disabled = false;
     if(d.redirect){ location.href = d.redirect; }
-    else { msg("dmsg-porte", d.erreur || "Connexion Discord indisponible pour le moment."); }
-  }).catch(function(){ msg("dmsg-porte", "Impossible de joindre l'API du bot : est-il en ligne ?"); });
+    else { b.textContent = "Se connecter avec Discord"; msg("dmsg-porte", d.erreur || "Connexion Discord indisponible pour le moment.", "no"); }
+  }).catch(function(){
+    b.disabled = false; b.textContent = "Se connecter avec Discord";
+    msg("dmsg-porte", "Impossible de joindre l'API du bot : est-il en ligne ?", "no");
+  });
 });
 
 /* Retour de Discord : le jeton arrive dans le fragment (#s=…), jamais dans les logs. */
@@ -312,28 +468,31 @@ if(frag.get("s")){
   history.replaceState(null, "", location.pathname + location.search);
 } else if(frag.get("err")){
   var ERREURS = {state:"Ce lien a expiré ou a déjà servi : reconnecte-toi.", discord:"Discord a refusé la connexion.", reseau:"Discord est injoignable pour l'instant."};
-  setTimeout(function(){ msg("dmsg-porte", ERREURS[frag.get("err")] || "Connexion impossible."); }, 60);
+  setTimeout(function(){ msg("dmsg-porte", ERREURS[frag.get("err")] || "Connexion impossible.", "no"); }, 60);
   history.replaceState(null, "", location.pathname + location.search);
 }
 
 /* ---------------------------------------------------------- ouverture */
+function afficherPanneau(){
+  $("dporte").hidden = true; $("dpanneau").hidden = false;
+}
 function ouvrirSession(){
   return api("/api/verify/dashboard/moi").then(function(res){
     if(res.status === 401){ deconnecter("Session expirée : reconnecte-toi avec Discord."); return false; }
-    if(!res.ok){ msg("dmsg-porte", (res.data && res.data.erreur) || "Erreur de connexion."); return false; }
+    if(!res.ok){ msg("dmsg-porte", (res.data && res.data.erreur) || "Erreur de connexion.", "no"); return false; }
     moi = res.data.utilisateur; serveurs = res.data.serveurs || [];
-    $("dporte").hidden = true; $("dpanneau").hidden = false;
+    afficherPanneau();
     $("d-nom").textContent = moi.nom || "Utilisateur";
     if(moi.avatar){ var a=$("d-avatar"); a.src=moi.avatar; a.hidden=false; }
-    var sel = $("d-select-serveur"); sel.textContent = "";
+    var sel = $("d-select-serveur"); vide(sel);
     if(!serveurs.length){
-      $("d-serveurs-nb").textContent = "Aucun serveur gérable trouvé.";
-      msg("dmsg-global", "Tu n'as aucun serveur où Orvyx est présent et où tu es propriétaire ou administrateur. Ajoute le bot à un serveur dont tu es responsable, puis reviens.", "");
+      $("d-serveurs-nb").textContent = "Aucun serveur gérable";
+      msg("dmsg-global", "Tu n'as aucun serveur où Orvyx est présent et où tu es propriétaire ou administrateur. Ajoute le bot à un serveur dont tu es responsable, puis reviens.", "no");
       return true;
     }
     $("d-serveurs-nb").textContent = serveurs.length + " serveur(s) gérable(s)";
     serveurs.forEach(function(s){
-      var o = el("option", null, s.nom + (s.proprietaire ? " (propriétaire)" : ""));
+      var o = el("option", null, s.nom + (s.proprietaire ? " · propriétaire" : " · administrateur"));
       o.value = s.id; sel.appendChild(o);
     });
     charger(serveurs[0].id);
@@ -345,101 +504,203 @@ $("d-deco").addEventListener("click", function(){ deconnecter(""); });
 
 function charger(guildId){
   courant = guildId;
+  modifs = {};
+  $("d-select-serveur").value = guildId;
+  $("d-barre").classList.remove("on");
+  var corps = $("dcorps-guard");
+  if(corps) corps.remove();
+  msg("dmsg-global", "");
   return api("/api/verify/dashboard/serveur/" + guildId).then(function(res){
     if(res.status === 401){ deconnecter("Session expirée."); return; }
     if(!res.ok){ msg("dmsg-global", (res.data && res.data.erreur) || "Chargement impossible.", "no"); return; }
     donnees = res.data;
     dessiner();
-    msg("dmsg-global", "");
-  }).catch(function(){ msg("dmsg-global", "Le bot ne répond pas.", "no"); });
+  }).catch(function(){ msg("dmsg-global", "Le bot ne répond pas. Vérifie qu'il est en ligne, puis recharge la page.", "no"); });
 }
 
 /* ---------------------------------------------------------- navigation */
-Array.prototype.forEach.call(document.querySelectorAll(".dside button"), function(b){
-  b.addEventListener("click", function(){
-    Array.prototype.forEach.call(document.querySelectorAll(".dside button"), function(x){ x.classList.toggle("on", x===b); });
-    Array.prototype.forEach.call(document.querySelectorAll(".dvue"), function(x){ x.classList.remove("on"); });
-    $("v-" + b.dataset.v).classList.add("on");
-    if(b.dataset.v === "logs") chargerLogs();
+var ONGLETS = ["apercu","config","tickets","moderation","communaute","logs"];
+function aller(v){
+  Array.prototype.forEach.call(document.querySelectorAll(".dside button"), function(x){
+    x.classList.toggle("on", x.dataset.v === v);
   });
+  Array.prototype.forEach.call(document.querySelectorAll(".dvue"), function(x){ x.classList.remove("on"); });
+  var cible = $("v-" + v); if(cible) cible.classList.add("on");
+  if(v === "logs") chargerLogs();
+  try{ location.hash = v; }catch(e){}
+}
+Array.prototype.forEach.call(document.querySelectorAll(".dside button"), function(b){
+  b.addEventListener("click", function(){ aller(b.dataset.v); });
 });
+/* Accès direct par ancre (#config, #tickets…). */
+var depart = (location.hash || "").replace(/^#/, "");
+if(ONGLETS.indexOf(depart) !== -1) aller(depart);
 
-/* ---------------------------------------------------------- rendu */
+/* ---------------------------------------------------------- rendu global */
 function dessiner(){
   var s = donnees.serveur || {}, r = donnees.resume || {}, st = donnees.statut || {};
   var stats = [
-    ["Membres", (s.membres||0).toLocaleString("fr-FR")],
-    ["Bots", String(s.bots||0)],
-    ["Salons", String(s.salons||0)],
-    ["Rôles", String(s.roles||0)],
+    ["Membres", nombre(s.membres)],
+    ["En ligne", st.present ? "Oui" : "Non"],
+    ["Salons", nombre(s.salons)],
+    ["Rôles", nombre(s.roles)],
     ["Boosts", String(s.boosts||0)],
     ["Niveau boost", "Niv. " + (s.niveau_boost||0)],
   ];
-  var boite = $("d-stats"); boite.textContent = "";
-  stats.forEach(function(c){ var d=el("div","dstat"); d.appendChild(el("b",null,c[1])); d.appendChild(el("span",null,c[0])); boite.appendChild(d); });
-
-  var res = $("d-resume"); res.textContent = "";
-  Object.keys(r).forEach(function(k){
-    var d = el("div","dligne"); d.appendChild(el("span","k",k));
-    var v = el("span","v");
-    var p = el("span","dbadge " + (r[k] ? "actif" : "inactif")); v.appendChild(p);
-    v.appendChild(document.createTextNode(r[k] ? "Actif" : "Inactif"));
-    d.appendChild(v); res.appendChild(d);
+  var boite = $("d-stats"); vide(boite);
+  stats.forEach(function(c){
+    var d=el("div","dstat"); d.appendChild(el("b",null,c[1])); d.appendChild(el("span",null,c[0]));
+    boite.appendChild(d);
   });
 
-  var sb = $("d-statut-bot"); sb.textContent = "";
-  if(!st.present){ sb.appendChild(el("p","dvide","Le bot n'est pas présent sur ce serveur.")); }
-  else {
+  /* Résumé : pastilles Actif / Inactif */
+  var res = $("d-resume"); vide(res);
+  Object.keys(r).forEach(function(k){
+    var d = el("div","dres");
+    var p = el("span","dbadge " + (r[k] ? "actif" : "inactif"));
+    d.appendChild(p);
+    d.appendChild(el("span","dt",k));
+    d.appendChild(el("span","dv", r[k] ? "Actif" : "Inactif"));
+    if(!r[k]) d.querySelector(".dv").style.color = "var(--mu)";
+    res.appendChild(d);
+  });
+  if(!Object.keys(r).length) res.appendChild(el("p","dvide","Rien à afficher."));
+
+  /* Santé du bot */
+  var sb = $("d-statut-bot"); vide(sb);
+  if(!st.present){
+    sb.appendChild(el("p","dvide","Le bot n'est pas présent sur ce serveur. Ajoute-le pour activer ses fonctionnalités."));
+  } else {
     var perms = st.permissions || {};
-    var noms = {administrateur:"Administrateur", gerer_serveur:"Gérer le serveur", gerer_roles:"Gérer les rôles", gerer_salons:"Gérer les salons", bannir:"Bannir", expulser:"Expulser", moderer:"Exclure temporairement", gerer_webhooks:"Gérer les webhooks"};
-    var d1 = el("div","dligne"); d1.appendChild(el("span","k","Rôle le plus haut")); d1.appendChild(el("span","v", st.role_le_plus_haut||"—")); sb.appendChild(d1);
+    var noms = {administrateur:"Administrateur", gerer_serveur:"Gérer le serveur", gerer_roles:"Gérer les rôles",
+                gerer_salons:"Gérer les salons", bannir:"Bannir", expulser:"Expulser",
+                moderer:"Exclure temporairement", gerer_webhooks:"Gérer les webhooks"};
+    var d1 = el("div","dligne2"); d1.appendChild(el("span","k","Rôle le plus haut"));
+    d1.appendChild(el("span","v", st.role_le_plus_haut||"—")); sb.appendChild(d1);
     Object.keys(noms).forEach(function(cle){
-      var d = el("div","dligne"); d.appendChild(el("span","k",noms[cle]));
+      var d = el("div","dligne2"); d.appendChild(el("span","k",noms[cle]));
       var v = el("span","v"); var p = el("span","dbadge " + (perms[cle] ? "actif":"inactif")); v.appendChild(p);
-      v.appendChild(document.createTextNode(perms[cle] ? "Oui" : "Non")); d.appendChild(v); sb.appendChild(d);
+      v.appendChild(document.createTextNode(perms[cle] ? "Oui" : "Non"));
+      d.appendChild(v); sb.appendChild(d);
     });
   }
 
+  dessinerConseils();
   dessinerConfig();
-  dessinerModeration();
   dessinerTickets();
+  dessinerModeration();
   dessinerCommunaute();
+  majCompteurs();
+}
+
+/* ---------------------------------------------------------- conseils */
+function dessinerConseils(){
+  var cfg = donnees.config || {}, r = donnees.resume || {};
+  function v(cle){ var e = cfg[cle]; return e ? e.valeur : null; }
+  var liste = [];
+  function pousser(texte, cible, vue){ liste.push({texte:texte, cible:cible, vue:vue||"config"}); }
+
+  if(!v("log_channel"))
+    pousser("Aucun salon de journaux n'est défini : les sanctions et incidents ne seront visibles nulle part.", "Salon de logs général");
+  if(!v("support_role") && r["Tickets"])
+    pousser("Les tickets sont actifs mais aucun rôle de support n'est défini : l'assignation automatique ne peut pas fonctionner.", "Rôle du support");
+  if(v("ai_enabled") && !String(v("ai_knowledge")||"").trim())
+    pousser("L'assistant IA est activé mais sa base de connaissances est vide : il répondra sans contexte sur ton serveur.", "Base de connaissances IA");
+  if(v("antiraid_enabled") && !v("antiraid_log_channel") && !v("log_channel"))
+    pousser("L'anti-raid est activé sans salon d'alerte : tu ne verras pas les raids signalés.", "Logs anti-raid");
+  if(v("tempvoc_master") && !v("tempvoc_category"))
+    pousser("Le salon maître vocal est défini sans catégorie : les vocaux temporaires seront créés à la racine du serveur.", "Catégorie des vocaux");
+  if(v("xp_enabled") && !(v("xp_rewards")||[]).length)
+    pousser("Les niveaux sont activés sans aucun rôle de récompense : les membres ne gagnent rien en montant de niveau.", "Rôles de récompense (niveaux)");
+  if(v("invites_enabled") && !v("invites_log_channel"))
+    pousser("Le suivi des invitations est activé sans salon d'arrivée : les nouveaux membres ne seront pas annoncés.", "Salon des arrivées d'invitation");
+
+  var zone = $("d-conseils"); vide(zone);
+  var carte = $("d-carte-conseils");
+  if(!liste.length){
+    carte.style.display = "none";
+    return;
+  }
+  carte.style.display = "";
+  liste.forEach(function(c){
+    var d = el("div","dligne2");
+    d.appendChild(el("span","k", c.texte));
+    var lien = el("button","btn ghost tiny","Corriger");
+    lien.type = "button";
+    lien.onclick = function(){
+      aller(c.vue);
+      setTimeout(function(){ allerChamp(c.cible); }, 60);
+    };
+    var w = el("span","v"); w.appendChild(lien); d.appendChild(w);
+    zone.appendChild(d);
+  });
+}
+
+/* Fait défiler jusqu'au champ dont le libellé correspond, et le met en évidence. */
+function allerChamp(libelle){
+  var champs = document.querySelectorAll("#v-config .dchamp");
+  for(var i=0;i<champs.length;i++){
+    var lab = champs[i].querySelector("label");
+    if(lab && lab.textContent.trim() === libelle){
+      var bloc = champs[i].closest(".dbloc");
+      if(bloc){
+        var f = $("d-filtre"); if(f){ f.value = ""; filtrerConfig(""); }
+      }
+      champs[i].scrollIntoView({behavior:"smooth", block:"center"});
+      champs[i].classList.add("marque");
+      setTimeout(function(){ champs[i].classList.remove("marque"); }, 2600);
+      return true;
+    }
+  }
+  return false;
 }
 
 /* ---------------------------------------------------------- configuration */
-var SALONS = {}, ROLES = {}, CONFIG = {};
-function optionsSalon(select, valeur, vide){
-  var o = el("option", null, vide || "— Aucun —"); o.value = ""; select.appendChild(o);
-  (donnees.salons.texte||[]).forEach(function(s){ var x=el("option",null,s.nom); x.value=s.id; select.appendChild(x); });
+var SALONS = {}, ROLES = {};
+function optionsSalon(select, valeur, vide_){
+  var o = el("option", null, vide_ || "— Aucun —"); o.value = ""; select.appendChild(o);
+  (donnees.salons.texte||[]).forEach(function(s){ var x=el("option",null,"#"+s.nom); x.value=s.id; select.appendChild(x); });
   select.value = valeur != null ? String(valeur) : "";
 }
 function optionsVocal(select, valeur){
   var o = el("option", null, "— Aucun —"); o.value=""; select.appendChild(o);
-  (donnees.salons.vocal||[]).forEach(function(s){ var x=el("option",null,s.nom); x.value=s.id; select.appendChild(x); });
+  (donnees.salons.vocal||[]).forEach(function(s){ var x=el("option",null,"🔊 "+s.nom); x.value=s.id; select.appendChild(x); });
   select.value = valeur != null ? String(valeur) : "";
 }
 function optionsCategorie(select, valeur){
   var o = el("option", null, "— Aucune —"); o.value=""; select.appendChild(o);
-  (donnees.salons.categorie||[]).forEach(function(s){ var x=el("option",null,s.nom); x.value=s.id; select.appendChild(x); });
+  (donnees.salons.categorie||[]).forEach(function(s){ var x=el("option",null,"📁 "+s.nom); x.value=s.id; select.appendChild(x); });
   select.value = valeur != null ? String(valeur) : "";
 }
-function optionsRole(select, valeur, avecAucun){
-  if(avecAucun!==false){ var o=el("option",null,"— Aucun —"); o.value=""; select.appendChild(o); }
-  (donnees.roles||[]).forEach(function(r){ var x=el("option",null,r.nom); x.value=r.id; select.appendChild(x); });
+function optionsRole(select, valeur){
+  var o=el("option",null,"— Aucun —"); o.value=""; select.appendChild(o);
+  (donnees.roles||[]).forEach(function(r){ var x=el("option",null,"@"+r.nom); x.value=r.id; select.appendChild(x); });
   select.value = valeur != null ? String(valeur) : "";
+}
+/* Menu de rôle qui accepte aussi un identifiant absent de la liste (rôle supprimé). */
+function optionsRoleId(select, valeur){
+  optionsRole(select, valeur);
+  if(valeur && select.value !== String(valeur)){
+    var x = el("option", null, "Rôle inconnu (" + valeur + ")"); x.value = String(valeur); select.appendChild(x);
+    select.value = String(valeur);
+  }
 }
 function champ(conteneur, label, aide, controle){
   var d = el("div","dchamp"); d.appendChild(el("label",null,label));
   if(aide) d.appendChild(el("small",null,aide));
   d.appendChild(controle); conteneur.appendChild(d);
+  return d;
 }
-function selectChamp(conteneur, label, aide, type, cle, vide){
+function selectChamp(conteneur, label, aide, type, cle, vide_){
   var sel = el("select"); sel.dataset.cle = cle;
-  if(type==="salon") optionsSalon(sel, CONFIG[cle] && CONFIG[cle].valeur, vide);
-  else if(type==="vocal") optionsVocal(sel, CONFIG[cle] && CONFIG[cle].valeur);
-  else if(type==="categorie") optionsCategorie(sel, CONFIG[cle] && CONFIG[cle].valeur);
-  else optionsRole(sel, CONFIG[cle] && CONFIG[cle].valeur);
-  champ(conteneur, label, aide, sel);
+  var val = CONFIG[cle] && CONFIG[cle].valeur;
+  if(type==="salon") optionsSalon(sel, val, vide_);
+  else if(type==="vocal") optionsVocal(sel, val);
+  else if(type==="categorie") optionsCategorie(sel, val);
+  else optionsRole(sel, val);
+  var d = champ(conteneur, label, aide, sel);
+  sel.addEventListener("change", function(){ marquer(cle, d); });
+  return d;
 }
 function boolChamp(conteneur, label, aide, cle){
   var d = el("div","dchamp"); var lab = el("label","dbascule");
@@ -448,36 +709,35 @@ function boolChamp(conteneur, label, aide, cle){
   lab.appendChild(inp); lab.appendChild(document.createTextNode(label));
   d.appendChild(lab); if(aide) d.appendChild(el("small",null,aide));
   conteneur.appendChild(d);
+  inp.addEventListener("change", function(){ marquer(cle, d); });
+  return d;
 }
 function texteChamp(conteneur, label, aide, cle, long){
   var inp = long ? el("textarea") : el("input");
   inp.dataset.cle = cle; if(!long) inp.type="text";
   inp.value = (CONFIG[cle] && CONFIG[cle].valeur) || "";
-  champ(conteneur, label, aide, inp);
+  var d = champ(conteneur, label, aide, inp);
+  inp.addEventListener("input", function(){ marquer(cle, d); });
+  return d;
 }
 function nombreChamp(conteneur, label, aide, cle, mini, maxi){
   var inp = el("input"); inp.type="number"; inp.dataset.cle=cle;
   if(mini!=null) inp.min=mini; if(maxi!=null) inp.max=maxi;
   inp.value = (CONFIG[cle] && CONFIG[cle].valeur) != null ? CONFIG[cle].valeur : "";
-  champ(conteneur, label, aide, inp);
+  var d = champ(conteneur, label, aide, inp);
+  inp.addEventListener("input", function(){ marquer(cle, d); });
+  return d;
 }
-
 /* Champ en LECTURE SEULE : affiché pour information, jamais envoyé au bot. */
 function lectureChamp(conteneur, label, aide, cle){
-  var d = el("div","dchamp"); d.appendChild(el("label",null,label));
-  if(aide) d.appendChild(el("small",null,aide));
   var inp = el("input"); inp.type = "text"; inp.readOnly = true;
   var v = CONFIG[cle] && CONFIG[cle].valeur;
   inp.value = v != null ? String(v) : "—";
-  inp.style.opacity = ".65";
-  d.appendChild(inp); conteneur.appendChild(d);
+  champ(conteneur, label, aide, inp);
 }
 
-/* Liste structurée éditable (priorités, catégories, récompenses).
-   Chaque entrée est une ligne ; on peut en ajouter et en retirer. La clé reste
-   marquée `data-liste` et la valeur est reconstruite à l'enregistrement. */
-var LISTES = {};
-function listeChamp(conteneur, label, aide, cle, colonnes, vide){
+/* Liste structurée éditable (priorités, catégories, récompenses). */
+function listeChamp(conteneur, label, aide, cle, colonnes){
   var d = el("div","dchamp dplein");
   d.appendChild(el("label",null,label));
   if(aide) d.appendChild(el("small",null,aide));
@@ -485,74 +745,110 @@ function listeChamp(conteneur, label, aide, cle, colonnes, vide){
   var lignes = (CONFIG[cle] && CONFIG[cle].valeur) || [];
   lignes.forEach(function(entree){ boite.appendChild(ligneListe(cle, colonnes, entree)); });
   d.appendChild(boite);
-  var ajouter = el("button","btn ghost tiny","+ Ajouter");
+  var pied = el("div","dpied");
+  var ajouter = el("button","btn ghost tiny","+ Ajouter une entrée");
   ajouter.type = "button";
-  ajouter.onclick = function(){ boite.appendChild(ligneListe(cle, colonnes, {})); };
-  var pied = el("div","dpied"); pied.appendChild(ajouter);
+  ajouter.onclick = function(){
+    boite.appendChild(ligneListe(cle, colonnes, {}));
+    marquerListe(cle, d);
+  };
+  pied.appendChild(ajouter);
   d.appendChild(pied);
   conteneur.appendChild(d);
-  LISTES[cle] = {colonnes: colonnes};
-  return boite;
+  LISTES[cle] = {colonnes: colonnes, conteneur: d};
+  return d;
 }
 function ligneListe(cle, colonnes, entree){
   var ligne = el("div","dligne");
   colonnes.forEach(function(col){
     var champDiv = el("div","dcol");
     champDiv.appendChild(el("small", null, col.label));
-    var inp = el("input");
-    inp.type = col.type === "number" ? "number" : "text";
+    var inp;
+    if(col.type === "role"){
+      inp = el("select"); optionsRoleId(inp, entree[col.cle]);
+    } else if(col.type === "salon"){
+      inp = el("select"); optionsSalon(inp, entree[col.cle], "— Aucun —");
+    } else {
+      inp = el("input");
+      inp.type = col.type === "number" ? "number" : "text";
+      if(col.max != null) inp.maxLength = col.max;
+      if(col.min != null) inp.min = col.min;
+      if(col.maxv != null) inp.max = col.maxv;
+      if(col.placeholder) inp.placeholder = col.placeholder;
+      var v = entree[col.cle];
+      inp.value = v != null ? String(v) : "";
+    }
     inp.dataset.col = col.cle;
-    if(col.max != null) inp.maxLength = col.max;
-    if(col.min != null) inp.min = col.min;
-    if(col.maxv != null) inp.max = col.maxv;
-    if(col.placeholder) inp.placeholder = col.placeholder;
-    var v = entree[col.cle];
-    inp.value = v != null ? String(v) : "";
+    inp.addEventListener("change", function(){ marquerListe(cle); });
+    inp.addEventListener("input", function(){ marquerListe(cle); });
     champDiv.appendChild(inp);
     ligne.appendChild(champDiv);
   });
   var sup = el("button","btn ghost tiny","✕");
   sup.type = "button"; sup.title = "Retirer cette entrée";
-  sup.onclick = function(){ ligne.parentNode.removeChild(ligne); };
+  sup.onclick = function(){ ligne.parentNode.removeChild(ligne); marquerListe(cle); };
   ligne.appendChild(sup);
   return ligne;
+}
+function marquerListe(cle, conteneur){
+  marquer(cle, conteneur || (LISTES[cle] && LISTES[cle].conteneur));
+}
+
+/* -------------------------------------------------- état « non enregistré » */
+function marquer(cle, conteneur){
+  if(!cle) return;
+  modifs[cle] = true;
+  if(conteneur) conteneur.classList.add("marque");
+  majBarre();
+}
+function nbModifs(){ return Object.keys(modifs).filter(function(k){ return modifs[k]; }).length; }
+function majBarre(){
+  var n = nbModifs();
+  var b = $("d-barre");
+  if(!b) return;
+  if(n > 0){
+    b.classList.add("on");
+    $("d-barre-txt").textContent = n === 1 ? "1 réglage modifié, non enregistré" : (n + " réglages modifiés, non enregistrés");
+  } else {
+    b.classList.remove("on");
+  }
 }
 
 function dessinerConfig(){
   CONFIG = donnees.config || {};
   var b;
 
-  b = $("cfg-logs"); b.textContent = "";
-  selectChamp(b,"Salon de logs général","Repli pour toutes les catégories.","salon","log_channel");
+  b = $("cfg-logs"); vide(b);
+  selectChamp(b,"Salon de logs général","Reçoit tout ce qu'aucune catégorie ci-dessous ne couvre.","salon","log_channel");
   selectChamp(b,"Logs admin","Sanctions et auto-modération.","salon","mod_log_channel");
-  selectChamp(b,"Logs serveur","Arrivées, pseudos, rôles, salons.","salon","log_server_channel");
+  selectChamp(b,"Logs serveur","Arrivées, départs, pseudos, rôles, salons.","salon","log_server_channel");
   selectChamp(b,"Logs du bot","Erreurs et incidents techniques.","salon","log_bot_channel");
   selectChamp(b,"Logs anti-raid","Alertes de raid.","salon","antiraid_log_channel");
 
-  b = $("cfg-accueil"); b.textContent = "";
-  boolChamp(b,"Bienvenue activée","Message d'accueil à l'arrivée.","welcome_enabled");
+  b = $("cfg-accueil"); vide(b);
+  boolChamp(b,"Bienvenue activée","Envoie un message à l'arrivée d'un membre.","welcome_enabled");
   selectChamp(b,"Salon de bienvenue",null,"salon","welcome_channel");
-  selectChamp(b,"Rôle automatique","Donné à chaque nouveau membre.","role","autorole");
-  texteChamp(b,"Message de bienvenue","Variables : {user} {username} {server} {count}","welcome_message",true);
+  selectChamp(b,"Rôle automatique","Attribué à chaque nouveau membre.","role","autorole");
+  texteChamp(b,"Message de bienvenue","Variables disponibles : {user} {username} {server} {count}","welcome_message",true);
 
-  b = $("cfg-moderation"); b.textContent = "";
-  nombreChamp(b,"Avertissements avant sanction",null,"warn_threshold",1,50);
+  b = $("cfg-moderation"); vide(b);
+  nombreChamp(b,"Avertissements avant sanction","Nombre de warns déclenchant le timeout.","warn_threshold",1,50);
   nombreChamp(b,"Durée du timeout (minutes)",null,"warn_timeout_minutes",1,40320);
-  boolChamp(b,"Auto-modération activée",null,"automod_enabled");
+  boolChamp(b,"Auto-modération activée","Filtre automatique des messages indésirables.","automod_enabled");
 
-  b = $("cfg-antiraid"); b.textContent = "";
+  b = $("cfg-antiraid"); vide(b);
   boolChamp(b,"Anti-raid activé",null,"antiraid_enabled");
-  nombreChamp(b,"Membres pour déclencher","Rafale d'arrivées.","antiraid_join_threshold",3,1000);
-  nombreChamp(b,"Fenêtre (secondes)",null,"antiraid_join_window",5,600);
-  nombreChamp(b,"Verrou (secondes)",null,"antiraid_raid_lock_seconds",30,86400);
+  nombreChamp(b,"Membres pour déclencher","Nombre d'arrivées dans la fenêtre qui déclenche l'alerte.","antiraid_join_threshold",3,1000);
+  nombreChamp(b,"Fenêtre (secondes)","Durée pendant laquelle les arrivées sont comptées.","antiraid_join_window",5,600);
+  nombreChamp(b,"Verrou (secondes)","Durée du verrouillage automatique.","antiraid_raid_lock_seconds",30,86400);
 
-  b = $("cfg-tickets"); b.textContent = "";
-  selectChamp(b,"Catégorie des tickets",null,"categorie","ticket_category");
-  selectChamp(b,"Salon des transcriptions",null,"salon","ticket_log_channel");
-  selectChamp(b,"Rôle du support",null,"role","support_role");
+  b = $("cfg-tickets"); vide(b);
+  selectChamp(b,"Catégorie des tickets","Où sont créés les salons de ticket.","categorie","ticket_category");
+  selectChamp(b,"Salon des transcriptions","Reçoit la transcription à la fermeture.","salon","ticket_log_channel");
+  selectChamp(b,"Rôle du support","Membres pouvant prendre en charge un ticket.","role","support_role");
   nombreChamp(b,"Tickets ouverts par membre",null,"ticket_limit",1,20);
   boolChamp(b,"Attribution automatique au staff le moins chargé",null,"ticket_autoassign");
-  listeChamp(b,"Priorités proposées","Libellé, emoji et délai d'échéance (heures).","ticket_priorities",
+  listeChamp(b,"Priorités proposées","Libellé, emoji et délai d'échéance en heures.","ticket_priorities",
     [{cle:"label",label:"Libellé",max:40,placeholder:"Haute"},
      {cle:"emoji",label:"Emoji",max:8,placeholder:"🔴"},
      {cle:"hours",label:"Heures",type:"number",min:1,maxv:720}]);
@@ -560,97 +856,147 @@ function dessinerConfig(){
     [{cle:"label",label:"Libellé",max:40,placeholder:"Support"},
      {cle:"emoji",label:"Emoji",max:8,placeholder:"🛠️"},
      {cle:"description",label:"Description",max:100,placeholder:"Besoin d'aide ?"}]);
-  lectureChamp(b,"Numéro du prochain ticket","Compteur tenu par le bot.","ticket_counter");
+  lectureChamp(b,"Numéro du prochain ticket","Compteur tenu par le bot ; non modifiable ici.","ticket_counter");
 
-  b = $("cfg-vocal"); b.textContent = "";
-  selectChamp(b,"Salon maître des vocaux",null,"vocal","tempvoc_master");
-  selectChamp(b,"Catégorie des vocaux",null,"categorie","tempvoc_category");
-  texteChamp(b,"Modèle de nom","{user} = pseudo du créateur.","tempvoc_name");
-  nombreChamp(b,"Vocaux simultanés maximum",null,"tempvoc_limit",1,50);
-  boolChamp(b,"Accueil vocal activé",null,"vocal_greet_enabled");
+  b = $("cfg-vocal"); vide(b);
+  selectChamp(b,"Salon maître des vocaux","Rejoindre ce salon crée un vocal personnel.","vocal","tempvoc_master");
+  selectChamp(b,"Catégorie des vocaux","Où sont placés les vocaux créés.","categorie","tempvoc_category");
+  texteChamp(b,"Modèle de nom","{user} est remplacé par le pseudo du créateur.","tempvoc_name");
+  nombreChamp(b,"Vocaux simultanés maximum","Par membre.",  "tempvoc_limit",1,50);
+  boolChamp(b,"Accueil vocal activé","Message quand quelqu'un rejoint un vocal.","vocal_greet_enabled");
   texteChamp(b,"Message d'accueil vocal","Variables : {user} {channel}","vocal_greet_message",true);
 
-  b = $("cfg-communaute"); b.textContent = "";
+  b = $("cfg-communaute"); vide(b);
   boolChamp(b,"Niveaux (XP) activés",null,"xp_enabled");
   nombreChamp(b,"XP minimum par message",null,"xp_min",1,1000);
   nombreChamp(b,"XP maximum par message",null,"xp_max",1,1000);
-  nombreChamp(b,"Délai entre deux gains (secondes)",null,"xp_cooldown",0,3600);
+  nombreChamp(b,"Délai entre deux gains (secondes)","Anti-spam : temps minimum entre deux gains d'XP.","xp_cooldown",0,3600);
   nombreChamp(b,"XP par minute en vocal",null,"xp_voice_per_minute",0,1000);
   selectChamp(b,"Salon des annonces de niveau",null,"salon","xp_announce_channel");
-  listeChamp(b,"Rôles de récompense (niveaux)","Du plus bas au plus haut ; trié automatiquement.","xp_rewards",
+  listeChamp(b,"Rôles de récompense (niveaux)","Du plus bas au plus haut ; trié automatiquement par le bot.","xp_rewards",
     [{cle:"niveau",label:"Niveau",type:"number",min:1,maxv:1000},
-     {cle:"role",label:"Identifiant du rôle",placeholder:"123456789012345678"}],
-    "Aucune récompense de niveau.");
+     {cle:"role",label:"Rôle",type:"role"}]);
   boolChamp(b,"Invitations activées",null,"invites_enabled");
   selectChamp(b,"Salon des arrivées d'invitation",null,"salon","invites_log_channel");
   listeChamp(b,"Rôles de récompense (invitations)","Trié automatiquement par nombre d'invitations.","invite_rewards",
     [{cle:"invites",label:"Invitations",type:"number",min:1,maxv:10000},
-     {cle:"role",label:"Identifiant du rôle",placeholder:"123456789012345678"}],
-    "Aucune récompense d'invitation.");
+     {cle:"role",label:"Rôle",type:"role"}]);
 
-  b = $("cfg-divers"); b.textContent = "";
+  b = $("cfg-divers"); vide(b);
   selectChamp(b,"Salon de vérification",null,"salon","verify_channel");
-  selectChamp(b,"Rôle de vérification",null,"role","verify_role");
+  selectChamp(b,"Rôle de vérification","Attribué après vérification réussie.","role","verify_role");
   texteChamp(b,"Lien de vérification","URL du bouton de vérification (facultatif).","verify_link");
-  lectureChamp(b,"Message de vérification publié","Identifiant du message du panneau, tenu par le bot.","verify_message_id");
+  lectureChamp(b,"Message de vérification publié","Identifiant du panneau, tenu par le bot.","verify_message_id");
   boolChamp(b,"Assistant IA activé",null,"ai_enabled");
-  texteChamp(b,"Base de connaissances IA","Texte servant UNIQUEMENT de source aux réponses.","ai_knowledge",true);
-  texteChamp(b,"Texte du Rôle de Soutien","À trouver dans le statut personnalisé.","support_text");
+  texteChamp(b,"Base de connaissances IA","Texte servant UNIQUEMENT de source aux réponses de l'IA.","ai_knowledge",true);
+  texteChamp(b,"Texte du Rôle de Soutien","Texte à trouver dans le statut personnalisé du membre.","support_text");
   selectChamp(b,"Rôle de Soutien",null,"role","support_status_role");
   boolChamp(b,"Contrôle des webhooks","Supprime les webhooks non autorisés.","webhook_guard");
+
+  majBarre();
+  majBadges();
+}
+
+/* Étiquettes de synthèse sur les cartes. */
+function majBadges(){
+  function v(cle){ var e = CONFIG[cle]; return e ? e.valeur : null; }
+  function tag(id, actif, texte){
+    var t = $(id); if(!t) return;
+    t.textContent = texte || (actif ? "configuré" : "non configuré");
+    t.className = "dtag " + (actif ? "ok" : "");
+  }
+  tag("dtag-logs", !!(v("log_channel") || v("mod_log_channel") || v("log_server_channel") || v("log_bot_channel") || v("antiraid_log_channel")));
+  tag("dtag-logs2", true, "en mémoire");
 }
 
 function lireConfig(){
-  var modifs = {};
+  var sortie = {};
   Array.prototype.forEach.call(document.querySelectorAll("#v-config [data-cle]"), function(elm){
     var cle = elm.dataset.cle;
     if(elm.readOnly) return;                       /* champ d'information : jamais envoyé */
-    if(elm.dataset.bool) modifs[cle] = elm.checked;
-    else if(elm.type === "number") modifs[cle] = parseInt(elm.value, 10) || 0;
-    else modifs[cle] = elm.value;
+    if(!modifs[cle]) return;                       /* on n'envoie que ce qui a changé */
+    if(elm.dataset.bool) sortie[cle] = elm.checked;
+    else if(elm.type === "number") sortie[cle] = parseInt(elm.value, 10) || 0;
+    else sortie[cle] = elm.value;
   });
-  /* Listes structurées : reconstruites depuis les lignes affichées. */
   Array.prototype.forEach.call(document.querySelectorAll("#v-config [data-liste]"), function(boite){
     var cle = boite.dataset.liste;
+    if(!modifs[cle]) return;
     var infos = LISTES[cle] || {colonnes: []};
     var entrees = [];
     Array.prototype.forEach.call(boite.querySelectorAll(".dligne"), function(ligne){
-      var objet = {}, vide = true;
+      var objet = {}, vide_ = true;
       infos.colonnes.forEach(function(col){
         var inp = ligne.querySelector('[data-col="' + col.cle + '"]');
         if(!inp) return;
-        var brut = inp.value.trim();
+        var brut = (inp.value || "").trim();
         if(brut === "") return;
-        vide = false;
+        vide_ = false;
         objet[col.cle] = col.type === "number" ? (parseInt(brut, 10) || 0) : brut;
       });
-      if(!vide) entrees.push(objet);
+      if(!vide_) entrees.push(objet);
     });
-    modifs[cle] = entrees;
+    sortie[cle] = entrees;
   });
-  return modifs;
+  return sortie;
 }
 $("d-enregistrer").addEventListener("click", function(){
   if(!courant) return;
-  var btn = this; btn.disabled = true;
-  $("d-enr-etat").textContent = "Enregistrement…";
-  poste("/api/verify/dashboard/serveur/" + courant + "/config", lireConfig()).then(function(res){
-    btn.disabled = false;
+  var modifsEnvoyees = lireConfig();
+  if(!Object.keys(modifsEnvoyees).length){ msg("dmsg-config","Aucune modification à enregistrer.","info"); return; }
+  var btn = this; btn.disabled = true; btn.textContent = "Enregistrement…";
+  poste("/api/verify/dashboard/serveur/" + courant + "/config", modifsEnvoyees).then(function(res){
+    btn.disabled = false; btn.textContent = "Enregistrer";
     if(res.status === 401){ deconnecter("Session expirée."); return; }
-    if(!res.ok){ $("d-enr-etat").textContent = (res.data && res.data.erreur) || "Échec."; return; }
+    if(!res.ok){
+      msg("dmsg-config", (res.data && res.data.erreur) || "L'enregistrement a échoué.", "no");
+      return;
+    }
     var refus = Object.keys(res.data.refuses || {});
-    $("d-enr-etat").textContent = refus.length
-      ? ("Enregistré, sauf : " + refus.join(", "))
-      : "Enregistré ✓";
+    modifs = {}; majBarre();
+    msg("dmsg-config", refus.length
+      ? ("Enregistré, sauf ces réglages refusés : " + refus.join(", "))
+      : "Configuration enregistrée ✓", refus.length ? "no" : "ok");
     if(res.data.config) donnees.config = res.data.config;
-    charger(courant);
-  }).catch(function(){ btn.disabled=false; $("d-enr-etat").textContent = "Le bot ne répond pas."; });
+    charger(courant).then(function(){ aller("config"); });
+  }).catch(function(){
+    btn.disabled = false; btn.textContent = "Enregistrer";
+    msg("dmsg-config", "Le bot ne répond pas : rien n'a été enregistré.", "no");
+  });
+});
+$("d-annuler").addEventListener("click", function(){
+  if(!courant) return;
+  modifs = {}; majBarre(); msg("dmsg-config","");
+  charger(courant).then(function(){ aller("config"); });
+});
+/* Alerte avant de quitter avec des modifications en attente. */
+window.addEventListener("beforeunload", function(e){
+  if(nbModifs() > 0){ e.preventDefault(); e.returnValue = ""; }
 });
 
-/* ---------------------------------------------------------- modération */
-function tableau(hotes, lignes, rendu, vide){
+/* Recherche dans les réglages. */
+function filtrerConfig(q){
+  q = (q || "").trim().toLowerCase();
+  var blocs = document.querySelectorAll("#v-config .dbloc");
+  var visibles = 0;
+  Array.prototype.forEach.call(blocs, function(bloc){
+    var mots = (bloc.dataset.mots || "") + " " + bloc.textContent.toLowerCase();
+    var ok = !q || mots.indexOf(q) !== -1;
+    bloc.classList.toggle("dcache", !ok);
+    if(ok) visibles++;
+  });
+  var nb = $("d-filtre-nb");
+  if(nb) nb.textContent = q ? (visibles + " section(s)") : "";
+}
+$("d-filtre").addEventListener("input", function(){ filtrerConfig(this.value); });
+
+/* ---------------------------------------------------------- tableaux */
+function tableau(hotes, lignes, rendu, vide_){
   var boite = el("div","dtab");
-  if(!lignes || !lignes.length){ boite.appendChild(el("p","dvide",vide||"Rien à afficher.")); return boite; }
+  if(!lignes || !lignes.length){
+    boite.appendChild(el("p","dvide",vide_||"Rien à afficher."));
+    return boite;
+  }
   var t = el("table"); var thead = el("thead"), tr = el("tr");
   hotes.forEach(function(h){ tr.appendChild(el("th",null,h)); }); thead.appendChild(tr); t.appendChild(thead);
   var tb = el("tbody");
@@ -666,98 +1012,147 @@ function tableau(hotes, lignes, rendu, vide){
   t.appendChild(tb); boite.appendChild(t);
   return boite;
 }
-function remplacer(id, noeud){ var e=$(id); e.textContent=""; e.appendChild(noeud); }
+function remplacer(id, noeud){ var e=$(id); if(!e) return; vide(e); e.appendChild(noeud); }
+function pastille(texte, classe){ return el("span","dpastille" + (classe ? " " + classe : ""), texte); }
+function tagTexte(id, texte, classe){
+  var e = $(id); if(!e) return;
+  e.textContent = texte; e.className = "dtag" + (classe ? " " + classe : "");
+}
 
+/* ---------------------------------------------------------- tickets */
+function dessinerTickets(){
+  var t = donnees.tickets || {ouverts:[], fermes:[], priorites:[]};
+  var st = $("d-stats-tickets"); vide(st);
+  var enCours = (t.ouverts||[]).length;
+  var nonAssignes = (t.ouverts||[]).filter(function(x){ return !x.assigne_id; }).length;
+  var notes = (t.fermes||[]).length;
+  [
+    ["Tickets ouverts", String(enCours)],
+    ["Non assignés", String(nonAssignes)],
+    ["Fermés (récents)", String(notes)],
+    ["Staff actif", String((donnees.staff||[]).length)],
+  ].forEach(function(c){ var d=el("div","dstat"); d.appendChild(el("b",null,c[1])); d.appendChild(el("span",null,c[0])); st.appendChild(d); });
+
+  tagTexte("dtag-tickets-ouverts", enCours ? (enCours + " en cours") : "aucun", enCours ? "warn" : "ok");
+
+  remplacer("d-tickets-ouverts", tableau(["N°","Catégorie","Priorité","Échéance","Assigné","Actions"],
+    t.ouverts, function(x){
+      var bloc = el("span"); bloc.style.display="inline-flex"; bloc.style.gap=".4rem"; bloc.style.alignItems="center";
+      var sel = el("select"); sel.style.padding=".3rem .5rem"; sel.style.fontSize=".8rem";
+      (t.priorites||[]).forEach(function(p){ var o=el("option",null,(p.emoji?p.emoji+" ":"")+p.label); o.value=p.label; sel.appendChild(o); });
+      sel.value = x.priorite;
+      sel.onchange = function(){ action("ticket_priority",{salon:x.salon_id, priorite:sel.value},"dmsg-global"); };
+      bloc.appendChild(sel);
+      var bf = el("button","btn ghost tiny","Fermer");
+      bf.onclick = function(){ if(confirm("Fermer le ticket #"+x.numero+" et supprimer son salon ?")) action("ticket_close",{salon:x.salon_id},"dmsg-global"); };
+      bloc.appendChild(bf);
+      return [{texte:"#"+x.numero},{texte:x.categorie},
+              {noeud:pastille(x.priorite, x.priorite==="Haute"?"ko":(x.priorite==="Basse"?"ok":"warn"))},
+              {texte:x.echeance?date(x.echeance):"—"},
+              {texte:x.assigne_id?("<@"+x.assigne_id+">"):"Personne"},{noeud:bloc}];
+    }, "Aucun ticket ouvert pour le moment."));
+
+  remplacer("d-staff", tableau(["Staff","Tickets en cours","Notes reçues","Satisfaction"],
+    donnees.staff, function(s){
+      var moy = el("span", null, s.moyenne!=null ? ("⭐ "+s.moyenne+"/5") : "—");
+      return [{texte:s.nom},{texte:String(s.charge)},{texte:String(s.notes)},{noeud:moy}];
+    }, "Aucun membre du staff identifié (rôle support ou permission « Gérer le serveur »)."));
+
+  remplacer("d-tickets-fermes", tableau(["N°","Catégorie","Note","Créé"],
+    t.fermes, function(x){
+      return [{texte:"#"+x.numero},{texte:x.categorie},
+              {texte:x.note?("⭐".repeat(x.note)):"—"},{texte:date(x.cree)}];
+    }, "Aucun ticket fermé."));
+}
+
+/* ---------------------------------------------------------- modération */
 function dessinerModeration(){
   remplacer("d-blacklist", tableau(["Membre","Par","Raison","Date","Action"],
     donnees.blacklist, function(b){
       var btn = el("button","btn ghost tiny","Retirer");
-      btn.onclick = function(){ action("blacklist_remove",{membre:b.membre_id},"dmsg-global"); };
+      btn.onclick = function(){ action("blacklist_remove",{membre:b.membre_id},"dmsg-bl"); };
       return [{texte:b.membre},{texte:b.moderateur},{texte:b.raison,classe:"wrap"},{texte:date(b.date)},{noeud:btn}];
-    }, "La blacklist est vide."));
+    }, "La blacklist est vide : aucun membre n'est bloqué."));
 
   remplacer("d-warns", tableau(["Membre","Type","Raison","Modérateur","Date"],
     donnees.warns, function(w){
       return [{texte:w.membre},{texte:w.type},{texte:w.raison,classe:"wrap"},{texte:w.moderateur},{texte:date(w.date)}];
-    }, "Aucun avertissement."));
+    }, "Aucun avertissement enregistré."));
 }
 $("d-bl-ajouter").addEventListener("click", function(){
   var membre = ($("d-bl-membre").value||"").trim(), raison = ($("d-bl-raison").value||"").trim();
-  if(!/^\d{5,25}$/.test(membre)){ msg("dmsg-global","Identifiant de membre invalide.","no"); return; }
-  action("blacklist_add", {membre:membre, raison:raison}, "dmsg-global", function(){ $("d-bl-membre").value=""; $("d-bl-raison").value=""; });
+  if(!/^\d{5,25}$/.test(membre)){ msg("dmsg-bl","Identifiant de membre invalide (17 à 20 chiffres attendus).","no"); return; }
+  action("blacklist_add", {membre:membre, raison:raison}, "dmsg-bl", function(){ $("d-bl-membre").value=""; $("d-bl-raison").value=""; });
 });
 $("d-san-appliquer").addEventListener("click", function(){
   var membre = ($("d-san-membre").value||"").trim();
   if(!/^\d{5,25}$/.test(membre)){ msg("dmsg-san","Identifiant de membre invalide.","no"); return; }
   var corps = {membre:membre, raison:($("d-san-raison").value||"").trim(), minutes:parseInt($("d-san-minutes").value,10)||60};
   var act = $("d-san-action").value;
-  if(!confirm("Confirmer l'action « " + act + " » sur " + membre + " ?")) return;
+  var noms = {warn:"avertir", mute:"rendre muet", kick:"expulser", ban:"bannir"};
+  if(!confirm("Confirmer : " + (noms[act]||act) + " le membre " + membre + " ?")) return;
   action(act, corps, "dmsg-san", function(){ $("d-san-membre").value=""; $("d-san-raison").value=""; });
 });
 
-/* ---------------------------------------------------------- tickets */
-function dessinerTickets(){
-  remplacer("d-tickets-ouverts", tableau(["N°","Catégorie","Priorité","Échéance","Assigné","Actions"],
-    donnees.tickets.ouverts, function(t){
-      var bloc = el("span");
-      var bf = el("button","btn ghost tiny","Fermer");
-      bf.onclick = function(){ if(confirm("Fermer le ticket #"+t.numero+" et supprimer son salon ?")) action("ticket_close",{salon:t.salon_id},"dmsg-global"); };
-      bloc.appendChild(bf);
-      var sel = el("select"); sel.style.marginLeft=".4rem";
-      (donnees.tickets.priorites||[]).forEach(function(p){ var o=el("option",null,(p.emoji?p.emoji+" ":"")+p.label); o.value=p.label; sel.appendChild(o); });
-      sel.value = t.priorite;
-      sel.onchange = function(){ action("ticket_priority",{salon:t.salon_id, priorite:sel.value},"dmsg-global"); };
-      bloc.appendChild(sel);
-      return [{texte:"#"+t.numero},{texte:t.categorie},{texte:t.priorite},
-              {texte:t.echeance?date(t.echeance):"—"},
-              {texte:t.assigne_id?("<@"+t.assigne_id+">"):"Personne"},{noeud:bloc}];
-    }, "Aucun ticket ouvert."));
-
-  remplacer("d-staff", tableau(["Staff","Tickets en cours","Notes reçues","Satisfaction"],
-    donnees.staff, function(s){
-      return [{texte:s.nom},{texte:String(s.charge)},{texte:String(s.notes)},
-              {texte:s.moyenne!=null?("⭐ "+s.moyenne+"/5"):"—"}];
-    }, "Aucun membre du staff identifié (rôle support ou permission « Gérer le serveur »)."));
-
-  remplacer("d-tickets-fermes", tableau(["N°","Catégorie","Note","Créé"],
-    donnees.tickets.fermes, function(t){
-      return [{texte:"#"+t.numero},{texte:t.categorie},{texte:t.note?("⭐".repeat(t.note)):"—"},{texte:date(t.cree)}];
-    }, "Aucun ticket fermé."));
-}
-
 /* ---------------------------------------------------------- communauté */
 function dessinerCommunaute(){
+  var n = donnees.niveaux || {xp:[]}, inv = donnees.invitations || {top:[]};
+  tagTexte("dtag-xp", n.xp.length ? (n.xp.length + " membre(s)") : "aucun", n.xp.length ? "ok" : "");
+  tagTexte("dtag-inv", inv.top.length ? (inv.top.length + " membre(s)") : "aucune", inv.top.length ? "ok" : "");
   remplacer("d-niveaux", tableau(["#","Membre","Niveau","XP","Messages","Vocal"],
-    donnees.niveaux.xp, function(n){
-      return [{texte:"#"+n.rang},{texte:n.nom},{texte:String(n.niveau)},
-              {texte:n.xp.toLocaleString("fr-FR")},{texte:String(n.messages)},{texte:duree(n.voix)}];
+    n.xp, function(x){
+      return [{texte:"#"+x.rang},{texte:x.nom},
+              {noeud:pastille(String(x.niveau), "bleu")},
+              {texte:nombre(x.xp)},{texte:nombre(x.messages)},{texte:duree(x.voix)}];
     }, "Aucune donnée de niveau (XP désactivée ou personne n'a encore gagné d'XP)."));
   remplacer("d-invitations", tableau(["#","Membre","Actives","Rejointes","Bonus","Départs"],
-    donnees.invitations.top, function(v,i){
+    inv.top, function(v){
       return [{texte:"#"+v.rang},{texte:v.nom},{texte:String(v.actives)},{texte:String(v.rejointes)},
               {texte:String(v.bonus)},{texte:String(v.departs)}];
     }, "Aucune invitation enregistrée."));
 }
 $("d-xp-reset").addEventListener("click", function(){
-  if(confirm("Remettre TOUS les niveaux de ce serveur à zéro ?")) action("xp_reset",{}, "dmsg-global");
+  if(confirm("Remettre TOUS les niveaux de ce serveur à zéro ? Cette action est irréversible."))
+    action("xp_reset",{}, "dmsg-global");
 });
 $("d-inv-reset").addEventListener("click", function(){
-  if(confirm("Remettre TOUTES les invitations de ce serveur à zéro ?")) action("invites_reset",{}, "dmsg-inv");
+  if(confirm("Remettre TOUTES les invitations de ce serveur à zéro ? Cette action est irréversible."))
+    action("invites_reset",{}, "dmsg-inv");
 });
 $("d-inv-bonus").addEventListener("click", function(){
   var m=($("d-inv-membre").value||"").trim(), d=parseInt($("d-inv-delta").value,10);
   if(!/^\d{5,25}$/.test(m)){ msg("dmsg-inv","Identifiant invalide.","no"); return; }
-  action("invites_bonus",{membre:m, delta:d}, "dmsg-inv");
+  if(isNaN(d) || d === 0){ msg("dmsg-inv","Indique un nombre de bonus différent de zéro.","no"); return; }
+  action("invites_bonus",{membre:m, delta:d}, "dmsg-inv", function(){ $("d-inv-membre").value=""; });
 });
 
-/* ---------------------------------------------------------- logs */
+/* ---------------------------------------------------------- journaux */
 function chargerLogs(){
   api("/api/verify/dashboard/logs?n=200").then(function(res){
     if(res.status === 401){ deconnecter("Session expirée."); return; }
     if(!res.ok){ return; }
     var entrees = (res.data && res.data.entrees) || [];
-    var boite = $("d-logs"); boite.textContent = "";
-    if(!entrees.length){ boite.appendChild(el("p","dvide","Aucun avertissement ni erreur depuis le démarrage : tout est propre.")); return; }
+    var parNiveau = (res.data && res.data.par_niveau) || {};
+    var total = Object.keys(parNiveau).reduce(function(a,k){ return a + parNiveau[k]; }, 0);
+    tagTexte("dtag-logs2", total ? (total + " entrée(s)") : "aucune", total ? "warn" : "ok");
+
+    /* Compteurs sur les onglets de niveau. */
+    Array.prototype.forEach.call(document.querySelectorAll("#d-logs-filtres button"), function(b){
+      var niv = b.dataset.niv;
+      var n = niv ? (parNiveau[niv] || 0) : total;
+      b.textContent = (b.dataset.texteBase || b.textContent.replace(/\s*\(\d+\)$/,"")) + (n ? " (" + n + ")" : "");
+      if(!b.dataset.texteBase) b.dataset.texteBase = b.textContent.replace(/\s*\(\d+\)$/,"");
+    });
+
+    if(filtreLogs) entrees = entrees.filter(function(e){ return String(e.niveau).toUpperCase() === filtreLogs; });
+
+    var boite = $("d-logs"); vide(boite);
+    if(!entrees.length){
+      boite.appendChild(el("p","dvide", filtreLogs
+        ? "Aucune entrée de ce niveau."
+        : "Aucun avertissement ni erreur depuis le démarrage : tout est propre."));
+      return;
+    }
     var t = el("table"); var thead=el("thead"), tr=el("tr");
     ["Heure","Niveau","Origine","Message"].forEach(function(h){ tr.appendChild(el("th",null,h)); });
     thead.appendChild(tr); t.appendChild(thead);
@@ -765,13 +1160,14 @@ function chargerLogs(){
     entrees.slice(0,200).forEach(function(e){
       var r = el("tr");
       r.appendChild(el("td",null,new Date(e.t*1000).toLocaleTimeString("fr-FR",{hour12:false})));
-      r.appendChild(el("td",null,e.niveau));
+      var niv = el("td"); niv.appendChild(pastille(e.niveau, String(e.niveau).toUpperCase()==="ERROR"||String(e.niveau).toUpperCase()==="CRITICAL" ? "ko" : "warn"));
+      r.appendChild(niv);
       r.appendChild(el("td",null,e.logger||"bot"));
       r.appendChild(el("td","wrap",e.message));
       tb.appendChild(r);
     });
     t.appendChild(tb); boite.appendChild(t);
-  });
+  }).catch(function(){ msg("dmsg-global","Impossible de récupérer les journaux.","no"); });
 }
 $("d-logs-maj").addEventListener("click", chargerLogs);
 $("d-logs-auto").addEventListener("change", function(){
@@ -779,6 +1175,21 @@ $("d-logs-auto").addEventListener("change", function(){
   clearInterval(tLogs);
   if(autoLogs) tLogs = setInterval(function(){ if(!document.hidden) chargerLogs(); }, 5000);
 });
+Array.prototype.forEach.call(document.querySelectorAll("#d-logs-filtres button"), function(b){
+  b.addEventListener("click", function(){
+    Array.prototype.forEach.call(document.querySelectorAll("#d-logs-filtres button"), function(x){ x.classList.toggle("on", x===b); });
+    filtreLogs = b.dataset.niv;
+    chargerLogs();
+  });
+});
+
+/* ---------------------------------------------------------- compteurs latéraux */
+function majCompteurs(){
+  var t = (donnees.tickets && donnees.tickets.ouverts) ? donnees.tickets.ouverts.length : 0;
+  var nb = $("d-nb-tickets"); if(nb){ nb.textContent = t || ""; }
+  var bl = (donnees.blacklist||[]).length;
+  var ebl = $("d-nb-bl"); if(ebl){ ebl.textContent = bl || ""; }
+}
 
 /* ---------------------------------------------------------- actions */
 function action(nom, corps, cible, apres){

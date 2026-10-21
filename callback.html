@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connexion — Orvyx</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="style.css">
+<style>
+  .cbn{max-width:520px;margin:14vh auto;padding:0 20px;text-align:center}
+  .cbn h1{font-size:1.4rem;margin:0 0 .4rem}
+  .cbn p{color:var(--muted,#9aa4b2);margin:.4rem 0}
+  .cbn .etat{display:inline-block;width:38px;height:38px;border-radius:50%;
+    border:3px solid rgba(255,255,255,.18);border-top-color:var(--accent,#7c5cff);
+    animation:tour 0.9s linear infinite;margin:1.2rem 0}
+  @keyframes tour{to{transform:rotate(360deg)}}
+  .cbn a{color:var(--accent,#7c5cff)}
+  .cbn .erreur{color:#ff6b6b}
+</style>
+</head>
+<body>
+<main class="cbn" id="cbn">
+  <div class="etat" id="tour"></div>
+  <h1 id="titre">Connexion à Discord…</h1>
+  <p id="texte">Vérification en cours, tu vas être redirigé vers ton tableau de bord.</p>
+  <p id="lien"></p>
+</main>
+
+<script src="config.js"></script>
+<script>
+/* ============================================================================
+   Page de retour OAuth2 du tableau de bord.
+
+   Le portail Discord renvoie ici (`DASHBOARD_REDIRECT_URI`, ex.
+   https://orvyx.site/callback.html) avec un `code` temporaire. Cette page
+   STATIQUE ne connaît AUCUN secret : elle transmet le `code` au bot, qui seul
+   possède la clé secrète, l'échange contre un jeton et ouvre une session. Le
+   jeton de session reçu est ensuite placé dans le FRAGMENT de dashboard.html
+   (`#s=…`), donc jamais journalisé par le serveur web.
+   ========================================================================== */
+(function(){
+"use strict";
+var API = String(window.ORVYX_API || "").replace(/\/+$/, "");
+var $ = function(id){ return document.getElementById(id); };
+var ERREURS = {
+  state: "Ce lien de connexion a expiré ou a déjà servi. Relance la connexion depuis le tableau de bord.",
+  discord: "Discord a refusé la connexion. Réessaie dans un instant.",
+  reseau: "Discord ou le bot est injoignable pour le moment. Réessaie plus tard.",
+  origine: "Origine non autorisée : ouvre le tableau de bord depuis le site officiel.",
+  indisponible: "Le tableau de bord est momentanément indisponible."
+};
+
+function echec(cle, detail){
+  $("tour").style.display = "none";
+  $("titre").textContent = "Connexion impossible";
+  $("texte").className = "erreur";
+  $("texte").textContent = ERREURS[cle] || "Connexion impossible.";
+  $("lien").innerHTML = '<a href="dashboard.html">Retour au tableau de bord</a>';
+  if(detail){ console.warn("[Orvyx] callback :", detail); }
+}
+
+/* Retour d'erreur direct de Discord (l'utilisateur a refusé l'autorisation). */
+var q = new URLSearchParams(location.search);
+if(q.get("error")){ echec("discord", q.get("error")); return; }
+
+var code = q.get("code") || "";
+var state = q.get("state") || "";
+if(!code || !state){
+  echec("state", "code ou state manquant");
+  return;
+}
+
+/* Le code n'est valable qu'une fois et pour la redirection déclarée : on l'échange
+   immédiatement auprès du bot, qui renvoie un jeton de session opaque. */
+fetch(API + "/api/verify/dashboard/relais", {
+  method: "POST",
+  headers: {"Content-Type": "application/json"},
+  body: JSON.stringify({code: code, state: state})
+}).then(function(r){
+  return r.json().catch(function(){ return {}; }).then(function(d){
+    return {ok: r.ok, status: r.status, data: d};
+  });
+}).then(function(res){
+  if(res.ok && res.data && res.data.jeton){
+    /* Nettoyage de l'URL : le code ne doit pas rester dans l'historique. */
+    history.replaceState(null, "", location.pathname);
+    location.replace("dashboard.html#s=" + encodeURIComponent(res.data.jeton));
+    return;
+  }
+  var cle = (res.data && res.data.erreur) || "discord";
+  if(res.status === 403){ cle = "origine"; }
+  if(res.status === 503){ cle = "indisponible"; }
+  echec(cle, res.data);
+}).catch(function(exc){
+  echec("reseau", exc && exc.message);
+});
+})();
+</script>
+</body>
+</html>

@@ -72,6 +72,9 @@
 .dplein{grid-column:1/-1}
 .dbascule{display:flex;align-items:center;gap:.65rem;cursor:pointer;padding:.35rem 0}
 .dbascule input{width:18px!important;height:18px;accent-color:#57f287;cursor:pointer;flex:0 0 auto}
+.dchamp input[type=color]{padding:.15rem;height:2.6rem;cursor:pointer}
+.dchamp input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+.dchamp input[type=color]::-webkit-color-swatch{border:1px solid var(--ln);border-radius:7px}
 .dchamp.marque{border-left:2px solid #f0b232;padding-left:.75rem;margin-left:-.75rem}
 
 /* -------------------------------------------------- listes structurées */
@@ -150,9 +153,45 @@
 .dspin{display:inline-block;width:22px;height:22px;border:2px solid rgba(255,255,255,.18);border-top-color:#fff;border-radius:50%;animation:dspin .7s linear infinite}
 @keyframes dspin{to{transform:rotate(360deg)}}
 
+/* ------------------------------------------------------ éditeur d'embed */
+.demb{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1.3rem;align-items:start}
+.demb-form{display:flex;flex-direction:column;gap:1.1rem;min-width:0}
+.demb-bloc{border:1px solid var(--ln);border-radius:13px;padding:.95rem 1rem;background:rgba(255,255,255,.015)}
+.demb-bloc h4{margin:0 0 .7rem;font-size:.79rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mu);font-weight:700}
+.demb-bloc .dform{gap:.75rem}
+.demb-bloc .dsmall{display:block;margin:-.3rem 0 .6rem}
+.demb .dligne .dcol{flex:1 1 150px}
+
+.demb-apercu{position:sticky;top:1rem;min-width:0}
+.demb-apercu h4{margin:0 0 .7rem;font-size:.79rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mu);font-weight:700}
+.dprev{background:#313338;border-radius:11px;padding:1rem;font:400 .95rem/1.45 var(--b);color:#dbdee1;overflow-wrap:anywhere}
+.dprev-texte{color:#dbdee1;margin-bottom:.5rem;white-space:pre-wrap}
+.dprev-carte{display:flex;gap:1rem;border-left:4px solid #000;background:#2b2d31;border-radius:5px;padding:.85rem 1rem;position:relative}
+.dprev-corps{flex:1;min-width:0}
+.dprev-auteur{display:flex;align-items:center;gap:.5rem;font-size:.86rem;font-weight:600;color:#f2f3f5;margin-bottom:.45rem}
+.dprev-auteur img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+.dprev-titre{font-size:1rem;font-weight:700;color:#f2f3f5;margin-bottom:.35rem}
+.dprev-titre a{color:inherit;text-decoration:none}
+.dprev-desc{font-size:.92rem;color:#dbdee1;white-space:pre-wrap}
+.dprev-desc:empty{display:none}
+.dprev-champs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem;margin-top:.7rem}
+.dprev-champs:empty{display:none}
+.dprev-champ{grid-column:span 3;min-width:0}
+.dprev-champ.code{grid-column:span 1}
+.dprev-champ b{display:block;font-size:.85rem;color:#f2f3f5;margin-bottom:.15rem;font-weight:700}
+.dprev-champ span{font-size:.87rem;color:#dbdee1;white-space:pre-wrap}
+.dprev-vignette{position:absolute;top:.85rem;right:1rem;width:74px;height:74px;border-radius:6px;overflow:hidden}
+.dprev-image{margin-top:.7rem;border-radius:6px;overflow:hidden;max-height:260px}
+.dprev-image,.dprev-vignette{background:#1e1f22}
+.dprev-image img,.dprev-vignette img{width:100%;height:100%;object-fit:cover;display:block}
+.dprev-pied{display:flex;align-items:center;gap:.5rem;font-size:.79rem;color:#b5bac1;margin-top:.7rem}
+.dprev-pied img{width:18px;height:18px;border-radius:50%;object-fit:cover}
+
 /* ------------------------------------------------------------- responsive */
 @media(max-width:1000px){
 .dgrid{grid-template-columns:1fr}
+.demb{grid-template-columns:1fr}
+.demb-apercu{position:static}
 .dside{position:static;display:flex;gap:.3rem;overflow-x:auto;padding:.5rem;border-radius:14px}
 .dside .dside-titre{display:none}
 .dside button{width:auto;white-space:nowrap;padding:.6rem .8rem}
@@ -207,6 +246,7 @@ Se connecter avec Discord
 <button data-v="tickets"><span class="dico">🎫</span>Tickets<span class="dcompte" id="d-nb-tickets"></span></button>
 <button data-v="moderation"><span class="dico">🔨</span>Modération<span class="dcompte" id="d-nb-bl"></span></button>
 <button data-v="communaute"><span class="dico">👥</span>Communauté</button>
+<button data-v="embed"><span class="dico">🖼️</span>Embed</button>
 <button data-v="logs"><span class="dico">📜</span>Journaux</button>
 </aside>
 
@@ -372,6 +412,90 @@ Se connecter avec Discord
 </section>
 </div>
 
+<!-- --------------------------------------------- embed -->
+<div class="dvue" id="v-embed">
+<section class="dcarte">
+<h3>Éditeur d'embed</h3>
+<p class="dsub">Compose un embed et vois le résultat en direct, exactement tel qu'il apparaîtra sur Discord. Puis publie-le dans le salon de ton choix — sans passer par la commande <code>/embed</code>.</p>
+
+<div class="demb">
+<!-- colonne formulaire -->
+<div class="demb-form">
+<div class="demb-bloc">
+<h4>Destination</h4>
+<div class="dform">
+<div class="dchamp"><label for="d-em-salon">Salon de destination</label><select id="d-em-salon"></select></div>
+<div class="dchamp"><label for="d-em-mention">Rôle à mentionner (optionnel)</label><select id="d-em-mention"></select></div>
+</div>
+</div>
+
+<div class="demb-bloc">
+<h4>Contenu</h4>
+<div class="dform">
+<div class="dchamp"><label for="d-em-titre">Titre</label><input id="d-em-titre" maxlength="256" placeholder="Annonce importante"></div>
+<div class="dchamp"><label for="d-em-lien">Lien du titre (optionnel)</label><input id="d-em-lien" placeholder="https://orvyx.site"></div>
+<div class="dchamp dplein"><label for="d-em-desc">Description</label><textarea id="d-em-desc" maxlength="4096" placeholder="Le texte de ton message… la mise en forme **gras**, *italique* et `code` fonctionne."></textarea></div>
+<div class="dchamp"><label for="d-em-couleur">Couleur d'accent</label><input id="d-em-couleur" type="color" value="#000000"></div>
+<div class="dchamp"><label for="d-em-contenu">Texte au-dessus de l'embed (optionnel)</label><input id="d-em-contenu" maxlength="2000" placeholder="Message hors embed"></div>
+</div>
+</div>
+
+<div class="demb-bloc">
+<h4>Images</h4>
+<div class="dform">
+<div class="dchamp"><label for="d-em-image">Grande image (URL)</label><input id="d-em-image" placeholder="https://…/banniere.png"></div>
+<div class="dchamp"><label for="d-em-vignette">Vignette en haut à droite (URL)</label><input id="d-em-vignette" placeholder="https://…/icone.png"></div>
+</div>
+</div>
+
+<div class="demb-bloc">
+<h4>Auteur &amp; pied de page</h4>
+<div class="dform">
+<div class="dchamp"><label for="d-em-auteur">Nom de l'auteur</label><input id="d-em-auteur" maxlength="256" placeholder="Orvyx"></div>
+<div class="dchamp"><label for="d-em-auteur-icone">Icône de l'auteur (URL)</label><input id="d-em-auteur-icone" placeholder="https://…/logo.png"></div>
+<div class="dchamp"><label for="d-em-pied">Texte du pied de page</label><input id="d-em-pied" maxlength="2048" placeholder="Serveur officiel"></div>
+<div class="dchamp"><label for="d-em-pied-icone">Icône du pied de page (URL)</label><input id="d-em-pied-icone" placeholder="https://…/logo.png"></div>
+</div>
+<label class="dbascule dsmall"><input type="checkbox" id="d-em-horodatage"> Ajouter l'horodatage du moment de l'envoi</label>
+</div>
+
+<div class="demb-bloc">
+<h4>Champs</h4>
+<p class="dsmall">Jusqu'à 25 champs. Coche « sur une ligne » pour placer plusieurs champs côte à côte.</p>
+<div class="dliste" id="d-em-champs"></div>
+<div class="dpied"><button class="btn ghost tiny" id="d-em-ajouter" type="button">+ Ajouter un champ</button></div>
+</div>
+
+<div class="dactions">
+<button class="btn tiny" id="d-em-publier" type="button">Publier l'embed</button>
+<button class="btn ghost tiny" id="d-em-modele" type="button">Charger un modèle</button>
+<button class="btn ghost tiny" id="d-em-vider" type="button">Tout effacer</button>
+</div>
+<div class="dmsg" id="dmsg-embed"></div>
+</div>
+
+<!-- colonne aperçu -->
+<div class="demb-apercu">
+<h4>Aperçu en direct</h4>
+<div class="dprev" id="d-em-apercu">
+<div class="dprev-texte" id="d-em-apercu-texte" hidden></div>
+<div class="dprev-carte" id="d-em-apercu-carte">
+<div class="dprev-auteur" id="d-em-apercu-auteur" hidden></div>
+<div class="dprev-corps">
+<div class="dprev-titre" id="d-em-apercu-titre" hidden></div>
+<div class="dprev-desc" id="d-em-apercu-desc"></div>
+<div class="dprev-champs" id="d-em-apercu-champs"></div>
+</div>
+<div class="dprev-vignette" id="d-em-apercu-vignette" hidden></div>
+<div class="dprev-image" id="d-em-apercu-image" hidden></div>
+<div class="dprev-pied" id="d-em-apercu-pied" hidden></div>
+</div>
+<p class="dvide" id="d-em-apercu-vide">Remplis le formulaire : l'aperçu apparaît ici.</p>
+</div>
+</div>
+</section>
+</div>
+
 <!-- --------------------------------------------- journaux -->
 <div class="dvue" id="v-logs">
 <section class="dcarte">
@@ -391,6 +515,7 @@ Se connecter avec Discord
 </section>
 </div>
 
+</div>
 </div>
 </div>
 </div>
@@ -519,7 +644,7 @@ function charger(guildId){
 }
 
 /* ---------------------------------------------------------- navigation */
-var ONGLETS = ["apercu","config","tickets","moderation","communaute","logs"];
+var ONGLETS = ["apercu","config","tickets","moderation","communaute","embed","logs"];
 function aller(v){
   Array.prototype.forEach.call(document.querySelectorAll(".dside button"), function(x){
     x.classList.toggle("on", x.dataset.v === v);
@@ -590,6 +715,8 @@ function dessiner(){
   dessinerTickets();
   dessinerModeration();
   dessinerCommunaute();
+  emRemplirSalons();
+  emApercu();
   majCompteurs();
 }
 
@@ -1201,6 +1328,229 @@ function action(nom, corps, cible, apres){
     if(res.ok){ if(apres) apres(); charger(courant); }
   }).catch(function(){ msg(cible || "dmsg-global", "Le bot ne répond pas.", "no"); });
 }
+
+/* ================================================================= éditeur d'embed
+   Tout le rendu est reconstruit côté bot à partir des mêmes champs : l'aperçu ici
+   ne fait que montrer ce que Discord affichera. Aucun contenu n'est interprété
+   comme du HTML (on n'utilise que textContent) : le balisage Markdown de Discord
+   reste affiché tel quel, sans exécution possible. */
+var EM = {};                                    /* champs texte liés à l'aperçu */
+var EM_CHAMPS = [];                             /* champs nom/valeur/en ligne */
+var MODELES = [
+  {nom:"Annonce", titre:"📢 Annonce", couleur:"#000000",
+   desc:"Bonjour à tous !\n\nNous avons le plaisir de vous annoncer une nouveauté sur le serveur.",
+   pied:"Orvyx", horodatage:true},
+  {nom:"Règlement", titre:"📜 Règlement du serveur", couleur:"#000000",
+   desc:"**1.** Respecte tout le monde.\n**2.** Pas de spam ni de publicité.\n**3.** Suis les consignes du staff.",
+   pied:"Direction"},
+  {nom:"Maintenance", titre:"🔧 Maintenance en cours", couleur:"#000000",
+   desc:"Le bot redémarre pour une mise à jour.\nNous revenons très vite, merci de votre patience !",
+   pied:"Orvyx", horodatage:true},
+  {nom:"Événement", titre:"🎉 Soirée jeux ce soir", couleur:"#000000",
+   desc:"Rendez-vous à **21 h** en vocal pour une soirée détente !",
+   pied:"Orvyx", horodatage:true}
+];
+
+function emVide(){
+  return $("d-em-titre").value.trim() === "" && $("d-em-desc").value.trim() === ""
+      && $("d-em-contenu").value.trim() === "" && EM_CHAMPS.length === 0
+      && $("d-em-image").value.trim() === "" && $("d-em-vignette").value.trim() === ""
+      && $("d-em-auteur").value.trim() === "" && $("d-em-pied").value.trim() === "";
+}
+
+/* Aperçu : reproduit visuellement la carte Discord. */
+function emApercu(){
+  var t = $("d-em-titre").value.trim();
+  var d = $("d-em-desc").value;
+  var conte = $("d-em-contenu").value.trim();
+  var titre = $("d-em-apercu-titre"), desc = $("d-em-apercu-desc");
+  var carte = $("d-em-apercu-carte"), vide_ = $("d-em-apercu-vide");
+
+  carte.style.borderLeftColor = $("d-em-couleur").value || "#000000";
+
+  /* Texte au-dessus de l'embed */
+  var zoneTexte = $("d-em-apercu-texte");
+  var mention = $("d-em-mention").value;
+  var prefixe = mention ? ("@" + ($("d-em-mention").selectedOptions[0] || {}).textContent + " ") : "";
+  if(conte || prefixe){
+    zoneTexte.hidden = false; zoneTexte.textContent = prefixe + conte;
+  } else { zoneTexte.hidden = true; }
+
+  /* Titre (+ lien) */
+  if(t){
+    titre.hidden = false; vide(titre);
+    var lien = $("d-em-lien").value.trim();
+    if(lien.indexOf("http") === 0){
+      var a = el("a", null, t); a.href = lien; a.target = "_blank"; a.rel = "noopener nofollow";
+      titre.appendChild(a);
+    } else { titre.textContent = t; }
+  } else { titre.hidden = true; }
+
+  desc.textContent = d;
+
+  /* Auteur */
+  var au = $("d-em-apercu-auteur"), nomAu = $("d-em-auteur").value.trim();
+  if(nomAu){
+    au.hidden = false; vide(au);
+    var ic = $("d-em-auteur-icone").value.trim();
+    if(ic.indexOf("http") === 0){ var i1 = el("img"); i1.src = ic; i1.alt = ""; au.appendChild(i1); }
+    au.appendChild(el("span", null, nomAu));
+  } else { au.hidden = true; }
+
+  /* Champs */
+  var zc = $("d-em-apercu-champs"); vide(zc);
+  EM_CHAMPS.forEach(function(c){
+    if(!c.nom.trim() && !c.valeur.trim()) return;
+    var bloc = el("div","dprev-champ" + (c.inline ? " code" : ""));
+    bloc.appendChild(el("b", null, c.nom || "\u200b"));
+    bloc.appendChild(el("span", null, c.valeur || "\u200b"));
+    zc.appendChild(bloc);
+  });
+
+  /* Vignette et grande image */
+  var vi = $("d-em-vignette").value.trim(), im = $("d-em-image").value.trim();
+  emImage($("d-em-apercu-vignette"), vi);
+  emImage($("d-em-apercu-image"), im);
+
+  /* Pied de page */
+  var pf = $("d-em-apercu-pied"), texteP = $("d-em-pied").value.trim();
+  var quand = $("d-em-horodatage").checked ? " • aujourd'hui à l'envoi" : "";
+  if(texteP || quand){
+    pf.hidden = false; vide(pf);
+    var ip = $("d-em-pied-icone").value.trim();
+    if(ip.indexOf("http") === 0){ var i2 = el("img"); i2.src = ip; i2.alt = ""; pf.appendChild(i2); }
+    pf.appendChild(el("span", null, texteP + quand));
+  } else { pf.hidden = true; }
+
+  vide_.hidden = !emVide() || !!(t || d || conte);
+}
+function emImage(bloc, url){
+  if(url.indexOf("http") !== 0){ bloc.hidden = true; vide(bloc); return; }
+  bloc.hidden = false; vide(bloc);
+  var img = el("img"); img.src = url; img.alt = ""; bloc.appendChild(img);
+}
+
+/* Ligne d'un champ personnalisé. */
+function emLigneChamp(entree){
+  entree = entree || {nom:"", valeur:"", inline:false};
+  var ligne = el("div","dligne");
+  function colonne(label, cle){
+    var c = el("div","dcol");
+    c.appendChild(el("small", null, label));
+    var inp = el("input"); inp.value = entree[cle] || "";
+    inp.addEventListener("input", function(){ entree[cle] = inp.value; emApercu(); });
+    c.appendChild(inp); return c;
+  }
+  ligne.appendChild(colonne("Nom du champ", "nom"));
+  ligne.appendChild(colonne("Valeur", "valeur"));
+  var c = el("div","dcol"); c.style.flex = "0 0 auto";
+  var lab = el("label","dbascule dsmall");
+  var coche = el("input"); coche.type = "checkbox"; coche.checked = !!entree.inline;
+  coche.addEventListener("change", function(){ entree.inline = coche.checked; emApercu(); });
+  lab.appendChild(coche); lab.appendChild(document.createTextNode("Sur une ligne"));
+  c.appendChild(lab); ligne.appendChild(c);
+  var sup = el("button","btn ghost tiny","✕"); sup.type = "button";
+  sup.title = "Supprimer ce champ";
+  sup.onclick = function(){
+    EM_CHAMPS.splice(EM_CHAMPS.indexOf(entree), 1);
+    ligne.remove(); emApercu();
+  };
+  ligne.appendChild(sup);
+  return ligne;
+}
+function emAjouterChamp(entree){
+  if(EM_CHAMPS.length >= 25){ msg("dmsg-embed","Maximum 25 champs.","no"); return; }
+  var e = entree || {nom:"", valeur:"", inline:false};
+  EM_CHAMPS.push(e);
+  $("d-em-champs").appendChild(emLigneChamp(e));
+  emApercu();
+}
+$("d-em-ajouter").addEventListener("click", function(){ emAjouterChamp(); });
+
+/* Tous les champs texte alimentent l'aperçu en direct. */
+["d-em-titre","d-em-desc","d-em-contenu","d-em-lien","d-em-image","d-em-vignette",
+ "d-em-auteur","d-em-auteur-icone","d-em-pied","d-em-pied-icone","d-em-couleur","d-em-mention"]
+.forEach(function(id){
+  var e = $(id); if(!e) return;
+  e.addEventListener("input", emApercu);
+  e.addEventListener("change", emApercu);
+});
+$("d-em-horodatage").addEventListener("change", emApercu);
+
+/* Remplit le salon et le rôle : appelé à chaque chargement de serveur. */
+function emRemplirSalons(){
+  var sel = $("d-em-salon"); vide(sel);
+  var o = el("option", null, "— Choisir un salon —"); o.value = ""; sel.appendChild(o);
+  ((donnees && donnees.salons && donnees.salons.texte) || []).forEach(function(s){
+    var x = el("option", null, "#" + s.nom); x.value = s.id; sel.appendChild(x);
+  });
+  var men = $("d-em-mention"); vide(men);
+  var a = el("option", null, "— Aucun rôle —"); a.value = ""; men.appendChild(a);
+  ((donnees && donnees.roles) || []).forEach(function(r){
+    var x = el("option", null, "@" + r.nom); x.value = r.id; men.appendChild(x);
+  });
+}
+
+/* Modèles prêts à l'emploi. */
+$("d-em-modele").addEventListener("click", function(){
+  var noms = MODELES.map(function(m,i){ return (i+1) + ". " + m.nom; }).join("\n");
+  var choix = window.prompt("Quel modèle charger ?\n\n" + noms + "\n\nNuméro :", "1");
+  if(choix === null) return;
+  var m = MODELES[(parseInt(choix,10) || 1) - 1];
+  if(!m){ msg("dmsg-embed","Numéro de modèle inconnu.","no"); return; }
+  $("d-em-titre").value = m.titre || "";
+  $("d-em-desc").value = m.desc || "";
+  $("d-em-couleur").value = m.couleur || "#000000";
+  $("d-em-pied").value = m.pied || "";
+  $("d-em-horodatage").checked = !!m.horodatage;
+  vide($("d-em-champs"));
+  EM_CHAMPS = [];
+  (m.champs || []).forEach(emAjouterChamp);  emApercu();
+  msg("dmsg-embed","Modèle « " + m.nom + " » chargé. Choisis le salon puis publie.","info");
+});
+
+/* Remise à zéro complète. */
+$("d-em-vider").addEventListener("click", function(){
+  ["d-em-titre","d-em-desc","d-em-contenu","d-em-lien","d-em-image","d-em-vignette",
+   "d-em-auteur","d-em-auteur-icone","d-em-pied","d-em-pied-icone"].forEach(function(id){ $(id).value = ""; });
+  $("d-em-couleur").value = "#000000";
+  $("d-em-horodatage").checked = false;
+  vide($("d-em-champs"));
+  EM_CHAMPS = [];
+  emApercu();
+  msg("dmsg-embed","");
+});
+
+/* Publication. */
+$("d-em-publier").addEventListener("click", function(){
+  if(!courant){ msg("dmsg-embed","Choisis d'abord un serveur.","no"); return; }
+  var salon = $("d-em-salon").value;
+  if(!salon){ msg("dmsg-embed","Choisis le salon de destination.","no"); return; }
+  var titre = $("d-em-titre").value.trim(), desc = $("d-em-desc").value.trim();
+  if(!titre && !desc){ msg("dmsg-embed","Ajoute au moins un titre ou une description.","no"); return; }
+  var champs = EM_CHAMPS.filter(function(c){ return c.nom.trim() || c.valeur.trim(); })
+                        .map(function(c){ return {nom:c.nom, valeur:c.valeur, inline:c.inline}; });
+  var corps = {
+    action: "embed_send", salon: salon, titre: titre, description: $("d-em-desc").value,
+    couleur: $("d-em-couleur").value, lien_titre: $("d-em-lien").value.trim(),
+    contenu: $("d-em-contenu").value, mention_role: $("d-em-mention").value,
+    image: $("d-em-image").value.trim(), vignette: $("d-em-vignette").value.trim(),
+    auteur: $("d-em-auteur").value.trim(), auteur_icone: $("d-em-auteur-icone").value.trim(),
+    pied: $("d-em-pied").value.trim(), pied_icone: $("d-em-pied-icone").value.trim(),
+    horodatage: $("d-em-horodatage").checked, champs: champs
+  };
+  var btn = this; btn.disabled = true; btn.textContent = "Publication…";
+  poste("/api/verify/dashboard/serveur/" + courant + "/actions", corps).then(function(res){
+    btn.disabled = false; btn.textContent = "Publier l'embed";
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    var texte = (res.data && (res.data.message || res.data.erreur)) || ("Réponse " + res.status);
+    msg("dmsg-embed", texte + (res.ok && res.data && res.data.lien ? " Ouvre le salon pour le voir." : ""),
+        res.ok ? "ok" : "no");
+  }).catch(function(){
+    btn.disabled = false; btn.textContent = "Publier l'embed";
+    msg("dmsg-embed","Le bot ne répond pas : rien n'a été publié.","no");
+  });
+});
 
 /* ---------------------------------------------------------- démarrage */
 if(jeton){

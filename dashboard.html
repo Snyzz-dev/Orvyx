@@ -247,6 +247,7 @@ Se connecter avec Discord
 <button data-v="moderation"><span class="dico">🔨</span>Modération<span class="dcompte" id="d-nb-bl"></span></button>
 <button data-v="communaute"><span class="dico">👥</span>Communauté</button>
 <button data-v="embed"><span class="dico">🖼️</span>Embed</button>
+<button data-v="musique"><span class="dico">🎵</span>Musique</button>
 <button data-v="logs"><span class="dico">📜</span>Journaux</button>
 </aside>
 
@@ -496,6 +497,47 @@ Se connecter avec Discord
 </section>
 </div>
 
+
+<!-- --------------------------------------------- musique -->
+<div class="dvue" id="v-musique">
+<section class="dcarte">
+<h3>🎵 Orvyx-Music - Panneau de contrôle</h3>
+<p class="dsub">Contrôlez la musique depuis le site. Le bot doit être connecté à un salon vocal.</p>
+<div class="dmusique">
+<div class="dmus-header">
+<div class="dmus-track">
+<div class="dmus-cover" id="dmus-cover"></div>
+<div class="dmus-info">
+<div class="dmus-title" id="dmus-title">Aucune musique en lecture</div>
+<div class="dmus-artist" id="dmus-artist">—</div>
+<div class="dmus-time"><span id="dmus-time">--:--</span></div>
+</div>
+</div>
+</div>
+<div class="dmus-controls">
+<button class="dbtn" id="dmus-shuffle" title="Mélanger">🔀</button>
+<button class="dbtn" id="dmus-prev" title="Précédent" disabled>⏮️</button>
+<button class="dbtn dplay" id="dmus-playpause" title="Lecture/Pause">▶️</button>
+<button class="dbtn" id="dmus-next" title="Suivant">⏭️</button>
+<button class="dbtn" id="dmus-stop" title="Arrêter">⏹️</button>
+</div>
+<div class="dmus-options">
+<label class="dbascule"><input type="checkbox" id="dmus-loop"> Boucler la musique</label>
+<label class="dbascule"><input type="checkbox" id="dmus-loopq"> Boucler la file</label>
+<div class="dmus-vol">
+<span>🔊</span>
+<input type="range" id="dmus-volume" min="0" max="100" value="50">
+<span id="dmus-volval">50%</span>
+</div>
+</div>
+</div>
+</section>
+<section class="dcarte">
+<h3>File d'attente</h3>
+<div id="dmus-queue" class="dmus-queue"></div>
+</section>
+</div>
+
 <!-- --------------------------------------------- journaux -->
 <div class="dvue" id="v-logs">
 <section class="dcarte">
@@ -644,7 +686,7 @@ function charger(guildId){
 }
 
 /* ---------------------------------------------------------- navigation */
-var ONGLETS = ["apercu","config","tickets","moderation","communaute","embed","logs"];
+var ONGLETS = ["apercu","config","tickets","moderation","communaute","embed","musique","logs"];
 function aller(v){
   Array.prototype.forEach.call(document.querySelectorAll(".dside button"), function(x){
     x.classList.toggle("on", x.dataset.v === v);

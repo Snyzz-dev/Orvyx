@@ -850,6 +850,970 @@ Se connecter avec Discord
 <footer><div class="wrap"><span>© 2026 Orvyx. Créé par Snyzz. Non affilié à Discord Inc.</span><div><a href="documentation.html">Documentation</a><a href="conditions.html">Conditions d’Utilisation</a><a href="confidentialite.html">Politique de Confidentialité</a><a href="droit-auteur.html">Droit d’auteur</a><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener noreferrer">GitHub</a><a href="#" data-support>Support</a></div></div></footer>
 <script src="config.js"></script>
 <script src="script.js"></script>
+<script>\n(function(){
+"use strict";
+/* API : config.js - "" = même origine (page servie par le bot / le reverse proxy). */
+var API = String(window.ORVYX_API || "").replace(/\/+$/, "");
+var CLE = "orvyx_dashboard_jeton";
+var $ = function(id){ return document.getElementById(id); };
+var jeton = sessionStorage.getItem(CLE) || "";
+var moi = null, serveurs = [], courant = null, donnees = null;
+var autoLogs = false, tLogs = 0, filtreLogs = "";
+var modifs = {};           /* clés modifiées localement, en attente d'enregistrement */
+var CONFIG = {}, LISTES = {}, LISTE_ETAT = {};
+
+/* ---------------------------------------------------------- utilitaires */
+function msg(id, texte, type){
+  var e = $(id); if(!e) return;
+  e.textContent = texte || "";
+  e.className = "dmsg " + (type || "");
+  if(!texte) e.className = "dmsg";
+}
+function date(s){ if(!s) return "-"; return new Date(s * 1000).toLocaleString("fr-FR", {dateStyle:"short", timeStyle:"short"}); }
+function duree(sec){
+  if(sec == null) return "-"; sec = Math.floor(sec);
+  var j=Math.floor(sec/86400),h=Math.floor(sec%86400/3600),m=Math.floor(sec%3600/60);
+  if(j) return j+" j "+h+" h"; if(h) return h+" h "+m+" min"; return m+" min";
+}
+function nombre(n){ return (Number(n)||0).toLocaleString("fr-FR"); }
+function api(chemin, opts){
+  opts = opts || {};
+  opts.headers = Object.assign({}, opts.headers, {"Authorization":"Bearer "+jeton});
+  return fetch(API + chemin, opts).then(function(r){
+    return r.json().catch(function(){return {};}).then(function(d){ return {ok:r.ok,status:r.status,data:d}; });
+  });
+}
+function poste(chemin, corps){
+  return api(chemin, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(corps||{})});
+}
+function el(balise, classe, texte){ var e=document.createElement(balise); if(classe)e.className=classe; if(texte!=null)e.textContent=texte; return e; }
+function vide(noeud){ while(noeud && noeud.firstChild) noeud.removeChild(noeud.firstChild); }
+
+/* ---------------------------------------------------------- connexion */
+function deconnecter(raison){
+  api("/api/verify/dashboard/logout", {method:"POST"}).catch(function(){});
+  jeton=""; sessionStorage.removeItem(CLE);
+  clearInterval(tLogs);
+  clearInterval(MUS_TIMER); MUS_TIMER = 0;
+  $("dpanneau").hidden = true; $("dporte").hidden = false;
+  msg("dmsg-porte", raison || "");
+}
+$("btn-discord").addEventListener("click", function(){
+  msg("dmsg-porte", "");
+  this.disabled = true;
+  var b = this; b.textContent = "Connexion…";
+  fetch(API + "/api/verify/dashboard/login").then(function(r){ return r.json(); }).then(function(d){
+    b.disabled = false;
+    if(d.redirect){ location.href = d.redirect; }
+    else { b.textContent = "Se connecter avec Discord"; msg("dmsg-porte", d.erreur || "Connexion Discord indisponible pour le moment.", "no"); }
+  }).catch(function(){
+    b.disabled = false; b.textContent = "Se connecter avec Discord";
+    msg("dmsg-porte", "Impossible de joindre l'API du bot : est-il en ligne ?", "no");
+  });
+});
+
+/* Retour de Discord : le jeton arrive dans le fragment (#s=…), jamais dans les logs. */
+var frag = new URLSearchParams(location.hash.replace(/^#/, ""));
+if(frag.get("s")){
+  jeton = frag.get("s"); sessionStorage.setItem(CLE, jeton);
+  history.replaceState(null, "", location.pathname + location.search);
+} else if(frag.get("err")){
+  var ERREURS = {state:"Ce lien a expiré ou a déjà servi : reconnecte-toi.", discord:"Discord a refusé la connexion.", reseau:"Discord est injoignable pour l'instant."};
+  setTimeout(function(){ msg("dmsg-porte", ERREURS[frag.get("err")] || "Connexion impossible.", "no"); }, 60);
+  history.replaceState(null, "", location.pathname + location.search);
+}
+
+/* ---------------------------------------------------------- ouverture */
+function afficherPanneau(){
+  $("dporte").hidden = true; $("dpanneau").hidden = false;
+}
+function ouvrirSession(){
+  return api("/api/verify/dashboard/moi").then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée : reconnecte-toi avec Discord."); return false; }
+    if(!res.ok){ msg("dmsg-porte", (res.data && res.data.erreur) || "Erreur de connexion.", "no"); return false; }
+    moi = res.data.utilisateur; serveurs = res.data.serveurs || [];
+    afficherPanneau();
+    $("d-nom").textContent = moi.nom || "Utilisateur";
+    if(moi.avatar){ var a=$("d-avatar"); a.src=moi.avatar; a.hidden=false; }
+    var sel = $("d-select-serveur"); vide(sel);
+    if(!serveurs.length){
+      $("d-serveurs-nb").textContent = "Aucun serveur gérable";
+      msg("dmsg-global", "Tu n'as aucun serveur où Orvyx est présent et où tu es propriétaire ou administrateur. Ajoute le bot à un serveur dont tu es responsable, puis reviens.", "no");
+      return true;
+    }
+    $("d-serveurs-nb").textContent = serveurs.length + " serveur(s) gérable(s)";
+    serveurs.forEach(function(s){
+      var o = el("option", null, s.nom + (s.proprietaire ? " · propriétaire" : " · administrateur"));
+      o.value = s.id; sel.appendChild(o);
+    });
+    charger(serveurs[0].id);
+    if($("v-musique").classList.contains("on")) setTimeout(musiqueEntrer, 0);
+    return true;
+  });
+}
+$("d-select-serveur").addEventListener("change", function(){ charger(this.value); });
+$("d-deco").addEventListener("click", function(){ deconnecter(""); });
+
+function charger(guildId){
+  courant = guildId;
+  modifs = {};
+  $("d-select-serveur").value = guildId;
+  $("d-barre").classList.remove("on");
+  var corps = $("dcorps-guard");
+  if(corps) corps.remove();
+  msg("dmsg-global", "");
+  return api("/api/verify/dashboard/serveur/" + guildId).then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    if(!res.ok){ msg("dmsg-global", (res.data && res.data.erreur) || "Chargement impossible.", "no"); return; }
+    donnees = res.data;
+    dessiner();
+    if(typeof musiqueSuivre === "function") musiqueSuivre(guildId);
+  }).catch(function(){ msg("dmsg-global", "Le bot ne répond pas. Vérifie qu'il est en ligne, puis recharge la page.", "no"); });
+}
+
+/* ================================================================ musique */
+var MUS_G = [], MUS_SEL = "", MUS_ETAT = null, MUS_TIMER = 0, MUS_SIG = "\u0000";
+var MUS_ADD = false, MUS_VOLT = 0, MUS_VOLT_T = 0;
+
+function musTemps(n){
+  n = Math.max(0, Math.floor(Number(n) || 0));
+  var h = Math.floor(n / 3600), m = Math.floor(n % 3600 / 60), s = n % 60;
+  if(h) return h + ":" + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  return m + ":" + String(s).padStart(2, "0");
+}
+function musMsg(texte, type){ msg("dmus-msg", texte, type); }
+function musActive(){
+  for(var i = 0; i < MUS_G.length; i++){ if(MUS_G[i].id === MUS_SEL) return MUS_G[i]; }
+  return null;
+}
+
+/* Charge les serveurs où le bot musique est présent. */
+function musCharger(){
+  if(!jeton) return Promise.resolve();
+  return api("/music/api/guilds").then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    if(!res.ok){
+      MUS_G = []; MUS_SEL = ""; MUS_ETAT = null;
+      musRemplirServeurs(); musRemplirSalons(); musPeindre();
+      musMsg((res.data && res.data.erreur) || "Le panneau musical est injoignable.", "no");
+      return;
+    }
+    MUS_G = (res.data && res.data.guilds) || [];
+    var existe = MUS_G.some(function(g){ return g.id === MUS_SEL; });
+    if(!existe){
+      var pref = null;
+      for(var i = 0; i < MUS_G.length; i++){ if(MUS_G[i].id === String(courant)){ pref = MUS_G[i]; break; } }
+      MUS_SEL = pref ? pref.id : (MUS_G[0] ? MUS_G[0].id : "");
+      MUS_SIG = "\u0000";
+    }
+    musRemplirServeurs(); musRemplirSalons(); musPoll();
+  }).catch(function(){
+    musMsg("Impossible de joindre le bot musique : vérifie qu'il est en ligne.", "no");
+  });
+}
+
+function musRemplirServeurs(){
+  var sel = $("dmus-guild"); if(!sel) return;
+  vide(sel);
+  if(!MUS_G.length){
+    var vide0 = el("option", null, "Aucun serveur"); vide0.value = "";
+    sel.appendChild(vide0); sel.disabled = true; return;
+  }
+  sel.disabled = false;
+  MUS_G.forEach(function(g){
+    var o = el("option", null, g.name + (g.connected ? " · en vocal" : ""));
+    o.value = g.id; sel.appendChild(o);
+  });
+  sel.value = MUS_SEL;
+}
+
+function musRemplirSalons(){
+  var sel = $("dmus-chan"); if(!sel) return;
+  var g = musActive();
+  vide(sel);
+  if(!g){
+    var rien = el("option", null, "Salon vocal…"); rien.value = "";
+    sel.appendChild(rien); sel.disabled = true; return;
+  }
+  if(g.connected && g.channel){
+    var actuel = el("option", null, "En vocal"); sel.appendChild(actuel); sel.disabled = true; return;
+    sel.appendChild(actuel); sel.disabled = true; return;
+  }
+  sel.disabled = false;
+  var vide1 = el("option", null, "Choisir un salon vocal…"); vide1.value = "";
+  sel.appendChild(vide1);
+  (g.channels || []).forEach(function(c){
+    var o = el("option", null, c.name + (c.membres ? " · " + c.membres + " en vocal" : ""));
+    o.value = c.id; sel.appendChild(o);
+  });
+  sel.value = g.user_channel || "";
+}
+
+/* Récupère l'état du lecteur d'un serveur. */
+function musPoll(){
+  if(!MUS_SEL) return;
+  api("/music/api/status?guild_id=" + encodeURIComponent(MUS_SEL)).then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    if(!res.ok){
+      MUS_ETAT = null; MUS_SIG = "\u0000"; musPeindre();
+      if(res.status === 404) musMsg("Le bot musique n'est pas présent sur ce serveur.", "no");
+      return;
+    }
+    MUS_ETAT = res.data || null;
+    musPeindre();
+  }).catch(function(){});
+}
+
+/* Reflète l'état du bot dans l'interface. */
+function musPeindre(){
+  var e = MUS_ETAT, cur = (e && e.current) ? e.current : null;
+  var g = musActive();
+
+  var live = $("dmus-live"), liveTxt = $("dmus-live-txt");
+  var classe = "dmus-live", texte = "Hors ligne";
+  if(e && e.connected){
+    if(e.playing){ classe += " ok"; texte = "En lecture"; }
+    else if(e.paused){ classe += " pause"; texte = "En pause"; }
+    else { texte = "Connecté"; }
+  } else if(g){
+    texte = "Hors ligne";
+  } else {
+    classe += " ko"; texte = "Aucun serveur";
+  }
+  live.className = classe; liveTxt.textContent = texte;
+
+  var art = $("dmus-art"), halo = $("dmus-glow");
+  if(cur && cur.thumbnail){
+    var u = "url('" + String(cur.thumbnail).replace(/'/g, "%27") + "')";
+    art.style.backgroundImage = u; art.classList.add("on");
+    halo.style.backgroundImage = u; halo.classList.add("on");
+  } else {
+    art.style.backgroundImage = ""; art.classList.remove("on");
+    halo.style.backgroundImage = ""; halo.classList.remove("on");
+  }
+
+  $("dmus-title").textContent = cur ? cur.title : "Rien en lecture";
+  var sub = $("dmus-sub");
+  if(cur){
+    var infos = ["via " + (cur.source || "youtube")];
+    if(cur.requester) infos.push("demandé par " + cur.requester);
+    sub.textContent = infos.join(" · ");
+  } else if(e && e.connected){
+    sub.textContent = "Le bot est dans « " + (e.channel ? e.channel.name : "un salon vocal") + " ». Ajoute une musique pour lancer la lecture.";
+  } else {
+    sub.textContent = "Choisis un salon vocal, puis ajoute une musique.";
+  }
+
+  var duree = cur ? Number(cur.duration || 0) : 0;
+  var pos = e ? Math.max(0, Number(e.position || 0)) : 0;
+  if(duree) pos = Math.min(pos, duree);
+  $("dmus-pos").textContent = musTemps(pos);
+  $("dmus-dur").textContent = duree ? musTemps(duree) : "0:00";
+  $("dmus-fill").style.width = (duree ? Math.min(100, pos / duree * 100) : 0) + "%";
+
+  var actif = !!(e && e.playing);
+  $("dmus-i-play").style.display = actif ? "none" : "";
+  $("dmus-i-pause").style.display = actif ? "" : "none";
+  $("dmus-eq").classList.toggle("on", actif);
+
+  $("dmus-toggle").disabled = !(e && e.connected && cur);
+  $("dmus-prev").disabled = !(e && e.connected);
+  $("dmus-next").disabled = !(e && e.connected && (cur || Number(e.queue_count || 0) > 0));
+  $("dmus-shuffle").disabled = !(e && Number(e.queue_count || 0) > 1);
+  $("dmus-stop").disabled = !(e && e.connected);
+  $("dmus-clear").disabled = !(e && Number(e.queue_count || 0) > 0);
+
+  var mode = e ? (e.loop || "off") : "off";
+  Array.prototype.forEach.call($("dmus-loop").children, function(b){
+    b.classList.toggle("on", b.dataset.mode === mode);
+  });
+
+  if(Date.now() > MUS_VOLT){
+    var vol = e && e.volume != null ? Number(e.volume) : 50;
+    $("dmus-vol-range").value = vol;
+    $("dmus-vol-val").textContent = vol + "%";
+  }
+
+  var nb = e ? Number(e.queue_count || 0) : 0;
+  $("dmus-count").textContent = nb + " en file";
+  $("dmus-qcount").textContent = nb;
+
+  var sig = JSON.stringify((e && e.queue) || []);
+  if(sig !== MUS_SIG){ MUS_SIG = sig; musPeindreFile((e && e.queue) || []); }
+}
+
+function musPeindreFile(file){
+  var boite = $("dmus-queue"); vide(boite);
+  if(!file.length){
+    boite.appendChild(el("div", "dmus-empty", "La file d'attente est vide."));
+    return;
+  }
+  file.forEach(function(t, i){
+    var ligne = el("div", "dmus-item");
+    ligne.appendChild(el('span', 'dmus-num', String(i + 1).padStart(2, '0')));
+
+    var pouce = el("div", "dmus-thumb");
+    if(t.thumbnail) pouce.style.backgroundImage = "url('" + String(t.thumbnail).replace(/'/g, "%27") + "')";
+    ligne.appendChild(pouce);
+
+    var meta = el("div", "dmus-meta");
+    meta.appendChild(el("b", null, t.title || "Inconnu"));
+    var infos = [t.source || "youtube"];
+    if(t.requester) infos.push(t.requester);
+    meta.appendChild(el("span", null, infos.join(" · ")));
+    ligne.appendChild(meta);
+
+    ligne.appendChild(el("span", "dmus-len", t.duration_label || musTemps(t.duration)));
+
+    var croix = el("button", "dmus-x", "\u2715");
+    croix.type = "button"; croix.title = "Retirer cette entrée";
+    croix.onclick = function(){ ligne.parentNode.removeChild(ligne); marquerListe(cle); };
+    ligne.appendChild(croix);
+  return ligne;
+}
+function marquerListe(cle, conteneur){
+  marquer(cle, conteneur || (LISTES[cle] && LISTES[cle].conteneur));
+}
+
+/* -------------------------------------------------- état « non enregistré » */
+function marquer(cle, conteneur){
+  if(!cle) return;
+  modifs[cle] = true;
+  if(conteneur) conteneur.classList.add("marque");
+  majBarre();
+}
+function nbModifs(){ return Object.keys(modifs).filter(function(k){ return modifs[k]; }).length; }
+function majBarre(){
+  var n = nbModifs();
+  var b = $("d-barre");
+  if(!b) return;
+  if(n > 0){
+    b.classList.add("on");
+    $("d-barre-txt").textContent = n === 1 ? "1 réglage modifié, non enregistré" : (n + " réglages modifiés, non enregistrés");
+  } else {
+    b.classList.remove("on");
+  }
+}
+
+function dessinerConfig(){
+  CONFIG = donnees.config || {};
+  var b;
+
+  b = $("cfg-logs"); vide(b);
+  selectChamp(b,"Salon de logs général","Reçoit tout ce qu'aucune catégorie ci-dessous ne couvre.","salon","log_channel");
+  selectChamp(b,"Logs admin","Sanctions et auto-modération.","salon","mod_log_channel");
+  selectChamp(b,"Logs serveur","Arrivées, départs, pseudos, rôles, salons.","salon","log_server_channel");
+  selectChamp(b,"Logs du bot","Erreurs et incidents techniques.","salon","log_bot_channel");
+  selectChamp(b,"Logs anti-raid","Alertes de raid.","salon","antiraid_log_channel");
+
+  b = $("cfg-accueil"); vide(b);
+  boolChamp(b,"Bienvenue activée","Envoie un message à l'arrivée d'un membre.","welcome_enabled");
+  selectChamp(b,"Salon de bienvenue",null,"salon","welcome_channel");
+  selectChamp(b,"Rôle automatique","Attribué à chaque nouveau membre.","role","autorole");
+  texteChamp(b,"Message de bienvenue","Variables disponibles : {user} {username} {server} {count}","welcome_message",true);
+
+  b = $("cfg-moderation"); vide(b);
+  nombreChamp(b,"Avertissements avant sanction","Nombre de warns déclenchant le timeout.","warn_threshold",1,50);
+  nombreChamp(b,"Durée du timeout (minutes)",null,"warn_timeout_minutes",1,40320);
+  boolChamp(b,"Auto-modération activée","Filtre automatique des messages indésirables.","automod_enabled");
+
+  b = $("cfg-antiraid"); vide(b);
+  boolChamp(b,"Anti-raid activé",null,"antiraid_enabled");
+  nombreChamp(b,"Membres pour déclencher","Nombre d'arrivées dans la fenêtre qui déclenche l'alerte.","antiraid_join_threshold",3,1000);
+  nombreChamp(b,"Fenêtre (secondes)","Durée pendant laquelle les arrivées sont comptées.","antiraid_join_window",5,600);
+  nombreChamp(b,"Verrou (secondes)","Durée du verrouillage automatique.","antiraid_raid_lock_seconds",30,86400);
+
+  b = $("cfg-tickets"); vide(b);
+  selectChamp(b,"Catégorie des tickets","Où sont créés les salons de ticket.","categorie","ticket_category");
+  selectChamp(b,"Salon des transcriptions","Reçoit la transcription à la fermeture.","salon","ticket_log_channel");
+  selectChamp(b,"Rôle du support","Membres pouvant prendre en charge un ticket.","role","support_role");
+  nombreChamp(b,"Tickets ouverts par membre",null,"ticket_limit",1,20);
+  boolChamp(b,"Attribution automatique au staff le moins chargé",null,"ticket_autoassign");
+  listeChamp(b,"Priorités proposées","Libellé, emoji et délai d'échéance en heures.","ticket_priorities",
+    [{cle:"label",label:"Libellé",max:40,placeholder:"Haute"},
+     {cle:"emoji",label:"Emoji",max:8,placeholder:"<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg>"},
+     {cle:"hours",label:"Heures",type:"number",min:1,maxv:720}]);
+  listeChamp(b,"Types de tickets","Libellé, emoji et description affichée au membre.","ticket_categories",
+    [{cle:"label",label:"Libellé",max:40,placeholder:"Support"},
+     {cle:"emoji",label:"Emoji",max:8,placeholder:"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4Z"/></svg>"},
+     {cle:"description",label:"Description",max:100,placeholder:"Besoin d'aide ?"}]);
+  lectureChamp(b,"Numéro du prochain ticket","Compteur tenu par le bot ; non modifiable ici.","ticket_counter");
+
+  b = $("cfg-vocal"); vide(b);
+  selectChamp(b,"Salon maître des vocaux","Rejoindre ce salon crée un vocal personnel.","vocal","tempvoc_master");
+  selectChamp(b,"Catégorie des vocaux","Où sont placés les vocaux créés.","categorie","tempvoc_category");
+  texteChamp(b,"Modèle de nom","{user} est remplacé par le pseudo du créateur.","tempvoc_name");
+  nombreChamp(b,"Vocaux simultanés maximum","Par membre.",  "tempvoc_limit",1,50);
+  boolChamp(b,"Accueil vocal activé","Message quand quelqu'un rejoint un vocal.","vocal_greet_enabled");
+  texteChamp(b,"Message d'accueil vocal","Variables : {user} {channel}","vocal_greet_message",true);
+
+  b = $("cfg-communaute"); vide(b);
+  boolChamp(b,"Niveaux (XP) activés",null,"xp_enabled");
+  nombreChamp(b,"XP minimum par message",null,"xp_min",1,1000);
+  nombreChamp(b,"XP maximum par message",null,"xp_max",1,1000);
+  nombreChamp(b,"Délai entre deux gains (secondes)","Anti-spam : temps minimum entre deux gains d'XP.","xp_cooldown",0,3600);
+  nombreChamp(b,"XP par minute en vocal",null,"xp_voice_per_minute",0,1000);
+  selectChamp(b,"Salon des annonces de niveau",null,"salon","xp_announce_channel");
+  listeChamp(b,"Rôles de récompense (niveaux)","Du plus bas au plus haut ; trié automatiquement par le bot.","xp_rewards",
+    [{cle:"niveau",label:"Niveau",type:"number",min:1,maxv:1000},
+     {cle:"role",label:"Rôle",type:"role"}]);
+  boolChamp(b,"Invitations activées",null,"invites_enabled");
+  selectChamp(b,"Salon des arrivées d'invitation",null,"salon","invites_log_channel");
+  listeChamp(b,"Rôles de récompense (invitations)","Trié automatiquement par nombre d'invitations.","invite_rewards",
+    [{cle:"invites",label:"Invitations",type:"number",min:1,maxv:10000},
+     {cle:"role",label:"Rôle",type:"role"}]);
+
+  b = $("cfg-divers"); vide(b);
+  selectChamp(b,"Salon de vérification",null,"salon","verify_channel");
+  selectChamp(b,"Rôle de vérification","Attribué après vérification réussie.","role","verify_role");
+  texteChamp(b,"Lien de vérification","URL du bouton de vérification (facultatif).","verify_link");
+  lectureChamp(b,"Message de vérification publié","Identifiant du panneau, tenu par le bot.","verify_message_id");
+  boolChamp(b,"Assistant IA activé",null,"ai_enabled");
+  texteChamp(b,"Base de connaissances IA","Texte servant UNIQUEMENT de source aux réponses de l'IA.","ai_knowledge",true);
+  texteChamp(b,"Texte du Rôle de Soutien","Texte à trouver dans le statut personnalisé du membre.","support_text");
+  selectChamp(b,"Rôle de Soutien",null,"role","support_status_role");
+  boolChamp(b,"Contrôle des webhooks","Supprime les webhooks non autorisés.","webhook_guard");
+
+  majBarre();
+  majBadges();
+}
+
+/* Étiquettes de synthèse sur les cartes. */
+function majBadges(){
+  function v(cle){ var e = CONFIG[cle]; return e ? e.valeur : null; }
+  function tag(id, actif, texte){
+    var t = $(id); if(!t) return;
+    t.textContent = texte || (actif ? "configuré" : "non configuré");
+    t.className = "dtag " + (actif ? "ok" : "");
+  }
+  tag("dtag-logs", !!(v("log_channel") || v("mod_log_channel") || v("log_server_channel") || v("log_bot_channel") || v("antiraid_log_channel")));
+  tag("dtag-logs2", true, "en mémoire");
+}
+
+function lireConfig(){
+  var sortie = {};
+  Array.prototype.forEach.call(document.querySelectorAll("#v-config [data-cle]"), function(elm){
+    var cle = elm.dataset.cle;
+    if(elm.readOnly) return;                       /* champ d'information : jamais envoyé */
+    if(!modifs[cle]) return;                       /* on n'envoie que ce qui a changé */
+    if(elm.dataset.bool) sortie[cle] = elm.checked;
+    else if(elm.type === "number") sortie[cle] = parseInt(elm.value, 10) || 0;
+    else sortie[cle] = elm.value;
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("#v-config [data-liste]"), function(boite){
+    var cle = boite.dataset.liste;
+    if(!modifs[cle]) return;
+    var infos = LISTES[cle] || {colonnes: []};
+    var entrees = [];
+    Array.prototype.forEach.call(boite.querySelectorAll(".dligne"), function(ligne){
+      var objet = {}, vide_ = true;
+      infos.colonnes.forEach(function(col){
+        var inp = ligne.querySelector('[data-col="' + col.cle + '"]');
+        if(!inp) return;
+        var brut = (inp.value || "").trim();
+        if(brut === "") return;
+        vide_ = false;
+        objet[col.cle] = col.type === "number" ? (parseInt(brut, 10) || 0) : brut;
+      });
+      if(!vide_) entrees.push(objet);
+    });
+    sortie[cle] = entrees;
+  });
+  return sortie;
+}
+$("d-enregistrer").addEventListener("click", function(){
+  if(!courant) return;
+  var modifsEnvoyees = lireConfig();
+  if(!Object.keys(modifsEnvoyees).length){ msg("dmsg-config","Aucune modification à enregistrer.","info"); return; }
+  var btn = this; btn.disabled = true; btn.textContent = "Enregistrement…";
+  poste("/api/verify/dashboard/serveur/" + courant + "/config", modifsEnvoyees).then(function(res){
+    btn.disabled = false; btn.textContent = "Enregistrer";
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    if(!res.ok){
+      msg("dmsg-config", (res.data && res.data.erreur) || "L'enregistrement a échoué.", "no");
+      return;
+    }
+    var refus = Object.keys(res.data.refuses || {});
+    modifs = {}; majBarre();
+    msg("dmsg-config", refus.length
+      ? ("Enregistré, sauf ces réglages refusés : " + refus.join(", "))
+      : "Configuration enregistrée <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>", refus.length ? "no" : "ok");
+    if(res.data.config) donnees.config = res.data.config;
+    charger(courant).then(function(){ aller("config"); });
+  }).catch(function(){
+    btn.disabled = false; btn.textContent = "Enregistrer";
+    msg("dmsg-config", "Le bot ne répond pas : rien n'a été enregistré.", "no");
+  });
+});
+$("d-annuler").addEventListener("click", function(){
+  if(!courant) return;
+  modifs = {}; majBarre(); msg("dmsg-config","");
+  charger(courant).then(function(){ aller("config"); });
+});
+/* Alerte avant de quitter avec des modifications en attente. */
+window.addEventListener("beforeunload", function(e){
+  if(nbModifs() > 0){ e.preventDefault(); e.returnValue = ""; }
+});
+
+/* Recherche dans les réglages. */
+function filtrerConfig(q){
+  q = (q || "").trim().toLowerCase();
+  var blocs = document.querySelectorAll("#v-config .dbloc");
+  var visibles = 0;
+  Array.prototype.forEach.call(blocs, function(bloc){
+    var mots = (bloc.dataset.mots || "") + " " + bloc.textContent.toLowerCase();
+    var ok = !q || mots.indexOf(q) !== -1;
+    bloc.classList.toggle("dcache", !ok);
+    if(ok) visibles++;
+  });
+  var nb = $("d-filtre-nb");
+  if(nb) nb.textContent = q ? (visibles + " section(s)") : "";
+}
+$("d-filtre").addEventListener("input", function(){ filtrerConfig(this.value); });
+
+/* ---------------------------------------------------------- tableaux */
+function tableau(hotes, lignes, rendu, vide_){
+  var boite = el("div","dtab");
+  if(!lignes || !lignes.length){
+    boite.appendChild(el("p","dvide",vide_||"Rien à afficher."));
+    return boite;
+  }
+  var t = el("table"); var thead = el("thead"), tr = el("tr");
+  hotes.forEach(function(h){ tr.appendChild(el("th",null,h)); }); thead.appendChild(tr); t.appendChild(thead);
+  var tb = el("tbody");
+  lignes.forEach(function(item){
+    var r = el("tr");
+    rendu(item).forEach(function(cellule){
+      var td = el("td", cellule.classe||"", cellule.texte);
+      if(cellule.noeud){ td.textContent=""; td.appendChild(cellule.noeud); }
+      r.appendChild(td);
+    });
+    tb.appendChild(r);
+  });
+  t.appendChild(tb); boite.appendChild(t);
+  return boite;
+}
+function remplacer(id, noeud){ var e=$(id); if(!e) return; vide(e); e.appendChild(noeud); }
+function pastille(texte, classe){ return el("span","dpastille" + (classe ? " " + classe : ""), texte); }
+function tagTexte(id, texte, classe){
+  var e = $(id); if(!e) return;
+  e.textContent = texte; e.className = "dtag" + (classe ? " " + classe : "");
+}
+
+/* ---------------------------------------------------------- tickets */
+function dessinerTickets(){
+  var t = donnees.tickets || {ouverts:[], fermes:[], priorites:[]};
+  var st = $("d-stats-tickets"); vide(st);
+  var enCours = (t.ouverts||[]).length;
+  var nonAssignes = (t.ouverts||[]).filter(function(x){ return !x.assigne_id; }).length;
+  var notes = (t.fermes||[]).length;
+  [
+    ["Tickets ouverts", String(enCours)],
+    ["Non assignés", String(nonAssignes)],
+    ["Fermés (récents)", String(notes)],
+    ["Staff actif", String((donnees.staff||[]).length)],
+  ].forEach(function(c){ var d=el("div","dstat"); d.appendChild(el("b",null,c[1])); d.appendChild(el("span",null,c[0])); st.appendChild(d); });
+
+  tagTexte("dtag-tickets-ouverts", enCours ? (enCours + " en cours") : "aucun", enCours ? "warn" : "ok");
+
+  remplacer("d-tickets-ouverts", tableau(["N°","Catégorie","Priorité","Échéance","Assigné","Actions"],
+    t.ouverts, function(x){
+      var bloc = el("span"); bloc.style.display="inline-flex"; bloc.style.gap=".4rem"; bloc.style.alignItems="center";
+      var sel = el("select"); sel.style.padding=".3rem .5rem"; sel.style.fontSize=".8rem";
+      (t.priorites||[]).forEach(function(p){ var o=el("option",null,(p.emoji?p.emoji+" ":"")+p.label); o.value=p.label; sel.appendChild(o); });
+      sel.value = x.priorite;
+      sel.onchange = function(){ action("ticket_priority",{salon:x.salon_id, priorite:sel.value},"dmsg-global"); };
+      bloc.appendChild(sel);
+      var bf = el("button","btn ghost tiny","Fermer");
+      bf.onclick = function(){ if(confirm("Fermer le ticket #"+x.numero+" et supprimer son salon ?")) action("ticket_close",{salon:x.salon_id},"dmsg-global"); };
+      bloc.appendChild(bf);
+      return [{texte:"#"+x.numero},{texte:x.categorie},
+              {noeud:pastille(x.priorite, x.priorite==="Haute"?"ko":(x.priorite==="Basse"?"ok":"warn"))},
+              {texte:x.echeance?date(x.echeance):"-"},
+              {texte:x.assigne_id?("<@"+x.assigne_id+">"):"Personne"},{noeud:bloc}];
+    }, "Aucun ticket ouvert pour le moment."));
+
+  remplacer("d-staff", tableau(["Staff","Tickets en cours","Notes reçues","Satisfaction"],
+    donnees.staff, function(s){
+      var moy = el("span", null, s.moyenne!=null ? ("<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg> "+s.moyenne+"/5") : "-");
+      return [{texte:s.nom},{texte:String(s.charge)},{texte:String(s.notes)},{noeud:moy}];
+    }, "Aucun membre du staff identifié (rôle support ou permission « Gérer le serveur »)."));
+
+  remplacer("d-tickets-fermes", tableau(["N°","Catégorie","Note","Créé"],
+    t.fermes, function(x){
+      return [{texte:"#"+x.numero},{texte:x.categorie},
+              {texte:x.note?("<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>".repeat(x.note)):"-"},{texte:date(x.cree)}];
+    }, "Aucun ticket fermé."));
+}
+
+/* ---------------------------------------------------------- modération */
+function dessinerModeration(){
+  remplacer("d-blacklist", tableau(["Membre","Par","Raison","Date","Action"],
+    donnees.blacklist, function(b){
+      var btn = el("button","btn ghost tiny","Retirer");
+      btn.onclick = function(){ action("blacklist_remove",{membre:b.membre_id},"dmsg-bl"); };
+      return [{texte:b.membre},{texte:b.moderateur},{texte:b.raison,classe:"wrap"},{texte:date(b.date)},{noeud:btn}];
+    }, "La blacklist est vide : aucun membre n'est bloqué."));
+
+  remplacer("d-warns", tableau(["Membre","Type","Raison","Modérateur","Date"],
+    donnees.warns, function(w){
+      return [{texte:w.membre},{texte:w.type},{texte:w.raison,classe:"wrap"},{texte:w.moderateur},{texte:date(w.date)}];
+    }, "Aucun avertissement enregistré."));
+}
+$("d-bl-ajouter").addEventListener("click", function(){
+  var membre = ($("d-bl-membre").value||"").trim(), raison = ($("d-bl-raison").value||"").trim();
+  if(!/^\d{5,25}$/.test(membre)){ msg("dmsg-bl","Identifiant de membre invalide (17 à 20 chiffres attendus).","no"); return; }
+  action("blacklist_add", {membre:membre, raison:raison}, "dmsg-bl", function(){ $("d-bl-membre").value=""; $("d-bl-raison").value=""; });
+});
+$("d-san-appliquer").addEventListener("click", function(){
+  var membre = ($("d-san-membre").value||"").trim();
+  if(!/^\d{5,25}$/.test(membre)){ msg("dmsg-san","Identifiant de membre invalide.","no"); return; }
+  var corps = {membre:membre, raison:($("d-san-raison").value||"").trim(), minutes:parseInt($("d-san-minutes").value,10)||60};
+  var act = $("d-san-action").value;
+  var noms = {warn:"avertir", mute:"rendre muet", kick:"expulser", ban:"bannir"};
+  if(!confirm("Confirmer : " + (noms[act]||act) + " le membre " + membre + " ?")) return;
+  action(act, corps, "dmsg-san", function(){ $("d-san-membre").value=""; $("d-san-raison").value=""; });
+});
+
+/* ---------------------------------------------------------- communauté */
+function dessinerCommunaute(){
+  var n = donnees.niveaux || {xp:[]}, inv = donnees.invitations || {top:[]};
+  tagTexte("dtag-xp", n.xp.length ? (n.xp.length + " membre(s)") : "aucun", n.xp.length ? "ok" : "");
+  tagTexte("dtag-inv", inv.top.length ? (inv.top.length + " membre(s)") : "aucune", inv.top.length ? "ok" : "");
+  remplacer("d-niveaux", tableau(["#","Membre","Niveau","XP","Messages","Vocal"],
+    n.xp, function(x){
+      return [{texte:"#"+x.rang},{texte:x.nom},
+              {noeud:pastille(String(x.niveau), "bleu")},
+              {texte:nombre(x.xp)},{texte:nombre(x.messages)},{texte:duree(x.voix)}];
+    }, "Aucune donnée de niveau (XP désactivée ou personne n'a encore gagné d'XP)."));
+  remplacer("d-invitations", tableau(["#","Membre","Actives","Rejointes","Bonus","Départs"],
+    inv.top, function(v){
+      return [{texte:"#"+v.rang},{texte:v.nom},{texte:String(v.actives)},{texte:String(v.rejointes)},
+              {texte:String(v.bonus)},{texte:String(v.departs)}];
+    }, "Aucune invitation enregistrée."));
+}
+$("d-xp-reset").addEventListener("click", function(){
+  if(confirm("Remettre TOUS les niveaux de ce serveur à zéro ? Cette action est irréversible."))
+    action("xp_reset",{}, "dmsg-global");
+});
+$("d-inv-reset").addEventListener("click", function(){
+  if(confirm("Remettre TOUTES les invitations de ce serveur à zéro ? Cette action est irréversible."))
+    action("invites_reset",{}, "dmsg-inv");
+});
+$("d-inv-bonus").addEventListener("click", function(){
+  var m=($("d-inv-membre").value||"").trim(), d=parseInt($("d-inv-delta").value,10);
+  if(!/^\d{5,25}$/.test(m)){ msg("dmsg-inv","Identifiant invalide.","no"); return; }
+  if(isNaN(d) || d === 0){ msg("dmsg-inv","Indique un nombre de bonus différent de zéro.","no"); return; }
+  action("invites_bonus",{membre:m, delta:d}, "dmsg-inv", function(){ $("d-inv-membre").value=""; });
+});
+
+/* ---------------------------------------------------------- journaux */
+function chargerLogs(){
+  api("/api/verify/dashboard/logs?n=200").then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    if(!res.ok){ return; }
+    var entrees = (res.data && res.data.entrees) || [];
+    var parNiveau = (res.data && res.data.par_niveau) || {};
+    var total = Object.keys(parNiveau).reduce(function(a,k){ return a + parNiveau[k]; }, 0);
+    tagTexte("dtag-logs2", total ? (total + " entrée(s)") : "aucune", total ? "warn" : "ok");
+
+    /* Compteurs sur les onglets de niveau. */
+    Array.prototype.forEach.call(document.querySelectorAll("#d-logs-filtres button"), function(b){
+      var niv = b.dataset.niv;
+      var n = niv ? (parNiveau[niv] || 0) : total;
+      b.textContent = (b.dataset.texteBase || b.textContent.replace(/\s*\(\d+\)$/,"")) + (n ? " (" + n + ")" : "");
+      if(!b.dataset.texteBase) b.dataset.texteBase = b.textContent.replace(/\s*\(\d+\)$/,"");
+    });
+
+    if(filtreLogs) entrees = entrees.filter(function(e){ return String(e.niveau).toUpperCase() === filtreLogs; });
+
+    var boite = $("d-logs"); vide(boite);
+    if(!entrees.length){
+      boite.appendChild(el("p","dvide", filtreLogs
+        ? "Aucune entrée de ce niveau."
+        : "Aucun avertissement ni erreur depuis le démarrage : tout est propre."));
+      return;
+    }
+    var t = el("table"); var thead=el("thead"), tr=el("tr");
+    ["Heure","Niveau","Origine","Message"].forEach(function(h){ tr.appendChild(el("th",null,h)); });
+    thead.appendChild(tr); t.appendChild(thead);
+    var tb = el("tbody");
+    entrees.slice(0,200).forEach(function(e){
+      var r = el("tr");
+      r.appendChild(el("td",null,new Date(e.t*1000).toLocaleTimeString("fr-FR",{hour12:false})));
+      var niv = el("td"); niv.appendChild(pastille(e.niveau, String(e.niveau).toUpperCase()==="ERROR"||String(e.niveau).toUpperCase()==="CRITICAL" ? "ko" : "warn"));
+      r.appendChild(niv);
+      r.appendChild(el("td",null,e.logger||"bot"));
+      r.appendChild(el("td","wrap",e.message));
+      tb.appendChild(r);
+    });
+    t.appendChild(tb); boite.appendChild(t);
+  }).catch(function(){ msg("dmsg-global","Impossible de récupérer les journaux.","no"); });
+}
+$("d-logs-maj").addEventListener("click", chargerLogs);
+$("d-logs-auto").addEventListener("change", function(){
+  autoLogs = this.checked;
+  clearInterval(tLogs);
+  if(autoLogs) tLogs = setInterval(function(){ if(!document.hidden) chargerLogs(); }, 5000);
+});
+Array.prototype.forEach.call(document.querySelectorAll("#d-logs-filtres button"), function(b){
+  b.addEventListener("click", function(){
+    Array.prototype.forEach.call(document.querySelectorAll("#d-logs-filtres button"), function(x){ x.classList.toggle("on", x===b); });
+    filtreLogs = b.dataset.niv;
+    chargerLogs();
+  });
+});
+
+/* ---------------------------------------------------------- compteurs latéraux */
+function majCompteurs(){
+  var t = (donnees.tickets && donnees.tickets.ouverts) ? donnees.tickets.ouverts.length : 0;
+  var nb = $("d-nb-tickets"); if(nb){ nb.textContent = t || ""; }
+  var bl = (donnees.blacklist||[]).length;
+  var ebl = $("d-nb-bl"); if(ebl){ ebl.textContent = bl || ""; }
+}
+
+/* ---------------------------------------------------------- actions */
+function action(nom, corps, cible, apres){
+  corps = Object.assign({action:nom}, corps||{});
+  poste("/api/verify/dashboard/serveur/" + courant + "/actions", corps).then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    var texte = (res.data && (res.data.message || res.data.erreur)) || ("Réponse " + res.status);
+    msg(cible || "dmsg-global", texte, res.ok ? "ok" : "no");
+    if(res.ok){ if(apres) apres(); charger(courant); }
+  }).catch(function(){ msg(cible || "dmsg-global", "Le bot ne répond pas.", "no"); });
+}
+
+/* ================================================================= éditeur d'embed
+   Tout le rendu est reconstruit côté bot à partir des mêmes champs : l'aperçu ici
+   ne fait que montrer ce que Discord affichera. Aucun contenu n'est interprété
+   comme du HTML (on n'utilise que textContent) : le balisage Markdown de Discord
+   reste affiché tel quel, sans exécution possible. */
+var EM = {};                                    /* champs texte liés à l'aperçu */
+var EM_CHAMPS = [];                             /* champs nom/valeur/en ligne */
+var MODELES = [
+  {nom:"Annonce", titre:"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Annonce", couleur:"#000000",
+   desc:"Bonjour à tous !\n\nNous avons le plaisir de vous annoncer une nouveauté sur le serveur.",
+   pied:"Orvyx", horodatage:true},
+  {nom:"Règlement", titre:"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Règlement du serveur", couleur:"#000000",
+   desc:"**1.** Respecte tout le monde.\n**2.** Pas de spam ni de publicité.\n**3.** Suis les consignes du staff.",
+   pied:"Direction"},
+  {nom:"Maintenance", titre:"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4Z"/></svg> Maintenance en cours", couleur:"#000000",
+   desc:"Le bot redémarre pour une mise à jour.\nNous revenons très vite, merci de votre patience !",
+   pied:"Orvyx", horodatage:true},
+  {nom:"Événement", titre:"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 9l2 2 4-4"/><path d="M12 15l2-2 4 4"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="7" r="2"/></svg> Soirée jeux ce soir", couleur:"#000000",
+   desc:"Rendez-vous à **21 h** en vocal pour une soirée détente !",
+   pied:"Orvyx", horodatage:true}
+];
+
+function emVide(){
+  return $("d-em-titre").value.trim() === "" && $("d-em-desc").value.trim() === ""
+      && $("d-em-contenu").value.trim() === "" && EM_CHAMPS.length === 0
+      && $("d-em-image").value.trim() === "" && $("d-em-vignette").value.trim() === ""
+      && $("d-em-auteur").value.trim() === "" && $("d-em-pied").value.trim() === "";
+}
+
+/* Aperçu : reproduit visuellement la carte Discord. */
+function emApercu(){
+  var t = $("d-em-titre").value.trim();
+  var d = $("d-em-desc").value;
+  var conte = $("d-em-contenu").value.trim();
+  var titre = $("d-em-apercu-titre"), desc = $("d-em-apercu-desc");
+  var carte = $("d-em-apercu-carte"), vide_ = $("d-em-apercu-vide");
+
+  carte.style.borderLeftColor = $("d-em-couleur").value || "#000000";
+
+  /* Texte au-dessus de l'embed */
+  var zoneTexte = $("d-em-apercu-texte");
+  var mention = $("d-em-mention").value;
+  var prefixe = mention ? ("@" + ($("d-em-mention").selectedOptions[0] || {}).textContent + " ") : "";
+  if(conte || prefixe){
+    zoneTexte.hidden = false; zoneTexte.textContent = prefixe + conte;
+  } else { zoneTexte.hidden = true; }
+
+  /* Titre (+ lien) */
+  if(t){
+    titre.hidden = false; vide(titre);
+    var lien = $("d-em-lien").value.trim();
+    if(lien.indexOf("http") === 0){
+      var a = el("a", null, t); a.href = lien; a.target = "_blank"; a.rel = "noopener nofollow";
+      titre.appendChild(a);
+    } else { titre.textContent = t; }
+  } else { titre.hidden = true; }
+
+  desc.textContent = d;
+
+  /* Auteur */
+  var au = $("d-em-apercu-auteur"), nomAu = $("d-em-auteur").value.trim();
+  if(nomAu){
+    au.hidden = false; vide(au);
+    var ic = $("d-em-auteur-icone").value.trim();
+    if(ic.indexOf("http") === 0){ var i1 = el("img"); i1.src = ic; i1.alt = ""; au.appendChild(i1); }
+    au.appendChild(el("span", null, nomAu));
+  } else { au.hidden = true; }
+
+  /* Champs */
+  var zc = $("d-em-apercu-champs"); vide(zc);
+  EM_CHAMPS.forEach(function(c){
+    if(!c.nom.trim() && !c.valeur.trim()) return;
+    var bloc = el("div","dprev-champ" + (c.inline ? " code" : ""));
+    bloc.appendChild(el("b", null, c.nom || "\u200b"));
+    bloc.appendChild(el("span", null, c.valeur || "\u200b"));
+    zc.appendChild(bloc);
+  });
+
+  /* Vignette et grande image */
+  var vi = $("d-em-vignette").value.trim(), im = $("d-em-image").value.trim();
+  emImage($("d-em-apercu-vignette"), vi);
+  emImage($("d-em-apercu-image"), im);
+
+  /* Pied de page */
+  var pf = $("d-em-apercu-pied"), texteP = $("d-em-pied").value.trim();
+  var quand = $("d-em-horodatage").checked ? " • aujourd'hui à l'envoi" : "";
+  if(texteP || quand){
+    pf.hidden = false; vide(pf);
+    var ip = $("d-em-pied-icone").value.trim();
+    if(ip.indexOf("http") === 0){ var i2 = el("img"); i2.src = ip; i2.alt = ""; pf.appendChild(i2); }
+    pf.appendChild(el("span", null, texteP + quand));
+  } else { pf.hidden = true; }
+
+  vide_.hidden = !emVide() || !!(t || d || conte);
+}
+function emImage(bloc, url){
+  if(url.indexOf("http") !== 0){ bloc.hidden = true; vide(bloc); return; }
+  bloc.hidden = false; vide(bloc);
+  var img = el("img"); img.src = url; img.alt = ""; bloc.appendChild(img);
+}
+
+/* Ligne d'un champ personnalisé. */
+function emLigneChamp(entree){
+  entree = entree || {nom:"", valeur:"", inline:false};
+  var ligne = el("div","dligne");
+  function colonne(label, cle){
+    var c = el("div","dcol");
+    c.appendChild(el("small", null, label));
+    var inp = el("input"); inp.value = entree[cle] || "";
+    inp.addEventListener("input", function(){ entree[cle] = inp.value; emApercu(); });
+    c.appendChild(inp); return c;
+  }
+  ligne.appendChild(colonne("Nom du champ", "nom"));
+  ligne.appendChild(colonne("Valeur", "valeur"));
+  var c = el("div","dcol"); c.style.flex = "0 0 auto";
+  var lab = el("label","dbascule dsmall");
+  var coche = el("input"); coche.type = "checkbox"; coche.checked = !!entree.inline;
+  coche.addEventListener("change", function(){ entree.inline = coche.checked; emApercu(); });
+  lab.appendChild(coche); lab.appendChild(document.createTextNode("Sur une ligne"));
+  c.appendChild(lab); ligne.appendChild(c);
+  var sup = el("button","btn ghost tiny","<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>"); sup.type = "button";
+    croix.title = "Supprimer ce champ";
+    croix.onclick = function(){
+    EM_CHAMPS.splice(EM_CHAMPS.indexOf(entree), 1);
+    ligne.remove(); emApercu();
+  };
+    ligne.appendChild(croix);
+  return ligne;
+}
+function emAjouterChamp(entree){
+  if(EM_CHAMPS.length >= 25){ msg("dmsg-embed","Maximum 25 champs.","no"); return; }
+  var e = entree || {nom:"", valeur:"", inline:false};
+  EM_CHAMPS.push(e);
+  $("d-em-champs").appendChild(emLigneChamp(e));
+  emApercu();
+}
+$("d-em-ajouter").addEventListener("click", function(){ emAjouterChamp(); });
+
+/* Tous les champs texte alimentent l'aperçu en direct. */
+["d-em-titre","d-em-desc","d-em-contenu","d-em-lien","d-em-image","d-em-vignette",
+ "d-em-auteur","d-em-auteur-icone","d-em-pied","d-em-pied-icone","d-em-couleur","d-em-mention"]
+.forEach(function(id){
+  var e = $(id); if(!e) return;
+  e.addEventListener("input", emApercu);
+  e.addEventListener("change", emApercu);
+});
+$("d-em-horodatage").addEventListener("change", emApercu);
+
+/* Remplit le salon et le rôle : appelé à chaque chargement de serveur. */
+function emRemplirSalons(){
+  var sel = $("d-em-salon"); vide(sel);
+  var o = el("option", null, "- Choisir un salon -"); o.value = ""; sel.appendChild(o);
+  ((donnees && donnees.salons && donnees.salons.texte) || []).forEach(function(s){
+    var x = el("option", null, "#" + s.nom); x.value = s.id; sel.appendChild(x);
+  });
+  var men = $("d-em-mention"); vide(men);
+  var a = el("option", null, "- Aucun rôle -"); a.value = ""; men.appendChild(a);
+  ((donnees && donnees.roles) || []).forEach(function(r){
+    var x = el("option", null, "@" + r.nom); x.value = r.id; men.appendChild(x);
+  });
+}
+
+/* Modèles prêts à l'emploi. */
+$("d-em-modele").addEventListener("click", function(){
+  var noms = MODELES.map(function(m,i){ return (i+1) + ". " + m.nom; }).join("\n");
+  var choix = window.prompt("Quel modèle charger ?\n\n" + noms + "\n\nNuméro :", "1");
+  if(choix === null) return;
+  var m = MODELES[(parseInt(choix,10) || 1) - 1];
+  if(!m){ msg("dmsg-embed","Numéro de modèle inconnu.","no"); return; }
+  $("d-em-titre").value = m.titre || "";
+  $("d-em-desc").value = m.desc || "";
+  $("d-em-couleur").value = m.couleur || "#000000";
+  $("d-em-pied").value = m.pied || "";
+  $("d-em-horodatage").checked = !!m.horodatage;
+  vide($("d-em-champs"));
+  EM_CHAMPS = [];
+  (m.champs || []).forEach(emAjouterChamp);  emApercu();
+  msg("dmsg-embed","Modèle « " + m.nom + " » chargé. Choisis le salon puis publie.","info");
+});
+
+/* Remise à zéro complète. */
+$("d-em-vider").addEventListener("click", function(){
+  ["d-em-titre","d-em-desc","d-em-contenu","d-em-lien","d-em-image","d-em-vignette",
+   "d-em-auteur","d-em-auteur-icone","d-em-pied","d-em-pied-icone"].forEach(function(id){ $(id).value = ""; });
+  $("d-em-couleur").value = "#000000";
+  $("d-em-horodatage").checked = false;
+  vide($("d-em-champs"));
+  EM_CHAMPS = [];
+  emApercu();
+  msg("dmsg-embed","");
+});
+
+/* Publication. */
+$("d-em-publier").addEventListener("click", function(){
+  if(!courant){ msg("dmsg-embed","Choisis d'abord un serveur.","no"); return; }
+  var salon = $("d-em-salon").value;
+  if(!salon){ msg("dmsg-embed","Choisis le salon de destination.","no"); return; }
+  var titre = $("d-em-titre").value.trim(), desc = $("d-em-desc").value.trim();
+  if(!titre && !desc){ msg("dmsg-embed","Ajoute au moins un titre ou une description.","no"); return; }
+  var champs = EM_CHAMPS.filter(function(c){ return c.nom.trim() || c.valeur.trim(); })
+                        .map(function(c){ return {nom:c.nom, valeur:c.valeur, inline:c.inline}; });
+  var corps = {
+    action: "embed_send", salon: salon, titre: titre, description: $("d-em-desc").value,
+    couleur: $("d-em-couleur").value, lien_titre: $("d-em-lien").value.trim(),
+    contenu: $("d-em-contenu").value, mention_role: $("d-em-mention").value,
+    image: $("d-em-image").value.trim(), vignette: $("d-em-vignette").value.trim(),
+    auteur: $("d-em-auteur").value.trim(), auteur_icone: $("d-em-auteur-icone").value.trim(),
+    pied: $("d-em-pied").value.trim(), pied_icone: $("d-em-pied-icone").value.trim(),
+    horodatage: $("d-em-horodatage").checked, champs: champs
+  };
+  var btn = this; btn.disabled = true; btn.textContent = "Publication…";
+  poste("/api/verify/dashboard/serveur/" + courant + "/actions", corps).then(function(res){
+    btn.disabled = false; btn.textContent = "Publier l'embed";
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    var texte = (res.data && (res.data.message || res.data.erreur)) || ("Réponse " + res.status);
+    msg("dmsg-embed", texte + (res.ok && res.data && res.data.lien ? " Ouvre le salon pour le voir." : ""),
+        res.ok ? "ok" : "no");
+  }).catch(function(){
+    btn.disabled = false; btn.textContent = "Publier l'embed";
+    msg("dmsg-embed","Le bot ne répond pas : rien n'a été publié.","no");
+  });
+});
+
+/* ---------------------------------------------------------- démarrage */
+if(jeton){
+  ouvrirSession();
+}
+})();
+
+)\n\n</script>
+<script src="script.js"></script>
 <script>\n
 (function(){
 "use strict";

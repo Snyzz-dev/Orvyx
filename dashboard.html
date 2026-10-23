@@ -1,4 +1,6 @@
-﻿<!doctype html><html lang="fr"><head><title>Tableau de bord – Orvyx</title><meta name="robots" content="noindex,nofollow"><meta name="description" content="Tableau de bord Orvyx : connecte-toi avec Discord et gère la configuration, les tickets, la modération et la communauté de tes serveurs où tu es propriétaire ou administrateur."><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="assets/logo.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Michroma&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"><meta property="og:image" content="assets/banner.png">
+﻿<!doctype html><html lang="fr"><head><title>Tableau de bord – Orvyx</title><meta name="robots" content="noindex,nofollow"><meta name="description" content="Tableau de bord Orvyx : connecte-toi avec Discord et gère la configuration, les tickets, la modération et la communauté de tes serveurs où tu es propriétaire ou administrateur."><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://api.orvyx.site https://discord.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"><meta http-equiv="X-Content-Type-Options" content="nosniff"><meta http-equiv="X-Frame-Options" content="DENY"><meta name="referrer" content="strict-origin-when-cross-origin"><meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), usb=(), payment=()">
+<meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="assets/logo.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Michroma&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"><meta property="og:image" content="assets/banner.png">
 <style>
 /* ==========================================================================
    Tableau de bord Orvyx — feuille de style locale.
@@ -439,7 +441,7 @@
   .dmus-main{width:58px;height:58px}
 }
 </style></head><body>
-<canvas id="stars"></canvas><nav><div class="wrap nv"><a class="brand" href="index.html"><img src="assets/logo.png" alt="">Orvyx</a><button class="burger" aria-label="Menu">☰</button><ul class="links"><li><a href="index.html#fonctionnalites">Fonctionnalités</a></li><li><a href="documentation.html">Documentation</a></li><li><a href="dashboard.html">Tableau de bord</a></li><li><a href="index.html#ia">Assistant IA</a></li><li><a href="index.html#faq">FAQ</a></li><li><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a></li><li><a href="#" data-support>Support</a></li><li><a class="btn" href="#" data-invite>Ajouter à Discord</a></li></ul></div></nav>
+<canvas id="stars"></canvas><nav><div class="wrap nv"><a class="brand" href="index.html"><img src="assets/logo.png" alt="">Orvyx</a><button class="burger" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><ul class="links"><li><a href="index.html#fonctionnalites">Fonctionnalités</a></li><li><a href="documentation.html">Documentation</a></li><li><a href="dashboard.html">Tableau de bord</a></li><li><a href="index.html#ia">Assistant IA</a></li><li><a href="index.html#faq">FAQ</a></li><li><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener noreferrer">GitHub</a></li><li><a href="#" data-support>Support</a></li><li><a class="btn" href="#" data-invite>Ajouter à Discord</a></li></ul></div></nav>
 
 <main class="wrap dwrap">
 
@@ -474,14 +476,14 @@ Se connecter avec Discord
 <div class="dgrid">
 <aside class="dside" aria-label="Sections">
 <div class="dside-titre">Navigation</div>
-<button data-v="apercu" class="on"><span class="dico">📊</span>Aperçu</button>
-<button data-v="config"><span class="dico">⚙️</span>Configuration<span class="dcompte" id="d-nb-config"></span></button>
-<button data-v="tickets"><span class="dico">🎫</span>Tickets<span class="dcompte" id="d-nb-tickets"></span></button>
-<button data-v="moderation"><span class="dico">🔨</span>Modération<span class="dcompte" id="d-nb-bl"></span></button>
-<button data-v="communaute"><span class="dico">👥</span>Communauté</button>
-<button data-v="embed"><span class="dico">🖼️</span>Embed</button>
-<button data-v="musique"><span class="dico">🎵</span>Musique</button>
-<button data-v="logs"><span class="dico">📜</span>Journaux</button>
+<button data-v="apercu" class="on"><span class="dico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19V5"/><path d="M4 19h16"/><rect x="7" y="10" width="3" height="7" rx="1"/><rect x="14" y="7" width="3" height="10" rx="1"/></svg></span>Aperçu</button>
+<button data-v="config"><span class="dico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>Configuration<span class="dcompte" id="d-nb-config"></span></button>
+<button data-v="tickets"><span class="dico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg></span>Tickets<span class="dcompte" id="d-nb-tickets"></span></button>
+<button data-v="moderation"><span class="dico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4Z"/></svg></span>Modération<span class="dcompte" id="d-nb-bl"></span></button>
+<button data-v="communaute"><span class="dico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="7" r="4"/><path d="M17 11a3 3 0 1 0-2-2.83"/><path d="M1.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16.5 20a4.5 4.5 0 0 1 6 0"/></svg></span>Communauté</button>
+<button data-v="embed"><span class="dico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M3 16l4-4 4 4 4-6 6 8"/></svg></span>Embed</button>
+<button data-v="musique"><span class="dico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg></span>Musique</button>
+<button data-v="logs"><span class="dico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>Journaux</button>
 </aside>
 
 <div class="dcorps">
@@ -833,7 +835,7 @@ Se connecter avec Discord
 </div>
 <div class="dtab" id="d-logs"></div>
 <div class="dactions">
-<button class="btn ghost tiny" id="d-logs-maj" type="button">↻ Actualiser</button>
+<button class="btn ghost tiny" id="d-logs-maj" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Actualiser</button>
 <label class="dbascule dsmall"><input type="checkbox" id="d-logs-auto"> Actualisation automatique (5 s)</label>
 </div>
 </section>
@@ -845,7 +847,7 @@ Se connecter avec Discord
 </div>
 </main>
 
-<footer><div class="wrap"><span>© 2026 Orvyx. Créé par Snyzz. Non affilié à Discord Inc.</span><div><a href="documentation.html">Documentation</a><a href="conditions.html">Conditions d’Utilisation</a><a href="confidentialite.html">Politique de Confidentialité</a><a href="droit-auteur.html">Droit d’auteur</a><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a><a href="#" data-support>Support</a></div></div></footer>
+<footer><div class="wrap"><span>© 2026 Orvyx. Créé par Snyzz. Non affilié à Discord Inc.</span><div><a href="documentation.html">Documentation</a><a href="conditions.html">Conditions d’Utilisation</a><a href="confidentialite.html">Politique de Confidentialité</a><a href="droit-auteur.html">Droit d’auteur</a><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener noreferrer">GitHub</a><a href="#" data-support>Support</a></div></div></footer>
 <script src="config.js"></script>
 <script src="script.js"></script>
 <script>
@@ -1035,7 +1037,7 @@ function musRemplirSalons(){
     sel.appendChild(rien); sel.disabled = true; return;
   }
   if(g.connected && g.channel){
-    var actuel = el("option", null, "🔊 " + g.channel.name); actuel.value = g.channel.id;
+    var actuel = el("option", null, "<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> " + g.channel.name); actuel.value = g.channel.id;
     sel.appendChild(actuel); sel.disabled = true; return;
   }
   sel.disabled = false;
@@ -1164,7 +1166,7 @@ function musPeindreFile(file){
 
     ligne.appendChild(el("span", "dmus-len", t.duration_label || musTemps(t.duration)));
 
-    var croix = el("button", "dmus-x", "✕");
+    var croix = el("button", "dmus-x", "<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>");
     croix.type = "button"; croix.title = "Retirer de la file";
     croix.addEventListener("click", function(){ musPoster("remove", {index: i}); });
     ligne.appendChild(croix);
@@ -1442,12 +1444,12 @@ function optionsSalon(select, valeur, vide_){
 }
 function optionsVocal(select, valeur){
   var o = el("option", null, "— Aucun —"); o.value=""; select.appendChild(o);
-  (donnees.salons.vocal||[]).forEach(function(s){ var x=el("option",null,"🔊 "+s.nom); x.value=s.id; select.appendChild(x); });
+  (donnees.salons.vocal||[]).forEach(function(s){ var x=el("option",null,"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> "+s.nom); x.value=s.id; select.appendChild(x); });
   select.value = valeur != null ? String(valeur) : "";
 }
 function optionsCategorie(select, valeur){
   var o = el("option", null, "— Aucune —"); o.value=""; select.appendChild(o);
-  (donnees.salons.categorie||[]).forEach(function(s){ var x=el("option",null,"📁 "+s.nom); x.value=s.id; select.appendChild(x); });
+  (donnees.salons.categorie||[]).forEach(function(s){ var x=el("option",null,"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg> "+s.nom); x.value=s.id; select.appendChild(x); });
   select.value = valeur != null ? String(valeur) : "";
 }
 function optionsRole(select, valeur){
@@ -1562,7 +1564,7 @@ function ligneListe(cle, colonnes, entree){
     champDiv.appendChild(inp);
     ligne.appendChild(champDiv);
   });
-  var sup = el("button","btn ghost tiny","✕");
+  var sup = el("button","btn ghost tiny","<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>");
   sup.type = "button"; sup.title = "Retirer cette entrée";
   sup.onclick = function(){ ligne.parentNode.removeChild(ligne); marquerListe(cle); };
   ligne.appendChild(sup);
@@ -1628,11 +1630,11 @@ function dessinerConfig(){
   boolChamp(b,"Attribution automatique au staff le moins chargé",null,"ticket_autoassign");
   listeChamp(b,"Priorités proposées","Libellé, emoji et délai d'échéance en heures.","ticket_priorities",
     [{cle:"label",label:"Libellé",max:40,placeholder:"Haute"},
-     {cle:"emoji",label:"Emoji",max:8,placeholder:"🔴"},
+     {cle:"emoji",label:"Emoji",max:8,placeholder:"<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg>"},
      {cle:"hours",label:"Heures",type:"number",min:1,maxv:720}]);
   listeChamp(b,"Types de tickets","Libellé, emoji et description affichée au membre.","ticket_categories",
     [{cle:"label",label:"Libellé",max:40,placeholder:"Support"},
-     {cle:"emoji",label:"Emoji",max:8,placeholder:"🛠️"},
+     {cle:"emoji",label:"Emoji",max:8,placeholder:"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4Z"/></svg>"},
      {cle:"description",label:"Description",max:100,placeholder:"Besoin d'aide ?"}]);
   lectureChamp(b,"Numéro du prochain ticket","Compteur tenu par le bot ; non modifiable ici.","ticket_counter");
 
@@ -1734,7 +1736,7 @@ $("d-enregistrer").addEventListener("click", function(){
     modifs = {}; majBarre();
     msg("dmsg-config", refus.length
       ? ("Enregistré, sauf ces réglages refusés : " + refus.join(", "))
-      : "Configuration enregistrée ✓", refus.length ? "no" : "ok");
+      : "Configuration enregistrée <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>", refus.length ? "no" : "ok");
     if(res.data.config) donnees.config = res.data.config;
     charger(courant).then(function(){ aller("config"); });
   }).catch(function(){
@@ -1832,14 +1834,14 @@ function dessinerTickets(){
 
   remplacer("d-staff", tableau(["Staff","Tickets en cours","Notes reçues","Satisfaction"],
     donnees.staff, function(s){
-      var moy = el("span", null, s.moyenne!=null ? ("⭐ "+s.moyenne+"/5") : "—");
+      var moy = el("span", null, s.moyenne!=null ? ("<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg> "+s.moyenne+"/5") : "—");
       return [{texte:s.nom},{texte:String(s.charge)},{texte:String(s.notes)},{noeud:moy}];
     }, "Aucun membre du staff identifié (rôle support ou permission « Gérer le serveur »)."));
 
   remplacer("d-tickets-fermes", tableau(["N°","Catégorie","Note","Créé"],
     t.fermes, function(x){
       return [{texte:"#"+x.numero},{texte:x.categorie},
-              {texte:x.note?("⭐".repeat(x.note)):"—"},{texte:date(x.cree)}];
+              {texte:x.note?("<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>".repeat(x.note)):"—"},{texte:date(x.cree)}];
     }, "Aucun ticket fermé."));
 }
 
@@ -1988,16 +1990,16 @@ function action(nom, corps, cible, apres){
 var EM = {};                                    /* champs texte liés à l'aperçu */
 var EM_CHAMPS = [];                             /* champs nom/valeur/en ligne */
 var MODELES = [
-  {nom:"Annonce", titre:"📢 Annonce", couleur:"#000000",
+  {nom:"Annonce", titre:"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Annonce", couleur:"#000000",
    desc:"Bonjour à tous !\n\nNous avons le plaisir de vous annoncer une nouveauté sur le serveur.",
    pied:"Orvyx", horodatage:true},
-  {nom:"Règlement", titre:"📜 Règlement du serveur", couleur:"#000000",
+  {nom:"Règlement", titre:"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Règlement du serveur", couleur:"#000000",
    desc:"**1.** Respecte tout le monde.\n**2.** Pas de spam ni de publicité.\n**3.** Suis les consignes du staff.",
    pied:"Direction"},
-  {nom:"Maintenance", titre:"🔧 Maintenance en cours", couleur:"#000000",
+  {nom:"Maintenance", titre:"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4Z"/></svg> Maintenance en cours", couleur:"#000000",
    desc:"Le bot redémarre pour une mise à jour.\nNous revenons très vite, merci de votre patience !",
    pied:"Orvyx", horodatage:true},
-  {nom:"Événement", titre:"🎉 Soirée jeux ce soir", couleur:"#000000",
+  {nom:"Événement", titre:"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 9l2 2 4-4"/><path d="M12 15l2-2 4 4"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="7" r="2"/></svg> Soirée jeux ce soir", couleur:"#000000",
    desc:"Rendez-vous à **21 h** en vocal pour une soirée détente !",
    pied:"Orvyx", horodatage:true}
 ];
@@ -2100,7 +2102,7 @@ function emLigneChamp(entree){
   coche.addEventListener("change", function(){ entree.inline = coche.checked; emApercu(); });
   lab.appendChild(coche); lab.appendChild(document.createTextNode("Sur une ligne"));
   c.appendChild(lab); ligne.appendChild(c);
-  var sup = el("button","btn ghost tiny","✕"); sup.type = "button";
+  var sup = el("button","btn ghost tiny","<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>"); sup.type = "button";
   sup.title = "Supprimer ce champ";
   sup.onclick = function(){
     EM_CHAMPS.splice(EM_CHAMPS.indexOf(entree), 1);

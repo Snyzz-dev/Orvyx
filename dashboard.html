@@ -205,6 +205,209 @@
 .dsel{width:100%}
 .dsel select{min-width:0;width:100%}
 }
+/* ================================================================ musique */
+#v-musique{
+  --dacc:#b9a7ff;
+  --dacc2:#7de3ff;
+}
+.dmus-scene{
+  position:relative;overflow:hidden;isolation:isolate;
+  border:1px solid rgba(255,255,255,.13);border-radius:26px;
+  padding:1.15rem 1.3rem 1.4rem;margin-bottom:1.1rem;
+  background:linear-gradient(165deg,#101016 0%,#08080c 55%,#050508 100%);
+  box-shadow:0 30px 80px -44px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.dmus-scene::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.5) 76%,rgba(0,0,0,.82) 100%);
+}
+.dmus-glow{
+  position:absolute;inset:-40%;z-index:0;
+  background-position:center;background-size:cover;
+  filter:blur(80px) saturate(1.5);opacity:0;transform:scale(1.15);
+  transition:opacity .8s ease,background-image .8s ease;
+}
+.dmus-glow.on{opacity:.55}
+.dmus-bar,.dmus-hero,.dmus-line,.dmus-ctrls,.dmus-foot{position:relative;z-index:1}
+
+.dmus-bar{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.dmus-live{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font:600 .68rem var(--b);letter-spacing:.14em;text-transform:uppercase;color:#cfcfe0;
+  border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:.38rem .8rem;
+  background:rgba(255,255,255,.045);
+}
+.dmus-live i{width:7px;height:7px;border-radius:50%;background:#6b6b7a}
+.dmus-live.ok i{background:#57f287;animation:dmusPulse 2s infinite}
+.dmus-live.pause i{background:#ffcf5c}
+.dmus-live.ko i{background:#ff5c5c}
+@keyframes dmusPulse{
+  0%{box-shadow:0 0 0 0 rgba(87,242,135,.55)}
+  70%{box-shadow:0 0 0 8px rgba(87,242,135,0)}
+  100%{box-shadow:0 0 0 0 rgba(87,242,135,0)}
+}
+.dmus-pick{margin-left:auto;display:flex;gap:.5rem;flex-wrap:wrap}
+.dmus-select{
+  appearance:none;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);
+  color:#ececf4;border-radius:999px;padding:.5rem .95rem;font:600 .8rem var(--b);
+  cursor:pointer;max-width:220px;text-overflow:ellipsis;transition:.2s;
+}
+.dmus-select:hover{border-color:rgba(255,255,255,.32)}
+.dmus-select option{background:#0b0b10;color:#fff}
+
+.dmus-hero{display:flex;align-items:center;gap:1.3rem;min-height:132px}
+.dmus-art{
+  width:132px;height:132px;flex:0 0 auto;border-radius:18px;
+  border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(145deg,#1b1b26,#0b0b11) center/cover no-repeat;
+  box-shadow:0 18px 44px -14px rgba(0,0,0,.9);
+  display:grid;place-items:center;color:rgba(255,255,255,.32);overflow:hidden;
+  transition:border-color .3s;
+}
+.dmus-art.on{border-color:rgba(255,255,255,.26)}
+.dmus-art svg{width:36px;height:36px}
+.dmus-copy{min-width:0;flex:1 1 auto}
+.dmus-eyebrow{
+  font:600 .66rem var(--b);letter-spacing:.24em;text-transform:uppercase;
+  color:var(--dacc);margin-bottom:.45rem;
+}
+.dmus-title{
+  font:400 clamp(1.2rem,3.1vw,1.95rem)/1.2 var(--d);
+  color:#fff;margin:0 0 .4rem;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  word-break:break-word;
+}
+.dmus-sub{
+  color:var(--mu);font-size:.85rem;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.dmus-sub b{color:#cfcfe0;font-weight:600}
+
+.dmus-eq{display:flex;align-items:flex-end;gap:3px;height:20px;margin-top:.8rem;opacity:.3;transition:opacity .3s}
+.dmus-eq.on{opacity:1}
+.dmus-eq i{width:3px;height:5px;border-radius:2px;background:linear-gradient(180deg,var(--dacc2),var(--dacc))}
+.dmus-eq.on i{animation:dmusEq 1s ease-in-out infinite}
+.dmus-eq.on i:nth-child(1){animation-delay:0s}
+.dmus-eq.on i:nth-child(2){animation-delay:.22s}
+.dmus-eq.on i:nth-child(3){animation-delay:.09s}
+.dmus-eq.on i:nth-child(4){animation-delay:.31s}
+.dmus-eq.on i:nth-child(5){animation-delay:.15s}
+@keyframes dmusEq{0%,100%{height:5px}50%{height:19px}}
+
+.dmus-line{
+  display:flex;align-items:center;gap:.8rem;margin:1.2rem 0 .95rem;
+  font:600 .71rem var(--b);color:var(--mu);font-variant-numeric:tabular-nums;
+}
+.dmus-trail{position:relative;flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
+.dmus-fill{
+  position:absolute;inset:0 auto 0 0;width:0;border-radius:999px;
+  background:linear-gradient(90deg,var(--dacc2),var(--dacc));
+  box-shadow:0 0 16px rgba(185,167,255,.65);
+  transition:width .45s linear;
+}
+
+.dmus-ctrls{display:flex;align-items:center;justify-content:center;gap:.85rem;margin-bottom:1.2rem}
+.dmus-ic{
+  width:46px;height:46px;border-radius:50%;cursor:pointer;
+  border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.045);color:#e8e8ee;
+  display:grid;place-items:center;transition:.2s;
+}
+.dmus-ic svg{width:20px;height:20px}
+.dmus-ic:hover:not(:disabled){background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.34);transform:translateY(-1px)}
+.dmus-ic:disabled{opacity:.3;cursor:not-allowed}
+.dmus-ic.danger:hover:not(:disabled){background:rgba(255,92,92,.14);border-color:rgba(255,92,92,.45);color:#ff8f8f}
+.dmus-main{
+  width:64px;height:64px;border-radius:50%;border:none;cursor:pointer;
+  background:#fff;color:#08080c;display:grid;place-items:center;
+  box-shadow:0 14px 36px -10px rgba(255,255,255,.4);transition:.2s;
+}
+.dmus-main svg{width:26px;height:26px}
+.dmus-main:hover{transform:scale(1.07);box-shadow:0 20px 46px -12px rgba(185,167,255,.8)}
+.dmus-main:active{transform:scale(.96)}
+.dmus-main:disabled{opacity:.45;cursor:wait;transform:none}
+
+.dmus-foot{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;justify-content:space-between}
+.dmus-seg{
+  display:inline-flex;padding:3px;border-radius:999px;
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);
+}
+.dmus-seg button{
+  border:none;background:none;color:var(--mu);font:600 .73rem var(--b);
+  padding:.4rem .82rem;border-radius:999px;cursor:pointer;transition:.2s;
+}
+.dmus-seg button:hover{color:#fff}
+.dmus-seg button.on{background:#fff;color:#08080c}
+.dmus-vol{display:flex;align-items:center;gap:.65rem;color:var(--mu)}
+.dmus-vol button{background:none;border:none;color:#cfcfe0;cursor:pointer;display:grid;place-items:center;padding:0}
+.dmus-vol svg{width:20px;height:20px}
+.dmus-vol input{width:132px;accent-color:#fff;cursor:pointer}
+.dmus-vol b{font:600 .73rem var(--b);color:#cfcfe0;min-width:36px;text-align:right;font-variant-numeric:tabular-nums}
+
+.dmus-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+@media(min-width:980px){
+  .dmus-grid{grid-template-columns:.82fr 1.35fr;gap:1.1rem;align-items:start}
+}
+.dmus-search{display:flex;gap:.6rem}
+.dmus-search input{
+  flex:1;min-width:0;background:#0a0a0f;border:1px solid var(--ln);border-radius:12px;
+  color:#fff;padding:.85rem 1rem;font:500 .92rem var(--b);outline:none;transition:.2s;
+}
+.dmus-search input::placeholder{color:#5c5c6b}
+.dmus-search input:focus{border-color:rgba(185,167,255,.6);box-shadow:0 0 0 3px rgba(185,167,255,.14)}
+.dmus-search button{
+  flex:0 0 auto;border:none;border-radius:12px;background:#fff;color:#08080c;
+  font:700 .85rem var(--b);padding:.85rem 1.25rem;cursor:pointer;transition:.2s;
+}
+.dmus-search button:hover:not(:disabled){background:var(--dacc)}
+.dmus-search button:disabled{opacity:.5;cursor:wait}
+.dmus-hint{margin-top:.75rem;font-size:.77rem;color:#6f6f7e;line-height:1.5}
+.dmus-list{
+  display:flex;flex-direction:column;gap:.3rem;max-height:430px;overflow:auto;
+  margin-top:.55rem;padding-right:.15rem;
+}
+.dmus-list::-webkit-scrollbar{width:6px}
+.dmus-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:99px}
+.dmus-item{
+  display:flex;align-items:center;gap:.7rem;padding:.45rem .55rem;
+  border-radius:12px;border:1px solid transparent;transition:.18s;
+}
+.dmus-item:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1)}
+.dmus-num{font:600 .71rem var(--b);color:#5f5f70;width:20px;text-align:right;font-variant-numeric:tabular-nums}
+.dmus-thumb{
+  width:40px;height:40px;border-radius:9px;flex:0 0 auto;
+  background:#14141c center/cover no-repeat;border:1px solid rgba(255,255,255,.08);
+}
+.dmus-meta{min-width:0;flex:1}
+.dmus-meta b{
+  display:block;font:600 .85rem var(--b);color:#eaeaf2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.dmus-meta span{
+  display:block;font-size:.73rem;color:#7c7c8c;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.dmus-len{font:600 .73rem var(--b);color:#8b8b97;font-variant-numeric:tabular-nums}
+.dmus-x{
+  border:none;background:none;color:#6b6b7a;cursor:pointer;font-size:.85rem;
+  padding:.25rem .35rem;border-radius:8px;opacity:0;transition:.18s;
+}
+.dmus-item:hover .dmus-x{opacity:1}
+.dmus-x:hover{color:#ff6b6b;background:rgba(255,92,92,.12)}
+.dmus-empty{padding:1.7rem .5rem;text-align:center;color:#666677;font-size:.85rem}
+.dmus-mini{
+  margin-left:auto;border:1px solid var(--ln);background:none;color:var(--mu);
+  border-radius:999px;padding:.22rem .68rem;font:600 .68rem var(--b);cursor:pointer;transition:.2s;
+}
+.dmus-mini:hover{color:#ff8a8a;border-color:rgba(255,92,92,.5)}
+@media(max-width:560px){
+  .dmus-hero{gap:1rem;min-height:0}
+  .dmus-art{width:96px;height:96px;border-radius:14px}
+  .dmus-pick{width:100%;margin-left:0}
+  .dmus-select{flex:1;max-width:none}
+  .dmus-ctrls{gap:.55rem}
+  .dmus-ic{width:42px;height:42px}
+  .dmus-main{width:58px;height:58px}
+}
 </style></head><body>
 <canvas id="stars"></canvas><nav><div class="wrap nv"><a class="brand" href="index.html"><img src="assets/logo.png" alt="">Orvyx</a><button class="burger" aria-label="Menu">☰</button><ul class="links"><li><a href="index.html#fonctionnalites">Fonctionnalités</a></li><li><a href="documentation.html">Documentation</a></li><li><a href="dashboard.html">Tableau de bord</a></li><li><a href="index.html#ia">Assistant IA</a></li><li><a href="index.html#faq">FAQ</a></li><li><a href="https://github.com/Snyzz-dev" target="_blank" rel="noopener">GitHub</a></li><li><a href="#" data-support>Support</a></li><li><a class="btn" href="#" data-invite>Ajouter à Discord</a></li></ul></div></nav>
 
@@ -500,42 +703,91 @@ Se connecter avec Discord
 
 <!-- --------------------------------------------- musique -->
 <div class="dvue" id="v-musique">
-<section class="dcarte">
-<h3>🎵 Orvyx-Music - Panneau de contrôle</h3>
-<p class="dsub">Contrôlez la musique depuis le site. Le bot doit être connecté à un salon vocal.</p>
-<div class="dmusique">
-<div class="dmus-header">
-<div class="dmus-track">
-<div class="dmus-cover" id="dmus-cover"></div>
-<div class="dmus-info">
-<div class="dmus-title" id="dmus-title">Aucune musique en lecture</div>
-<div class="dmus-artist" id="dmus-artist">—</div>
-<div class="dmus-time"><span id="dmus-time">--:--</span></div>
+<div class="dmus-scene">
+  <div class="dmus-glow" id="dmus-glow"></div>
+
+  <div class="dmus-bar">
+    <div class="dmus-live" id="dmus-live"><i></i><span id="dmus-live-txt">Hors ligne</span></div>
+    <div class="dmus-pick">
+      <select class="dmus-select" id="dmus-guild" title="Serveur"><option value="">Serveur…</option></select>
+      <select class="dmus-select" id="dmus-chan" title="Salon vocal"><option value="">Salon vocal…</option></select>
+    </div>
+  </div>
+
+  <div class="dmus-hero">
+    <div class="dmus-art" id="dmus-art">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.6"/><circle cx="17.5" cy="16" r="2.6"/></svg>
+    </div>
+    <div class="dmus-copy">
+      <div class="dmus-eyebrow">En cours de lecture</div>
+      <h2 class="dmus-title" id="dmus-title">Rien en lecture</h2>
+      <div class="dmus-sub" id="dmus-sub">Choisis un serveur, puis lance une musique.</div>
+      <div class="dmus-eq" id="dmus-eq"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+  </div>
+
+  <div class="dmus-line">
+    <span id="dmus-pos">0:00</span>
+    <div class="dmus-trail"><div class="dmus-fill" id="dmus-fill"></div></div>
+    <span id="dmus-dur">0:00</span>
+  </div>
+
+  <div class="dmus-ctrls">
+    <button class="dmus-ic" id="dmus-shuffle" title="Mélanger la file" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h4v4"/><path d="M20 4l-6.4 6.4"/><path d="M4 20l5.6-5.6"/><path d="M16 20h4v-4"/><path d="M20 20l-4.2-4.2"/><path d="M4 4l4.2 4.2"/></svg>
+    </button>
+    <button class="dmus-ic" id="dmus-prev" title="Piste précédente" type="button">
+      <svg viewBox="0 0 24 24"><path d="M18.5 5.2v13.6L8 12z" fill="currentColor"/><rect x="4.6" y="4.8" width="2.6" height="14.4" rx="1.3" fill="currentColor"/></svg>
+    </button>
+    <button class="dmus-main" id="dmus-toggle" title="Lecture / pause" type="button">
+      <svg id="dmus-i-play" viewBox="0 0 24 24"><path d="M8.4 5.2v13.6L19 12z" fill="currentColor"/></svg>
+      <svg id="dmus-i-pause" class="off" viewBox="0 0 24 24" style="display:none"><rect x="7" y="5" width="3.7" height="14" rx="1.4" fill="currentColor"/><rect x="13.3" y="5" width="3.7" height="14" rx="1.4" fill="currentColor"/></svg>
+    </button>
+    <button class="dmus-ic" id="dmus-next" title="Piste suivante" type="button">
+      <svg viewBox="0 0 24 24"><path d="M5.5 5.2v13.6L16 12z" fill="currentColor"/><rect x="16.8" y="4.8" width="2.6" height="14.4" rx="1.3" fill="currentColor"/></svg>
+    </button>
+    <button class="dmus-ic danger" id="dmus-stop" title="Arrêter et quitter le vocal" type="button">
+      <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.6" fill="currentColor"/></svg>
+    </button>
+  </div>
+
+  <div class="dmus-foot">
+    <div class="dmus-seg" id="dmus-loop">
+      <button type="button" data-mode="off">Boucle off</button>
+      <button type="button" data-mode="track">Piste</button>
+      <button type="button" data-mode="queue">File</button>
+    </div>
+    <div class="dmus-vol">
+      <button id="dmus-mute" type="button" title="Couper / rétablir le son">
+        <svg viewBox="0 0 24 24"><path d="M4 9.6h3.4L12 6v12L7.4 14.4H4z" fill="currentColor"/><path d="M15.8 8.6a4.8 4.8 0 0 1 0 6.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18.4 6a8.4 8.4 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <input type="range" id="dmus-vol-range" min="0" max="100" step="1" value="50" aria-label="Volume">
+      <b id="dmus-vol-val">50%</b>
+    </div>
+  </div>
 </div>
+
+<div class="dmus-grid">
+  <section class="dcarte">
+    <h3>Ajouter une musique <span class="dtag" id="dmus-count">0 en file</span></h3>
+    <p class="dsub">Un lien YouTube, Spotify, Deezer ou SoundCloud — ou simplement un titre.</p>
+    <div class="dmus-search">
+      <input id="dmus-query" type="text" placeholder="Ne me quitte pas · ou colle un lien…" autocomplete="off" spellcheck="false">
+      <button id="dmus-add" type="button">Ajouter</button>
+    </div>
+    <div class="dmsg" id="dmus-msg"></div>
+    <div class="dmus-hint">Astuce : colle une playlist Spotify, Deezer ou YouTube pour ajouter toutes les pistes d'un coup. Le bot rejoint le salon vocal choisi en haut.</div>
+  </section>
+
+  <section class="dcarte">
+    <h3>À suivre <span class="dtag" id="dmus-qcount">0</span>
+      <button class="dmus-mini" id="dmus-clear" type="button">Vider</button>
+    </h3>
+    <div class="dmus-list" id="dmus-queue">
+      <div class="dmus-empty">La file d'attente est vide.</div>
+    </div>
+  </section>
 </div>
-</div>
-<div class="dmus-controls">
-<button class="dbtn" id="dmus-shuffle" title="Mélanger">🔀</button>
-<button class="dbtn" id="dmus-prev" title="Précédent" disabled>⏮️</button>
-<button class="dbtn dplay" id="dmus-playpause" title="Lecture/Pause">▶️</button>
-<button class="dbtn" id="dmus-next" title="Suivant">⏭️</button>
-<button class="dbtn" id="dmus-stop" title="Arrêter">⏹️</button>
-</div>
-<div class="dmus-options">
-<label class="dbascule"><input type="checkbox" id="dmus-loop"> Boucler la musique</label>
-<label class="dbascule"><input type="checkbox" id="dmus-loopq"> Boucler la file</label>
-<div class="dmus-vol">
-<span>🔊</span>
-<input type="range" id="dmus-volume" min="0" max="100" value="50">
-<span id="dmus-volval">50%</span>
-</div>
-</div>
-</div>
-</section>
-<section class="dcarte">
-<h3>File d'attente</h3>
-<div id="dmus-queue" class="dmus-queue"></div>
-</section>
 </div>
 
 <!-- --------------------------------------------- journaux -->
@@ -611,6 +863,7 @@ function deconnecter(raison){
   api("/api/verify/dashboard/logout", {method:"POST"}).catch(function(){});
   jeton=""; sessionStorage.removeItem(CLE);
   clearInterval(tLogs);
+  clearInterval(MUS_TIMER); MUS_TIMER = 0;
   $("dpanneau").hidden = true; $("dporte").hidden = false;
   msg("dmsg-porte", raison || "");
 }
@@ -663,6 +916,7 @@ function ouvrirSession(){
       o.value = s.id; sel.appendChild(o);
     });
     charger(serveurs[0].id);
+    if($("v-musique").classList.contains("on")) setTimeout(musiqueEntrer, 0);
     return true;
   });
 }
@@ -682,8 +936,332 @@ function charger(guildId){
     if(!res.ok){ msg("dmsg-global", (res.data && res.data.erreur) || "Chargement impossible.", "no"); return; }
     donnees = res.data;
     dessiner();
+    if(typeof musiqueSuivre === "function") musiqueSuivre(guildId);
   }).catch(function(){ msg("dmsg-global", "Le bot ne répond pas. Vérifie qu'il est en ligne, puis recharge la page.", "no"); });
 }
+
+/* ================================================================ musique */
+var MUS_G = [], MUS_SEL = "", MUS_ETAT = null, MUS_TIMER = 0, MUS_SIG = "\u0000";
+var MUS_ADD = false, MUS_VOLT = 0, MUS_VOLT_T = 0;
+
+function musTemps(n){
+  n = Math.max(0, Math.floor(Number(n) || 0));
+  var h = Math.floor(n / 3600), m = Math.floor(n % 3600 / 60), s = n % 60;
+  if(h) return h + ":" + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  return m + ":" + String(s).padStart(2, "0");
+}
+function musMsg(texte, type){ msg("dmus-msg", texte, type); }
+function musActive(){
+  for(var i = 0; i < MUS_G.length; i++){ if(MUS_G[i].id === MUS_SEL) return MUS_G[i]; }
+  return null;
+}
+
+/* Charge les serveurs où le bot musique est présent. */
+function musCharger(){
+  if(!jeton) return Promise.resolve();
+  return api("/music/api/guilds").then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    if(!res.ok){
+      MUS_G = []; MUS_SEL = ""; MUS_ETAT = null;
+      musRemplirServeurs(); musRemplirSalons(); musPeindre();
+      musMsg((res.data && res.data.erreur) || "Le panneau musical est injoignable.", "no");
+      return;
+    }
+    MUS_G = (res.data && res.data.guilds) || [];
+    var existe = MUS_G.some(function(g){ return g.id === MUS_SEL; });
+    if(!existe){
+      var pref = null;
+      for(var i = 0; i < MUS_G.length; i++){ if(MUS_G[i].id === String(courant)){ pref = MUS_G[i]; break; } }
+      MUS_SEL = pref ? pref.id : (MUS_G[0] ? MUS_G[0].id : "");
+      MUS_SIG = "\u0000";
+    }
+    musRemplirServeurs(); musRemplirSalons(); musPoll();
+  }).catch(function(){
+    musMsg("Impossible de joindre le bot musique : vérifie qu'il est en ligne.", "no");
+  });
+}
+
+function musRemplirServeurs(){
+  var sel = $("dmus-guild"); if(!sel) return;
+  vide(sel);
+  if(!MUS_G.length){
+    var vide0 = el("option", null, "Aucun serveur"); vide0.value = "";
+    sel.appendChild(vide0); sel.disabled = true; return;
+  }
+  sel.disabled = false;
+  MUS_G.forEach(function(g){
+    var o = el("option", null, g.name + (g.connected ? " · en vocal" : ""));
+    o.value = g.id; sel.appendChild(o);
+  });
+  sel.value = MUS_SEL;
+}
+
+function musRemplirSalons(){
+  var sel = $("dmus-chan"); if(!sel) return;
+  var g = musActive();
+  vide(sel);
+  if(!g){
+    var rien = el("option", null, "Salon vocal…"); rien.value = "";
+    sel.appendChild(rien); sel.disabled = true; return;
+  }
+  if(g.connected && g.channel){
+    var actuel = el("option", null, "🔊 " + g.channel.name); actuel.value = g.channel.id;
+    sel.appendChild(actuel); sel.disabled = true; return;
+  }
+  sel.disabled = false;
+  var vide1 = el("option", null, "Choisir un salon vocal…"); vide1.value = "";
+  sel.appendChild(vide1);
+  (g.channels || []).forEach(function(c){
+    var o = el("option", null, c.name + (c.membres ? " · " + c.membres + " en vocal" : ""));
+    o.value = c.id; sel.appendChild(o);
+  });
+  sel.value = g.user_channel || "";
+}
+
+/* Récupère l'état du lecteur d'un serveur. */
+function musPoll(){
+  if(!MUS_SEL) return;
+  api("/music/api/status?guild_id=" + encodeURIComponent(MUS_SEL)).then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    if(!res.ok){
+      MUS_ETAT = null; MUS_SIG = "\u0000"; musPeindre();
+      if(res.status === 404) musMsg("Le bot musique n'est pas présent sur ce serveur.", "no");
+      return;
+    }
+    MUS_ETAT = res.data || null;
+    musPeindre();
+  }).catch(function(){});
+}
+
+/* Reflète l'état du bot dans l'interface. */
+function musPeindre(){
+  var e = MUS_ETAT, cur = (e && e.current) ? e.current : null;
+  var g = musActive();
+
+  var live = $("dmus-live"), liveTxt = $("dmus-live-txt");
+  var classe = "dmus-live", texte = "Hors ligne";
+  if(e && e.connected){
+    if(e.playing){ classe += " ok"; texte = "En lecture"; }
+    else if(e.paused){ classe += " pause"; texte = "En pause"; }
+    else { texte = "Connecté"; }
+  } else if(g){
+    texte = "Hors ligne";
+  } else {
+    classe += " ko"; texte = "Aucun serveur";
+  }
+  live.className = classe; liveTxt.textContent = texte;
+
+  var art = $("dmus-art"), halo = $("dmus-glow");
+  if(cur && cur.thumbnail){
+    var u = "url('" + String(cur.thumbnail).replace(/'/g, "%27") + "')";
+    art.style.backgroundImage = u; art.classList.add("on");
+    halo.style.backgroundImage = u; halo.classList.add("on");
+  } else {
+    art.style.backgroundImage = ""; art.classList.remove("on");
+    halo.style.backgroundImage = ""; halo.classList.remove("on");
+  }
+
+  $("dmus-title").textContent = cur ? cur.title : "Rien en lecture";
+  var sub = $("dmus-sub");
+  if(cur){
+    var infos = ["via " + (cur.source || "youtube")];
+    if(cur.requester) infos.push("demandé par " + cur.requester);
+    sub.textContent = infos.join(" · ");
+  } else if(e && e.connected){
+    sub.textContent = "Le bot est dans « " + (e.channel ? e.channel.name : "un salon vocal") + " ». Ajoute une musique pour lancer la lecture.";
+  } else {
+    sub.textContent = "Choisis un salon vocal, puis ajoute une musique.";
+  }
+
+  var duree = cur ? Number(cur.duration || 0) : 0;
+  var pos = e ? Math.max(0, Number(e.position || 0)) : 0;
+  if(duree) pos = Math.min(pos, duree);
+  $("dmus-pos").textContent = musTemps(pos);
+  $("dmus-dur").textContent = duree ? musTemps(duree) : "0:00";
+  $("dmus-fill").style.width = (duree ? Math.min(100, pos / duree * 100) : 0) + "%";
+
+  var actif = !!(e && e.playing);
+  $("dmus-i-play").style.display = actif ? "none" : "";
+  $("dmus-i-pause").style.display = actif ? "" : "none";
+  $("dmus-eq").classList.toggle("on", actif);
+
+  $("dmus-toggle").disabled = !(e && e.connected && cur);
+  $("dmus-prev").disabled = !(e && e.connected);
+  $("dmus-next").disabled = !(e && e.connected && (cur || Number(e.queue_count || 0) > 0));
+  $("dmus-shuffle").disabled = !(e && Number(e.queue_count || 0) > 1);
+  $("dmus-stop").disabled = !(e && e.connected);
+  $("dmus-clear").disabled = !(e && Number(e.queue_count || 0) > 0);
+
+  var mode = e ? (e.loop || "off") : "off";
+  Array.prototype.forEach.call($("dmus-loop").children, function(b){
+    b.classList.toggle("on", b.dataset.mode === mode);
+  });
+
+  if(Date.now() > MUS_VOLT){
+    var vol = e && e.volume != null ? Number(e.volume) : 50;
+    $("dmus-vol-range").value = vol;
+    $("dmus-vol-val").textContent = vol + "%";
+  }
+
+  var nb = e ? Number(e.queue_count || 0) : 0;
+  $("dmus-count").textContent = nb + " en file";
+  $("dmus-qcount").textContent = nb;
+
+  var sig = JSON.stringify((e && e.queue) || []);
+  if(sig !== MUS_SIG){ MUS_SIG = sig; musPeindreFile((e && e.queue) || []); }
+}
+
+function musPeindreFile(file){
+  var boite = $("dmus-queue"); vide(boite);
+  if(!file.length){
+    boite.appendChild(el("div", "dmus-empty", "La file d'attente est vide."));
+    return;
+  }
+  file.forEach(function(t, i){
+    var ligne = el("div", "dmus-item");
+    ligne.appendChild(el("span", "dmus-num", String(i + 1).padStart(2, "0")));
+
+    var pouce = el("div", "dmus-thumb");
+    if(t.thumbnail) pouce.style.backgroundImage = "url('" + String(t.thumbnail).replace(/'/g, "%27") + "')";
+    ligne.appendChild(pouce);
+
+    var meta = el("div", "dmus-meta");
+    meta.appendChild(el("b", null, t.title || "Inconnu"));
+    var infos = [t.source || "youtube"];
+    if(t.requester) infos.push(t.requester);
+    meta.appendChild(el("span", null, infos.join(" · ")));
+    ligne.appendChild(meta);
+
+    ligne.appendChild(el("span", "dmus-len", t.duration_label || musTemps(t.duration)));
+
+    var croix = el("button", "dmus-x", "✕");
+    croix.type = "button"; croix.title = "Retirer de la file";
+    croix.addEventListener("click", function(){ musPoster("remove", {index: i}); });
+    ligne.appendChild(croix);
+
+    boite.appendChild(ligne);
+  });
+}
+
+/* Envoie une action au bot musique. */
+function musPoster(acte, corps, silencieux){
+  if(!MUS_SEL){ musMsg("Choisis d'abord un serveur.", "no"); return Promise.resolve(null); }
+  if(!jeton){ return Promise.resolve(null); }
+  var donnees = Object.assign({guild_id: MUS_SEL}, corps || {});
+  return poste("/music/api/" + acte, donnees).then(function(res){
+    if(res.status === 401){ deconnecter("Session expirée."); return null; }
+    var d = res.data || {};
+    if(!silencieux) musMsg(d.message || d.erreur || ("Réponse " + res.status), res.ok ? "ok" : "no");
+    musPoll();
+    return res;
+  }).catch(function(){
+    if(!silencieux) musMsg("Le bot musique ne répond pas.", "no");
+    return null;
+  });
+}
+
+function musAjouter(){
+  var q = $("dmus-query").value.trim();
+  if(!q){ musMsg("Écris un titre ou colle un lien.", "no"); $("dmus-query").focus(); return; }
+  if(!MUS_SEL){ musMsg("Choisis d'abord un serveur.", "no"); return; }
+  var salon = $("dmus-chan");
+  if(salon && !salon.disabled && !salon.value){
+    musMsg("Choisis le salon vocal que le bot doit rejoindre.", "no"); return;
+  }
+  if(MUS_ADD) return;
+  MUS_ADD = true;
+  var bouton = $("dmus-add");
+  bouton.disabled = true; bouton.textContent = "Recherche…";
+  musMsg("Recherche en cours…", "info");
+
+  poste("/music/api/play", {
+    guild_id: MUS_SEL, query: q, channel_id: (salon && salon.value) || null
+  }).then(function(res){
+    MUS_ADD = false; bouton.disabled = false; bouton.textContent = "Ajouter";
+    if(res.status === 401){ deconnecter("Session expirée."); return; }
+    var d = res.data || {};
+    if(res.ok){
+      musMsg(d.message || "Musique ajoutée.", "ok");
+      $("dmus-query").value = "";
+      musCharger();
+    } else {
+      musMsg(d.erreur || "Ajout impossible.", "no");
+    }
+  }).catch(function(){
+    MUS_ADD = false; bouton.disabled = false; bouton.textContent = "Ajouter";
+    musMsg("Le bot musique ne répond pas.", "no");
+  });
+}
+
+/* Entrée / sortie de l'onglet : le sondage ne tourne que lorsqu'il sert. */
+function musiqueEntrer(){
+  if(!jeton) return;
+  musCharger();
+  clearInterval(MUS_TIMER);
+  MUS_TIMER = setInterval(function(){
+    if(document.hidden) return;
+    var vue = $("v-musique");
+    if(!vue || !vue.classList.contains("on")) return;
+    musPoll();
+  }, 4000);
+}
+function musiqueSortir(){ clearInterval(MUS_TIMER); MUS_TIMER = 0; }
+function musiqueSuivre(guildId){
+  var id = String(guildId);
+  if(MUS_G.some(function(g){ return g.id === id; })){
+    MUS_SEL = id; MUS_SIG = "\u0000";
+    musRemplirServeurs(); musRemplirSalons(); musPoll();
+  }
+}
+
+$("dmus-guild").addEventListener("change", function(){
+  MUS_SEL = this.value; MUS_ETAT = null; MUS_SIG = "\u0000";
+  musRemplirSalons(); musPeindre(); musPoll();
+});
+$("dmus-add").addEventListener("click", musAjouter);
+$("dmus-query").addEventListener("keydown", function(ev){
+  if(ev.key === "Enter"){ ev.preventDefault(); musAjouter(); }
+});
+$("dmus-toggle").addEventListener("click", function(){
+  if(!MUS_ETAT) return;
+  musPoster(MUS_ETAT.paused ? "resume" : "pause", {}, true);
+});
+$("dmus-prev").addEventListener("click", function(){ musPoster("previous", {}, true); });
+$("dmus-next").addEventListener("click", function(){ musPoster("skip", {}, true); });
+$("dmus-shuffle").addEventListener("click", function(){ musPoster("shuffle"); });
+$("dmus-stop").addEventListener("click", function(){
+  if(!window.confirm("Arrêter la musique, vider la file et déconnecter le bot ?")) return;
+  musPoster("stop");
+});
+$("dmus-clear").addEventListener("click", function(){
+  if(!window.confirm("Vider la file d'attente ?")) return;
+  musPoster("clear");
+});
+Array.prototype.forEach.call($("dmus-loop").children, function(b){
+  b.addEventListener("click", function(){ musPoster("loop", {mode: b.dataset.mode}); });
+});
+$("dmus-vol-range").addEventListener("input", function(){
+  var val = Math.max(0, Math.min(100, parseInt(this.value, 10) || 0));
+  $("dmus-vol-val").textContent = val + "%";
+  MUS_VOLT = Date.now() + 1500;
+  clearTimeout(MUS_VOLT_T);
+  MUS_VOLT_T = setTimeout(function(){
+    if(MUS_SEL) poste("/music/api/volume", {guild_id: MUS_SEL, volume: val}).catch(function(){});
+  }, 260);
+});
+$("dmus-mute").addEventListener("click", function(){
+  if(!MUS_ETAT) return;
+  var actuel = Number(MUS_ETAT.volume || 0);
+  var cible = actuel > 0 ? 0 : 50;
+  $("dmus-vol-range").value = cible;
+  $("dmus-vol-val").textContent = cible + "%";
+  musPoster("volume", {volume: cible}, true);
+});
+document.addEventListener("visibilitychange", function(){
+  if(document.hidden) return;
+  var vue = $("v-musique");
+  if(vue && vue.classList.contains("on")) musPoll();
+});
 
 /* ---------------------------------------------------------- navigation */
 var ONGLETS = ["apercu","config","tickets","moderation","communaute","embed","musique","logs"];
@@ -694,6 +1272,7 @@ function aller(v){
   Array.prototype.forEach.call(document.querySelectorAll(".dvue"), function(x){ x.classList.remove("on"); });
   var cible = $("v-" + v); if(cible) cible.classList.add("on");
   if(v === "logs") chargerLogs();
+  if(v === "musique"){ musiqueEntrer(); } else { musiqueSortir(); }
   try{ location.hash = v; }catch(e){}
 }
 Array.prototype.forEach.call(document.querySelectorAll(".dside button"), function(b){

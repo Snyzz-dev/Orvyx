@@ -144,3 +144,175 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}
 .docs-som{position:static}
 .docs{padding:100px 0 3rem}
 }
+
+/* ================= COUCHE "COSMOS" : polish + animations ================= */
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+::selection{background:#fff;color:#000}
+html{scrollbar-width:thin;scrollbar-color:#444 #000}
+body{opacity:0;animation:pg .9s .05s ease forwards}
+@keyframes pg{to{opacity:1}}
+/* aurores en fond */
+body::before{content:"";position:fixed;inset:-20%;z-index:-2;pointer-events:none;
+background:radial-gradient(40% 35% at 20% 25%,rgba(150,160,255,.13),transparent 70%),radial-gradient(35% 30% at 80% 70%,rgba(255,255,255,.09),transparent 70%),radial-gradient(30% 30% at 60% 15%,rgba(120,200,255,.08),transparent 70%);
+animation:au 24s ease-in-out infinite alternate}
+@keyframes au{to{transform:translate3d(4%,3%,0) rotate(6deg) scale(1.1)}}
+/* grain de film */
+body::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* barre de progression + lueur curseur */
+#prog{position:fixed;top:0;left:0;height:2px;width:100%;transform-origin:0 50%;transform:scaleX(0);z-index:70;background:linear-gradient(90deg,transparent,#fff,#9ab4ff);box-shadow:0 0 12px #fff}
+#glow{position:fixed;top:0;left:0;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;pointer-events:none;z-index:-1;
+background:radial-gradient(circle,rgba(255,255,255,.09),transparent 65%);will-change:transform;opacity:0;transition:opacity .6s}
+#glow.on{opacity:1}
+/* navigation */
+nav{animation:nd .8s cubic-bezier(.2,.7,.2,1) both}
+@keyframes nd{from{transform:translateY(-100%);opacity:0}}
+.links a:not(.btn){position:relative}
+.links a:not(.btn)::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:#fff;transform:scaleX(0);transform-origin:right;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.links a:not(.btn):hover::after{transform:scaleX(1);transform-origin:left}
+.brand img{transition:transform .8s cubic-bezier(.2,.7,.2,1),filter .4s}
+.brand:hover img{transform:rotate(360deg) scale(1.1);filter:drop-shadow(0 0 10px #fff)}
+/* boutons : balayage lumineux */
+.btn::after{content:"";position:absolute;top:0;left:-75%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-20deg);transition:left .7s}
+.btn:hover::after{left:130%}
+.btn.ghost::after{display:none}
+.cta .btn:not(.ghost),.end .btn{animation:pulse 3.2s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 38px rgba(255,255,255,.38)}}
+.btn{will-change:transform}
+/* hero */
+.hero h1{filter:blur(0);text-shadow:0 0 60px rgba(255,255,255,.18)}
+.hero h1.in{animation:hin 1.3s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes hin{from{opacity:0;transform:translateY(34px);filter:blur(14px);letter-spacing:.12em}to{opacity:1;transform:none;filter:blur(0);letter-spacing:.01em}}
+.orb::before{content:"";position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 65%);filter:blur(30px);animation:halo 5s ease-in-out infinite alternate}
+@keyframes halo{to{transform:scale(1.25);opacity:.45}}
+.orb img{transform:translate3d(var(--ox,0),var(--oy,0),0) rotate(var(--or,0deg));transition:transform .25s ease-out;position:relative}
+.orb i:nth-child(2)::after{top:auto;bottom:10%;width:5px;height:5px}
+.hero::after{content:"";position:absolute;left:50%;bottom:26px;width:22px;height:36px;margin-left:-11px;border:1.5px solid var(--ln);border-radius:12px;background:linear-gradient(#fff,#fff) 50% 8px/3px 7px no-repeat;animation:wh 2s infinite}
+.hero{position:relative}
+@keyframes wh{50%{background-position:50% 18px;opacity:.4}}
+/* titres */
+h2{background:linear-gradient(90deg,#fff 30%,#8b8b97 60%,#fff);background-size:250%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 9s linear infinite}
+.legal h2,.docs-som h2,.cat h2{animation:none}
+/* stats */
+.stats b{text-shadow:0 0 24px rgba(255,255,255,.45)}
+.stats div{transition:transform .4s,background .4s;border-radius:12px}
+.stats div:hover{transform:translateY(-4px)}
+/* cartes fonctionnalités : bordure lumineuse tournante */
+.f{overflow:hidden;transform-style:preserve-3d;transition:transform .25s ease-out,background .3s}
+.f::before{content:"";position:absolute;inset:0;padding:1px;border-radius:inherit;background:conic-gradient(from var(--a),transparent 62%,rgba(255,255,255,.95));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .4s;animation:rot 4s linear infinite;pointer-events:none}
+.f:hover::before{opacity:1}
+@keyframes rot{to{--a:360deg}}
+.f svg{transition:transform .5s cubic-bezier(.2,.7,.2,1),filter .4s}
+.f:hover svg{transform:translateY(-4px) scale(1.18) rotate(-6deg);filter:drop-shadow(0 0 8px #fff)}
+.feat .f.rv{transition-delay:var(--d,0s)}
+/* révélations plus riches */
+/* commandes, onglets, FAQ */
+.tabs button{position:relative;transition:.3s cubic-bezier(.2,.7,.2,1)}
+.tabs button:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,255,255,.18)}
+.cmd,.cmds,.docs-som,.vcard,.docs-bas,.docs-note{transition:border-color .35s,box-shadow .35s,transform .35s}
+.cmd:hover{border-color:rgba(255,255,255,.4);box-shadow:0 0 30px rgba(255,255,255,.06);transform:translateX(4px)}
+.vcard{box-shadow:0 0 90px rgba(255,255,255,.05);position:relative}
+.vcard:hover,.hp:hover{border-color:rgba(255,255,255,.3)}
+details{transition:background .3s,padding .3s}
+details:hover{background:rgba(255,255,255,.03);padding-inline:1rem}
+details[open] p{animation:up .5s cubic-bezier(.2,.7,.2,1) both}
+summary:hover{text-shadow:0 0 14px #fff}
+.node{transition:transform .3s}.node:hover{transform:translateY(-3px)}
+.chain s{position:relative;overflow:hidden}
+.chain s::after{content:"";position:absolute;inset:0;width:40%;background:#fff;animation:flow 2.2s linear infinite}
+@keyframes flow{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
+/* bannière finale : zoom lent */
+.end{background-size:115%;animation:kb 22s ease-in-out infinite alternate}
+@keyframes kb{to{background-size:135%;background-position:60% 40%}}
+/* pied de page */
+footer a{position:relative;transition:color .2s,transform .2s;display:inline-block}
+footer a:hover{transform:translateY(-2px)}
+/* légal : sections qui s'allument */
+.legal h2{transition:border-color .4s,padding-left .4s}.legal h2:hover{border-color:#fff;padding-left:.6rem}
+@media(hover:none){#glow{display:none}.f::before{display:none}}
+@media(prefers-reduced-motion:reduce){body{opacity:1}#glow,#prog{display:none}.hero::after{display:none}.hero h1.in{opacity:1}}
+
+/* correctifs : espacement du hero + révélations fiables */
+.hero{padding-bottom:9rem}
+.hero::after{bottom:48px}
+.stats{margin-top:1rem;margin-bottom:1rem}
+.rv.hp{transition:1s cubic-bezier(.2,.7,.2,1),border-color .35s}
+@media(max-width:860px){.hero{padding-bottom:6rem}.hero::after{display:none}}
+
+/* icônes du Centre d'aide : taille fixe (elles s'étiraient à toute la largeur) */
+.hp svg{width:18px;height:18px;flex:none;display:inline-block;vertical-align:-3px;margin-right:.45rem;stroke:#fff}
+.hp div{display:flex;align-items:center;flex-wrap:wrap;gap:.1rem .2rem}
+.hp b svg{margin-right:.5rem}
+
+/* documentation : toutes les icônes SVG à taille fixe */
+.soms a svg,.tab svg{width:18px;height:18px;flex:none}
+.tab{display:inline-flex;align-items:center;gap:.45rem}
+.tab em{font-style:normal;opacity:.7;font-size:.8rem}
+.cat-lead svg{width:20px;height:20px;display:inline-block;vertical-align:-4px;margin-right:.4rem;stroke:#fff}
+.cmd-aide svg,.sous-desc svg,.args svg,.cmd-desc svg{width:1em;height:1em;display:inline-block;vertical-align:-.15em}
+.legal svg,.vcard svg:not(.keep){max-width:1.4em;max-height:1.4em}
+
+/* ===== Bannière finale "Prêt à lancer Orvyx ?" ===== */
+.end{position:relative;overflow:hidden;isolation:isolate;padding:11rem 0 10rem;background:#000;animation:none;background-size:auto}
+.end::before{content:"";position:absolute;inset:-6%;z-index:-2;background:url(assets/banner.png) center/cover no-repeat;filter:brightness(.7) contrast(1.1);animation:endzoom 26s ease-in-out infinite alternate}
+@keyframes endzoom{from{transform:scale(1) translate3d(0,0,0)}to{transform:scale(1.14) translate3d(-1.5%,1%,0)}}
+.end::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+background:linear-gradient(#000 0,rgba(0,0,0,0) 28%,rgba(0,0,0,0) 72%,#000 100%),
+radial-gradient(ellipse 48% 62% at 50% 50%,rgba(0,0,0,.88) 0,rgba(0,0,0,.55) 55%,rgba(0,0,0,0) 100%)}
+.end>*{position:relative;z-index:2}
+.end h2{font-size:clamp(2rem,5.2vw,3.9rem);margin-bottom:1.2rem;filter:drop-shadow(0 0 26px rgba(255,255,255,.4))}
+.end p.lead{color:#cfcfda;text-shadow:0 2px 24px #000,0 0 8px #000;font-size:1.15rem;margin:0 auto 2.6rem}
+.end p.lead code{background:rgba(255,255,255,.14);border-radius:6px;padding:.05rem .45rem;color:#fff}
+.end .btn{padding:1.15rem 2.8rem;font-size:1.05rem;letter-spacing:.01em;animation:ping 2.6s ease-out infinite;box-shadow:0 0 40px rgba(255,255,255,.3)}
+.end .btn:hover{animation-play-state:paused;box-shadow:0 0 60px rgba(255,255,255,.55);background:#000;color:#fff!important}
+@keyframes ping{0%{box-shadow:0 0 40px rgba(255,255,255,.3),0 0 0 0 rgba(255,255,255,.55)}80%,100%{box-shadow:0 0 40px rgba(255,255,255,.3),0 0 0 26px rgba(255,255,255,0)}}
+/* ligne de lumière entre la bannière et le pied de page */
+footer{position:relative;border-top:0}
+footer::before{content:"";position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent)}
+@media(max-width:860px){.end{padding:7rem 0 6.5rem}.end .btn{padding:1rem 2rem}}
+@media(prefers-reduced-motion:reduce){.end::before{animation:none}.end .btn{animation:none}}
+
+/* ===== Bannière finale v2 : fondu, balayage de lumière, étincelles ===== */
+@property --ea{syntax:"<angle>";inherits:false;initial-value:0deg}
+.end::before{-webkit-mask-image:linear-gradient(transparent,#000 24%,#000 76%,transparent);mask-image:linear-gradient(transparent,#000 24%,#000 76%,transparent);filter:brightness(.8) contrast(1.12) saturate(0)}
+.end::after{background:
+radial-gradient(ellipse 46% 58% at 50% 52%,rgba(0,0,0,.9) 0,rgba(0,0,0,.55) 55%,transparent 100%),
+conic-gradient(from var(--ea) at 50% 52%,transparent 0,rgba(255,255,255,.10) 8%,transparent 22%,transparent 50%,rgba(255,255,255,.07) 58%,transparent 72%);
+animation:sweep 18s linear infinite}
+@keyframes sweep{to{--ea:360deg}}
+.end h2{background-size:300%;animation:sh 7s linear infinite;text-shadow:none}
+.end .spark{position:absolute;z-index:1;width:3px;height:3px;border-radius:50%;background:#fff;box-shadow:0 0 10px 2px rgba(255,255,255,.8);opacity:0;pointer-events:none;animation:rise var(--t,9s) linear var(--w,0s) infinite}
+@keyframes rise{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.9}100%{transform:translateY(-220px) scale(1.2);opacity:0}}
+/* entrée orchestrée */
+.end.pre h2,.end.pre p.lead,.end.pre .btn{opacity:0;transform:translateY(28px);filter:blur(10px)}
+.end.go h2,.end.go p.lead,.end.go .btn{transition:opacity 1s cubic-bezier(.2,.7,.2,1),transform 1s cubic-bezier(.2,.7,.2,1),filter 1s}
+.end.go p.lead{transition-delay:.18s}.end.go .btn{transition-delay:.36s}
+/* lueur d'horizon sous le bouton */
+.end p.lead+*{position:relative}
+@media(prefers-reduced-motion:reduce){.end::after{animation:none}.end .spark{display:none}.end.pre h2,.end.pre p.lead,.end.pre .btn{opacity:1;transform:none;filter:none}}
+
+/* ===== Bannière finale : cadre délimité ===== */
+.end{margin:3rem clamp(.6rem,2.2vw,2rem) 3.5rem;border-radius:30px;border:1px solid rgba(255,255,255,.2);
+box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 0 80px rgba(0,0,0,.6),0 0 0 6px rgba(255,255,255,.025),0 30px 90px -30px rgba(255,255,255,.18);
+padding:9rem 0 8.5rem;background:#000}
+.end::before{-webkit-mask-image:none;mask-image:none;inset:-4%}
+/* liseré lumineux qui parcourt le cadre */
+.end>.edge{position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:3;
+background:conic-gradient(from var(--ea),transparent 0,rgba(255,255,255,.95) 6%,transparent 16%);
+-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:sweep 9s linear infinite}
+footer::before{display:none}
+footer{border-top:0}
+@media(max-width:860px){.end{border-radius:20px;padding:6rem 0 5.5rem;margin-top:2rem}}
+@media(prefers-reduced-motion:reduce){.end>.edge{animation:none;opacity:.5}}
+
+/* ===== Logo du hero : animation autonome (ne suit plus le curseur) ===== */
+.orb img{transform:none;transition:none;animation:logo3d 11s ease-in-out infinite;transform-origin:50% 50%;will-change:transform,filter}
+@keyframes logo3d{
+0%,100%{transform:perspective(900px) rotateY(-14deg) rotateX(4deg) rotateZ(-2deg) scale(1);filter:brightness(1) drop-shadow(0 0 14px rgba(255,255,255,.25))}
+50%{transform:perspective(900px) rotateY(14deg) rotateX(-4deg) rotateZ(2deg) scale(1.05);filter:brightness(1.25) drop-shadow(0 0 34px rgba(255,255,255,.55))}}
+/* éclat de lumière qui tourne autour de l'anneau */
+.orb::after{content:"";position:absolute;inset:14%;border-radius:50%;pointer-events:none;mix-blend-mode:screen;filter:blur(12px);
+background:conic-gradient(from var(--ea),transparent 0,rgba(255,255,255,.4) 7%,transparent 18%,transparent 55%,rgba(255,255,255,.22) 62%,transparent 72%);
+-webkit-mask-image:radial-gradient(circle,transparent 30%,#000 52%,transparent 70%);mask-image:radial-gradient(circle,transparent 30%,#000 52%,transparent 70%);animation:sweep 7s linear infinite}
+.orb::before{animation:halo 4.5s ease-in-out infinite alternate}
+@media(prefers-reduced-motion:reduce){.orb img,.orb::after{animation:none}}

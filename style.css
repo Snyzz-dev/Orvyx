@@ -25,8 +25,7 @@ nav.sc{background:rgba(0,0,0,.78);backdrop-filter:blur(14px);border-bottom:1px s
 .hero{min-height:100vh;display:flex;align-items:center;padding:110px 0 60px}
 .hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:2rem;align-items:center}
 .hero p.lead{margin:1.4rem 0 2rem}.cta{display:flex;gap:.9rem;flex-wrap:wrap}
-.hero h1 span{display:block;background:linear-gradient(90deg,#fff,#777,#fff);background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 6s linear infinite}
-@keyframes sh{to{background-position:200% 0}}
+.hero h1 span{display:block;color:#fff}
 .orb{position:relative;aspect-ratio:1;width:100%;max-width:520px;margin:auto;animation:fl 7s ease-in-out infinite}
 .orb img{width:100%;mix-blend-mode:screen;-webkit-mask-image:radial-gradient(circle,#000 55%,transparent 72%);mask-image:radial-gradient(circle,#000 55%,transparent 72%)}
 .orb i{position:absolute;inset:-4%;border-radius:50%;border:1px dashed var(--ln);animation:sp 40s linear infinite}
@@ -180,9 +179,9 @@ nav{animation:nd .8s cubic-bezier(.2,.7,.2,1) both}
 @keyframes pulse{50%{box-shadow:0 0 38px rgba(255,255,255,.38)}}
 .btn{will-change:transform}
 /* hero */
-.hero h1{filter:blur(0);text-shadow:0 0 60px rgba(255,255,255,.18)}
+.hero h1{text-shadow:0 0 60px rgba(255,255,255,.18)}
 .hero h1.in{animation:hin 1.3s cubic-bezier(.2,.7,.2,1) forwards}
-@keyframes hin{from{opacity:0;transform:translateY(34px);filter:blur(14px);letter-spacing:.12em}to{opacity:1;transform:none;filter:blur(0);letter-spacing:.01em}}
+@keyframes hin{from{opacity:0;transform:translateY(34px);letter-spacing:.12em}to{opacity:1;transform:none;letter-spacing:.01em}}
 .orb::before{content:"";position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 65%);filter:blur(30px);animation:halo 5s ease-in-out infinite alternate}
 @keyframes halo{to{transform:scale(1.25);opacity:.45}}
 .orb img{transform:translate3d(var(--ox,0),var(--oy,0),0) rotate(var(--or,0deg));transition:transform .25s ease-out;position:relative}
@@ -191,7 +190,7 @@ nav{animation:nd .8s cubic-bezier(.2,.7,.2,1) both}
 .hero{position:relative}
 @keyframes wh{50%{background-position:50% 18px;opacity:.4}}
 /* titres */
-h2{background:linear-gradient(90deg,#fff 30%,#8b8b97 60%,#fff);background-size:250%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 9s linear infinite}
+h2{color:var(--wh)}
 .legal h2,.docs-som h2,.cat h2{animation:none}
 /* stats */
 .stats b{text-shadow:0 0 24px rgba(255,255,255,.45)}

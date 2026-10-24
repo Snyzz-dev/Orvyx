@@ -250,7 +250,6 @@ footer a:hover{transform:translateY(-2px)}
 .cat-lead svg{width:20px;height:20px;display:inline-block;vertical-align:-4px;margin-right:.4rem;stroke:#fff}
 .cmd-aide svg,.sous-desc svg,.args svg,.cmd-desc svg{width:1em;height:1em;display:inline-block;vertical-align:-.15em}
 .legal svg,.vcard svg:not(.keep){max-width:1.4em;max-height:1.4em}
-.vcard .captcha span svg{max-width:100%;max-height:none;width:auto;height:auto;min-width:160px}
 .btn.mini{white-space:nowrap;display:inline-flex;align-items:center;gap:.4rem}
 
 /* ===== Bannière finale "Prêt à lancer Orvyx ?" ===== */
@@ -317,3 +316,9 @@ background:conic-gradient(from var(--ea),transparent 0,rgba(255,255,255,.4) 7%,t
 -webkit-mask-image:radial-gradient(circle,transparent 30%,#000 52%,transparent 70%);mask-image:radial-gradient(circle,transparent 30%,#000 52%,transparent 70%);animation:sweep 7s linear infinite}
 .orb::before{animation:halo 4.5s ease-in-out infinite alternate}
 @media(prefers-reduced-motion:reduce){.orb img,.orb::after{animation:none}}
+
+/* ===== Captcha : taille explicite (prioritaire sur la règle .vcard svg) ===== */
+#defi{flex:none}
+#defi svg{display:block!important;width:220px!important;height:auto!important;min-width:220px!important;max-width:100%!important;max-height:none!important}
+.captcha .btn.mini{white-space:nowrap;flex:none}
+.captcha .btn.mini svg{width:1.1em!important;height:1.1em!important;min-width:0!important}

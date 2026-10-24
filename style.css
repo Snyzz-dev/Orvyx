@@ -250,6 +250,8 @@ footer a:hover{transform:translateY(-2px)}
 .cat-lead svg{width:20px;height:20px;display:inline-block;vertical-align:-4px;margin-right:.4rem;stroke:#fff}
 .cmd-aide svg,.sous-desc svg,.args svg,.cmd-desc svg{width:1em;height:1em;display:inline-block;vertical-align:-.15em}
 .legal svg,.vcard svg:not(.keep){max-width:1.4em;max-height:1.4em}
+.vcard .captcha span svg{max-width:100%;max-height:none;width:auto;height:auto;min-width:160px}
+.btn.mini{white-space:nowrap;display:inline-flex;align-items:center;gap:.4rem}
 
 /* ===== Bannière finale "Prêt à lancer Orvyx ?" ===== */
 .end{position:relative;overflow:hidden;isolation:isolate;padding:11rem 0 10rem;background:#000;animation:none;background-size:auto}
